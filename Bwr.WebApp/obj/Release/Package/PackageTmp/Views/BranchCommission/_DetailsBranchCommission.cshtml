@@ -1,0 +1,51 @@
+﻿
+@model BWR.Application.Dtos.Branch.BranchCommissionDto
+@{
+    Layout = null;
+
+    string type = Model.Cost != 0 ? "العمولة" : "النسبة";
+    decimal value = Model.Cost != 0 ? Model.Cost : Model.Ratio;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">تفاصيل العمولة</h4>
+        </div>
+        
+        <div class="modal-body">
+            <ul class="list-group">
+                <li class="list-group-item"><a href="#"><h5>العملة  <span class="badge">@Model.Coin.Name</span></h5></a></li>
+                <li class="list-group-item"><a href="#"><h5>البلد  <span class="badge">@Model.Country.Name</span></h5></a></li>
+                <li class="list-group-item"><a href="#"><h5>من  <span class="badge">@Model.StartRange</span></h5></a></li>
+                <li class="list-group-item"><a href="#"><h5>إلى  <span class="badge">@Model.EndRange</span></h5></a></li>
+                <li class="list-group-item"><a href="#"><h5> @type  <span class="badge">@value</span></h5></a></li>
+
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button type="button" id="btnCloseDetailBranchCommission" class="btn btn-default" onclick="resetBranchCommissionContainer()" data-dismiss="modal">إغلاق <span class="glyphicon glyphicon-remove"></span></button>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+</div>
+<script>
+    $(function () {
+        $('input.flat').iCheck({
+            checkboxClass: 'icheckbox_flat-green',
+            radioClass: 'iradio_flat-green'
+        });
+    });
+
+    function resetDetailsBranchCommissionContainer() {
+
+        $('#detailsBranchCommissionModal').modal('hide');
+        $('#detailsBranchCommissionContainer').html('');
+    }
+
+</script>

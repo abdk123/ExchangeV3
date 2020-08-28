@@ -1,0 +1,159 @@
+﻿
+@model BWR.Application.Dtos.Client.ClientDto
+@{ ViewBag.Title = "تفاصيل العميل";
+    Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
+}
+
+@section  Style{
+    <!--Data Table Style-->
+    <link href="~/Content/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap-rtl.css" rel="stylesheet"
+          type="text/css" />
+    <!--End Data Table Style-->
+    <!--Begin Css Jquery Confirm-->
+    <link href="~/Content/Jquery-Confirm/Jquery-confrim-css.css" rel="stylesheet" />
+    <!--END Css Jquery Confirm-->
+}
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN PROFILE SIDEBAR -->
+        <div class="profile-sidebar">
+        </div>
+        <!-- END BEGIN PROFILE SIDEBAR -->
+        <!-- BEGIN PROFILE CONTENT -->
+        <div class="profile-content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light ">
+                        <div class="portlet-title tabbable-line">
+                            <div class="caption caption-md">
+                                <i class="icon-globe theme-font hide"></i>
+                                <span class="caption-subject font-blue-madison bold uppercase">حساب عميل  @Html.DisplayFor(mdoel => mdoel.FullName)</span>
+                            </div>
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a href="#currentBalance" data-toggle="tab" aria-expanded="true">الرصيد الحالي</a>
+                                </li>
+                                <li class="">
+                                    <a href="#clientCash" data-url="@Url.Action("Index","ClientCash")?clientId=@Model.Id" data-toggle="tab" aria-expanded="false">تهيئة العملات </a>
+                                </li>
+                                @*<li>
+                                    <a href="#comission" data-url="@Url.Action("Index","ClientCommission")?clientId=@Model.Id" data-toggle="tab">تهيئة العمولة</a>
+                                </li>*@
+                                <li>
+                                    <a href="#cashFlow" data-url="@Url.Action("Index","ClientCashFlow")?clientId=@Model.Id" data-toggle="tab">كشف حساب الصندوق </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="tab-content">
+                                <!-- PERSONAL INFO TAB -->
+                                <div class="tab-pane active" id="currentBalance">
+                                    <div class="row">
+                                        <div class="portlet box green">
+                                            <div class="portlet-title">
+                                                <div class="caption">
+                                                    <i class=""></i>
+                                                    الرصيد الحالي
+                                                </div>
+                                                <div class="tools"> </div>
+                                            </div>
+                                            <div class="portlet-body">
+                                                <table class="table table-actions-wrapper" id="clientBalance"></table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane" id="clientCash">
+
+                                </div>
+
+                                @*<div class="tab-pane" id="comission">
+
+                                </div>*@
+                                <div class="tab-pane" id="cashFlow">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END PROFILE CONTENT -->
+        </div>
+    </div>
+
+</div>
+<script>
+    var $clientBalanceDT;
+    var $clientCoinDT;
+    $(function () {
+       
+        $('input.flat').iCheck({
+            checkboxClass: 'icheckbox_flat-green',
+            radioClass: 'iradio_flat-green'
+        });
+        var clientId = '@Model.Id';
+        
+        initialClientBalanceDT(clientId);
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var url = $(e.target).attr('data-url');
+            var id = e.target.href.split("#")[1];
+            $('#' + id).load(url);
+        });
+
+    });
+
+    function initialClientBalanceDT(clientId) {
+        
+        $clientBalanceDT = {
+                dt: null,
+                init: function () {
+                    dt = $('#clientBalance').DataTable({
+                        'language': dataTableLocalizationArValue(),
+
+                        'ajax': {
+                            'url': '@Url.Action("Get", "ClientCash")',
+                            method: 'POST',
+                            data: {'clientId': clientId}
+                        },
+                        'columns': [
+                            { 'title': 'معرف العملة', 'data': 'CoinId', "visible": false},
+                            { 'title': 'العملة', 'data': 'CoinName', "width": "20%", 'searchable': true },
+                            { 'title': 'له', 'data': 'ForHim', "width": "20%", 'searchable': true },
+                            { 'title': 'عليه', 'data': 'OnHim', "width": "20%", 'searchable': true },
+                            { 'title': 'أكبر قيمة دائن', 'data': 'MaxCreditor', "width": "20%", 'searchable': true },
+                            { 'title': 'أكبر قيمة مدين', 'data': 'MaxDebit', "width": "20%",'searchable': true },
+
+                        ],
+                        'lengthMenu': [10, 25, 50, 100],
+                    });
+                },
+
+            refresh: function () {
+
+                dt.ajax.reload();
+                }
+            }
+
+        $clientBalanceDT.init();
+    }
+
+
+    function getCheckBox(data) {
+        var ele = '<div class="md-checkbox has-success">';
+        if (data)
+            ele += '<input type = "checkbox" id = "IsEnabledChk" class="md-check" checked="checked" disabled="true" />';
+        else
+            ele += '<input type = "checkbox" id = "IsEnabledChk" class="md-check" disabled="true" />';
+        ele += '<label for="IsEnabledChk">';
+        ele += '<span class="inc"></span>';
+        ele += '<span class="check"></span>';
+        ele += '<span class="box"></span>';
+        ele += '</label>';
+        ele += '</div >';
+        return ele;
+    }
+</script>

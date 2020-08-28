@@ -1,0 +1,197 @@
+﻿
+@model BWR.Application.Dtos.Setting.Country.CountryInsertDto
+@{
+    /**/
+
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">إضافة بلد</h4>
+        </div>
+        @using (Ajax.BeginForm("Create", "Country", null, new AjaxOptions { HttpMethod = "Post"}, new { @class = "form-horizontal", role = "form", id = "addCountryForm" }))
+        {
+            <div class="modal-body ">
+                <div class="col-lg-12 col-md-12">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item active">
+                            <a class="nav-link active" id="country-tab" data-toggle="tab" href="#addCountrySection" role="tab">بيانات البلد</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="provinces-tab" data-toggle="tab" href="#addProvinceSection" role="tab">المحافظات</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-12 col-md-12">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="addCountrySection">
+                            <div class="form-horizontal">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" for="Name">اسم البلد <span class="text-danger">*</span></label>
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <div class="tab-pane" id="addProvinceSection">
+
+                            <div class="row">
+                                <div class="col-sm-4 col-sm-4"></div>
+
+                                <div class="col-md-4 col-sm-4">
+                                    <h4>إضافة مدن للبلد</h4>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom:10px;"></div>
+
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <button type="button" class="btn btn-success" id="addProvinceTextBtn">إضافة حقل جديد <span class="fa fa-plus"></span></button>
+                                </div>
+                            </div>
+                            <div style="margin-bottom:10px;"></div>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-3"></div>
+                                <div class="col-md-8 col-sm-8">
+                                    <div class="row a-province-group">
+
+                                       
+
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom:15px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+
+                        <button id="btnAddCountry" type="button" class="btn btn-primary">حفظ <span class="glyphicon glyphicon-save"></span></button>
+                        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">إغلاق <span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    
+    $(function () {
+
+        var $form = $("#addCountryForm");
+        $.validator.unobtrusive.parse($form);
+
+        $('#btnAddCountry').on("click", function (event) {
+            if ($form.valid()) {
+                var dto = {
+                    Name: $('#Name').val(),
+                    Provinces: getProvincesValues()
+                };
+
+                $.ajax({
+                    url: '@Url.Action("Create", "Country")',
+                    type: 'POST',
+                    data: dto,
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+
+                        if (data.Success == true) {
+                            $('#createCountryModal').modal('hide');
+                            $('#createCountryContainer').html('');
+
+                            $countryDataTable.refresh();
+                            toastr.success('تم الحفظ بنجاح')
+                        }
+                        else {
+                            if (data.Exist == true) {
+                                $('[data-valmsg-for="Name"]').html("");
+                                $('[data-valmsg-for="Name"]').html(data.Message);
+                            }
+                            toastr.error(data.Message);
+                        }
+
+                    },
+                    error: function () { toastr.error("خدث خطأ ما أثناء الإضافة"); }
+                });
+
+            }
+
+        });
+
+        initNewProvinceEle();
+
+        $('#addProvinceTextBtn').click(function () {
+            addProvinceTextELement();
+        });
+
+    });
+
+    function initNewProvinceEle() {
+
+        $('.a-province-group').append(getHtml());
+    }
+
+    function addProvinceTextELement() {
+        
+        var isEmpty = false;
+        $('.a-province-group :input.a-province-input').each(function (data) {
+            
+            var value = $(this).val();
+            if (value.trim() == "") {
+                isEmpty = true;
+                return;
+            }
+        });
+
+        if (!isEmpty) {
+            $('.a-province-group').append(getHtml());
+
+            //remove copy value from new textbox
+            $('.a-province-group :input.a-province-input').last().val("")
+        }
+
+    }
+
+    function getProvincesValues() {
+        var provinces = [];
+        
+        $('.a-province-group :input.a-province-input').each(function (data) {
+
+            var value = $(this).val();
+            if (value.trim() != "" && value != null) {
+
+                provinces.push({ 'Name': value.trim(), 'IsEnabled': true });
+            }
+        });
+
+        return provinces;
+    }
+
+    function getHtml() {
+        return '<div class="col-md-8 col-sm-8 a-province" style="margin-bottom:5px;">' +
+            '<div class="input-group">' +
+            '<input type="text" date-province-id="0" placeholder="ادخل اسم المدينة" class="form-control has-error a-province-input" value="" />' +
+            '<span class="input-group-addon" onclick="this.parentElement.parentElement.remove();"><span class="fa fa-close"></span></span>' +
+            '</div > ' +
+            '</div >';
+    }
+</script>

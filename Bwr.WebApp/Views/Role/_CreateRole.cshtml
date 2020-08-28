@@ -1,0 +1,102 @@
+﻿
+@model BWR.Application.Dtos.Role.RoleInsertDto
+@{
+    /**/
+
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">إضافة دور</h4>
+        </div>
+        @using (Ajax.BeginForm("Create", "Role", null, new AjaxOptions { HttpMethod = "Post" }, new { @class = "form-horizontal", role = "form",id="addRoleForm" }))
+        {
+        <div class="modal-body ">
+            
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="Rolename">اسم الدور <span class="text-danger">*</span></label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", id = "a-name" } })
+
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+               
+
+            </div>
+            
+        </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+
+                        <button id="btnAddRole" type="button" class="btn btn-primary">حفظ <span class="glyphicon glyphicon-save"></span></button>
+                        <button type="button" class="btn btn-sm btn-default" onclick="resetCreateRoleContainer()" data-dismiss="modal">إغلاق <span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    
+    $(function () {
+
+        var $form = $("#addRoleForm");
+        $.validator.unobtrusive.parse($form);
+        
+        $('#btnAddRole').on("click", function (event) {
+            if ($form.valid()) {
+                var dto = {
+                    Name: $('#a-name').val(),
+                };
+                
+                $.ajax({
+                    url: '@Url.Action("Create", "Role")',
+                    type: 'POST',
+                    data: dto,
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+
+                        if (data.Success == true) {
+
+                            resetCreateRoleContainer();
+
+                            $roleDataTable.refresh();
+                            toastr.success('تم الحفظ بنجاح')
+                        }
+                        else {
+                            if (data.Exist == true) {
+                                $('[data-valmsg-for="Rolename"]').html("");
+                                $('[data-valmsg-for="Rolename"]').html(data.Message);
+                            }
+                            toastr.error(data.Message);
+                        }
+
+                    },
+                    error: function () { toastr.error("خدث خطأ ما أثناء الإضافة"); }
+                });
+
+            }
+            
+
+        });
+    });
+
+
+    function resetCreateRoleContainer() {
+       
+        $('#createRoleModal').modal('hide');
+        $('#createRoleContainer').html('');
+    }
+    
+</script>

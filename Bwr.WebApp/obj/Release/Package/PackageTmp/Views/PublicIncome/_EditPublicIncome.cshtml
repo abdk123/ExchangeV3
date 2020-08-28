@@ -1,0 +1,131 @@
+﻿
+@model BWR.Application.Dtos.Setting.PublicIncome.PublicIncomeUpdateDto
+@{
+    /**/
+
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">إضافة نفقات</h4>
+        </div>
+        @using (Ajax.BeginForm("Edit", "PublicIncome", null, new AjaxOptions { HttpMethod = "Post" }, new { @class = "form-horizontal", role = "form", id = "editPublicIncomeForm" }))
+        {
+        <div class="modal-body ">
+
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    <label class="control-label col-md-3" for="Name">اسم النفقات <span class="text-danger">*</span></label>
+                    <div class="col-md-9">
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", id = "e-publicIncome-name" } })
+
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="Name">فعالة </label>
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            <label>
+                                @Html.EditorFor(model => model.IsEnabled, new { htmlAttributes = new { @class = "flat" ,id="e-income-isEnabled"} })
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+
+                        <button id="btnAddPublicIncome" type="button" class="btn btn-primary">حفظ <span class="glyphicon glyphicon-save"></span></button>
+                        <button type="button" class="btn btn-sm btn-default" onclick="resetEditPublicIncomeContainer()" data-dismiss="modal">إغلاق <span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $(function () {
+
+        $('input.flat').iCheck({
+            checkboxClass: 'icheckbox_flat-green',
+            radioClass: 'iradio_flat-green'
+        });
+
+        var $form = $("#editPublicIncomeForm");
+        $.validator.unobtrusive.parse($form);
+
+        $('#btnAddPublicIncome').on("click", function (event) {
+            if ($form.valid()) {
+
+                var dto = {
+                    Id: '@Html.Raw(Model.Id)',
+                    Name: $('#e-publicIncome-name').val(),
+                    IsEnabled: getIsEnableValue()
+                };
+
+                $.ajax({
+                    url: '@Url.Action("Edit", "PublicIncome")',
+                    type: 'POST',
+                    data: dto,
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+
+                        if (data.Success == true) {
+                            resetEditPublicIncomeContainer();
+
+                            $publicIncomeDataTable.refresh();
+                            toastr.success('تم الحفظ بنجاح')
+                        }
+                        else {
+                            if (data.Exist == true) {
+                                $('[data-valmsg-for="Name"]').html("");
+                                $('[data-valmsg-for="Name"]').html(data.Message);
+                            }
+                            toastr.error(data.Message);
+                        }
+
+                    },
+                    error: function () { toastr.error("خدث خطأ ما أثناء الإضافة"); }
+                });
+
+            }
+
+
+        });
+
+    });
+
+    $('input.flat').iCheck({
+        checkboxClass: 'icheckbox_flat-green',
+        radioClass: 'iradio_flat-green'
+    });
+
+    function getIsEnableValue() {
+        var divChecked = $('#e-income-isEnabled').parent();
+        if (divChecked.hasClass('checked'))
+            return true;
+        else
+            return false;
+    }
+   
+    function resetEditPublicIncomeContainer() {
+
+        $('#editPublicIncomeModal').modal('hide');
+        $('#editPublicIncomeContainer').html('');
+    }
+
+
+</script>

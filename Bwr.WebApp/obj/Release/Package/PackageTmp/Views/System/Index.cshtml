@@ -1,0 +1,119 @@
+﻿@using Bwr.WebApp.Models.Security
+@using BWR.ShareKernel.Permisions
+
+@{
+    ViewBag.Title = "الإعدادات";
+    Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
+
+    var systemPermissions = (IList<string>)HttpContext.Current.Session["UserPermissions"];
+}
+@section  Style{
+    <!--Data Table Style-->
+    @*<link href="~/Content/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap-rtl.css" rel="stylesheet"
+          type="text/css" />*@
+    <!--End Data Table Style-->
+    <!--Begin Css Jquery Confirm-->
+    @*<link href="~/Content/Jquery-Confirm/Jquery-confrim-css.css" rel="stylesheet" />*@
+    <!--END Css Jquery Confirm-->
+}
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-gift"></i>الإعدادات
+        </div>
+        <div class="tools">
+            <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+            <a href="#portlet-config" data-toggle="modal" class="config" data-original-title=""
+               title=""></a>
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div class="row">
+            <div class="col-md-2 col-sm-3 col-xs-3">
+                <ul class="nav nav-tabs tabs-left" id="utTabUl">
+                    @if (systemPermissions.Contains(AppPermision.Page_Country))
+                    {
+                        <li class="active"><a href="#Countrys_Tab" data-indexurl="@Url.Action("Index", "Country")" data-toggle="tab"> البلدان </a></li>
+                    }
+                    @if (systemPermissions.Contains(AppPermision.Page_Province))
+                    {
+                        <li><a href="#Provinces_Tab" data-indexurl="@Url.Action("Index", "Province")" data-toggle="tab">المحافظات</a></li>
+                    }
+                    @if (systemPermissions.Contains(AppPermision.Page_Coin))
+                    {
+                        <li><a href="#Coins_Tab" data-indexurl="@Url.Action("Index", "Coin")" data-toggle="tab">العملات</a></li>
+                    }
+                    @if (systemPermissions.Contains(AppPermision.Page_BranchCash))
+                    {
+                        <li><a href="#InitialBalance_Tab" data-indexurl="@Url.Action("Index", "BranchCash")" data-toggle="tab">الرصيد الأولي</a></li>
+                    }
+                    @if (systemPermissions.Contains(AppPermision.Page_Company))
+                    {
+                        <li><a href="#Company_Tab" data-indexurl="@Url.Action("Index", "Company")" data-toggle="tab">الشركات</a></li>
+                    }
+                    @if (systemPermissions.Contains(AppPermision.Page_PublicIncome))
+                    {
+                        <li><a href="#Revenues_Tab" data-indexurl="@Url.Action("Index", "PublicIncome")" data-toggle="tab">ايرادات</a></li>
+                    }
+                    @if (systemPermissions.Contains(AppPermision.Page_PublicExpense))
+                    {
+                        <li><a href="#Expenses_Tab" data-indexurl="@Url.Action("Index", "PublicExpense")" data-toggle="tab">النفقات</a></li>
+                    }
+                    @if (systemPermissions.Contains(AppPermision.Page_Client))
+                    {
+                        <li><a href="#Client_Tab" data-indexurl="@Url.Action("Index", "Client")" data-toggle="tab">العملاء</a></li>
+                    }
+                    @if (systemPermissions.Contains(AppPermision.Page_Attachment))
+                    {
+                        <li><a href="#Attachment_Tab" data-indexurl="@Url.Action("Index", "Attachment")" data-toggle="tab">المرفقات</a></li>
+                    }
+                    @if (systemPermissions.Contains(AppPermision.Page_Treasury))
+                    {
+                        <li><a href="#Treasury_Tab" data-indexurl="@Url.Action("Index", "Treasury")" data-toggle="tab">الصناديق</a></li>
+                    }
+                    @if (systemPermissions.Contains(AppPermision.Page_BranchCommission))
+                    {
+                        <li><a href="#BranchCommission_Tab" data-indexurl="@Url.Action("Index", "BranchCommission")" data-toggle="tab">العمولة</a></li>
+                    }
+                    @if (systemPermissions.Contains(AppPermision.Page_Exchange))
+                    {
+                        <li><a href="#Exchange_Tab" data-indexurl="@Url.Action("Index", "Exchange")" data-toggle="tab">إعدادات الصرافة</a></li>
+                    }
+
+                </ul>
+            </div>
+            <div class="col-md-10 col-sm-9 col-xs-9">
+                <div class="tab-content">
+                    @if (systemPermissions.Contains(AppPermision.Page_Country))
+                    {
+                        <div class="tab-pane active" id="Countrys_Tab">
+                            @Html.Partial(Url.Content("~/Views/Country/Index.cshtml"))
+                        </div>
+                    }
+                    <div class="tab-pane" id="Provinces_Tab"></div>
+                    <div class="tab-pane" id="Coins_Tab"></div>
+                    <div class="tab-pane" id="Company_Tab"></div>
+                    <div class="tab-pane" id="InitialBalance_Tab"></div>
+                    <div class="tab-pane" id="Revenues_Tab"></div>
+                    <div class="tab-pane" id="Expenses_Tab"></div>
+                    <div class="tab-pane" id="Attachment_Tab"></div>
+                    <div class="tab-pane" id="Client_Tab"></div>
+                    <div class="tab-pane" id="BranchCommission_Tab"></div>
+                    <div class="tab-pane" id="Exchange_Tab"></div>
+                    <div class="tab-pane" id="Treasury_Tab"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var url = $(e.target).attr('data-indexurl');
+                var id = e.target.href.split("#")[1];
+                $('#' + id).load(url);
+            })
+        });
+    </script>
+</div>
+

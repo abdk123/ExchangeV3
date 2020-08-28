@@ -1,0 +1,206 @@
+﻿@model BWR.Application.Dtos.Company.CompanyCashFlow.CompanyCashFlowInputDto
+@{
+                /**/
+
+
+                Layout = "";
+}
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="control-label " for="a-flow-coinId">اختر العملة </label>
+            @Html.DropDownListFor(model => model.CoinId, new List<SelectListItem>(), new { @class = "form-control", id = "a-flow-coinId" })
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="control-label" for="a-flow-from">من </label>
+            <input type="date" class="form-control" id="a-flow-from" onchange="$companyCashFlowDataTable.refresh();;" />
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="control-label" for="a-flow-to">إلى </label>
+            <input type="date" class="form-control" id="a-flow-to" onchange="$companyCashFlowDataTable.refresh();;" />
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover dt-responsive" id="companyCashFlowDataTable"></table>
+    </div>
+</div>
+<script type="text/javascript">
+    var $companyCashFlowDataTable;
+    var $companyId;
+    var $inputDto;
+    $(function () {
+
+        initialCoins();
+        $companyId = '@Model.CompanyId';
+        $inputDto =  {
+            'CompanyId': $companyId,
+            'CoinId': 0,
+            'From': $('#a-flow-from').val(),
+            'To': $('#a-flow-to').val()
+        };
+
+
+            $companyCashFlowDataTable = {
+            dt: null,
+            init: function () {
+                dt = $('#companyCashFlowDataTable').DataTable({
+                    'language': dataTableLocalizationArValue(),
+
+                    'ajax': {
+                        'url': '@Url.Action("Get","CompanyCashFlow")',
+                        'method': 'POST',
+                        'cash': false,
+                        'data': function (d) {
+                            d.inputDto = $inputDto;
+                        }
+                    },
+                    'columns': [
+                        { 'title': 'مطابقة', 'data': 'Id', 'searchable': true },
+                        {
+                            'title': 'الرصيد', 'data': "Balance", 'searchable': true,
+                            render: function (data, type, row) {
+                                if (data > 0) {
+
+                                    return 'له/' + numberWithCommas(data);
+
+                                } else if(data < 0) {
+
+                                    return 'عليه/' + numberWithCommas(Math.abs(data));
+
+                                }else{
+                                return "";
+                                }
+                            },
+                        },
+                        {
+                            'title': 'له', 'data': "Amount", 'searchable': true,
+                            render: function (data, type, row) {
+                                if (data > 0) {
+                                    return numberWithCommas(data);
+                                } else {
+                                    return "";
+                                }
+
+                            },
+                        },
+                        {
+                            'title': 'عليه', 'data': "Amount", 'searchable': true,
+                            render: function (data, type, row) {
+                                if (data < 0) {
+                                    return numberWithCommas(Math.abs(data));
+                                } else {
+                                    return "";
+                                }
+                            },
+                        },
+                        {
+                            'title': 'العمولة', 'data': "Commission", 'searchable': true,
+                            render: function (data, type, row) {
+                                if (data == 0 || data == null) {
+                                    return 'لا يوجد';
+                                }
+                                return data;
+                            },
+                        },
+                        {
+                            'title': 'العمولة الثانية', 'data': "SecondCommission", 'searchable': true,
+                            render: function (data, type, row) {
+                                if (data == 0 || data == null) {
+                                    return 'لا يوجد';
+                                }
+                                return data;
+                            },
+                        },
+                        { 'title': 'التاريخ', 'data': 'Date', 'searchable': true },
+                        { 'title': 'المستفيد', 'data': 'ReceiverName', 'searchable': true },
+                        { 'title': 'المرسل', 'data': 'SenderName', 'searchable': true },
+                        { 'title': 'الجهة', 'data': 'CountryName', 'searchable': true },
+                        { 'title': 'النوع', 'data': 'Type', 'searchable': true },
+                        { 'title': 'الرقم', 'data': 'Number', 'searchable': true },
+                        { 'title': 'ملاحظات', 'data': 'Note', 'searchable': true },
+                        {
+                            'title': 'تفاصيل',
+                            'data': 'Id',
+                            'searchable': false,
+                            'sortable': false,
+                            'render': function (data, type, full, meta) {
+                                return '<a href="@Url.Action("Detail","CompanyCashFlow")?id=' + data + '" class="btn btn-defult editCompanyCommission"><span class="glyphicon glyphicon-eye"></span>  تفاصيل</a>';
+
+                            }
+                        }
+                    ],
+                    'lengthMenu': [10, 25, 50, 100],
+                });
+            },
+
+            refresh: function () {
+                dt.ajax.reload();
+            }
+
+        }
+
+            $companyCashFlowDataTable.init();
+
+
+
+        $('#a-flow-coinId').on("change", function (e) {
+            debugger;
+            $inputDto = getData();
+            $companyCashFlowDataTable.refresh();
+        });
+
+
+    });
+
+    function getData() {
+
+        var dto = {
+            'CompanyId': $companyId,
+            'CoinId': getSelectedCoin(),
+            'From': $('#a-flow-from').val(),
+            'To': $('#a-flow-to').val()
+        };
+
+        return dto;
+    }
+
+    function initialCoins() {
+
+        $.get('@Url.Action("GetCoinsForDropdown","Coin")', { term: "" }, function (data) {
+
+            var coins = data.Coins;
+            var option = '<option index="0"></option>';
+            $('#a-flow-coinId').append(option);
+
+            for (var i = 0; i < coins.length; i++) {
+                var option = '<option value="' + coins[i].Id + '">' + coins[i].Name + '</option>';
+                $('#a-flow-coinId').append(option);
+            }
+
+            $('#a-flow-coinId').select2({ width: null, placeholder: "اختر عملة" });
+
+            $('#a-flow-coinId').val('').trigger('change')
+
+        });
+    }
+
+    function getSelectedCoin() {
+
+        try {
+            var data = $('#a-flow-coinId').select2('data');
+
+            return data[0].id;
+        } catch{
+            return 0;
+        }
+
+    }
+
+</script>

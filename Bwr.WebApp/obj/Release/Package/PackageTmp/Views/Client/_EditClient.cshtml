@@ -1,0 +1,426 @@
+﻿
+@model BWR.Application.Dtos.Client.ClientUpdateDto
+@{
+
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">إضافة عميل</h4>
+        </div>
+        @using (Ajax.BeginForm("Edit", "Client", null, new AjaxOptions { HttpMethod = "Post", OnSuccess = "createClientSuccess" }, new { @class = "form-horizontal", role = "form", id = "addClientForm" }))
+        {
+            <div class="modal-body ">
+                <div class="col-lg-12 col-md-12">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item active">
+
+                            <a class="nav-link active" id="client-tab" data-toggle="tab" href="#addClientSection" role="tab">بيانات العميل</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="phones-tab" data-toggle="tab" href="#addPhoneSection" role="tab">الهواتف</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="cashFlow-tab" data-toggle="tab" href="#addClientCashFlow" role="tab">الرصيد</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-12 col-md-12">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="addClientSection">
+                            <div class="form-horizontal">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3" for="Name">اسم العميل <span class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control", id = "e-client-fullName" } })
+
+                                        @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3" for="ClientCountries">اختر المنطقة<span class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        @Html.DropDownListFor(model => model.CountryId, new List<SelectListItem>(), new { @class = "form-control", id = "e-client-countryId" })
+                                        <span class="text-danger field-validation-error" data-valmsg-for="CountryId" data-valmsg-replace="true"></span>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3" for="Name">العنوان التفصيلي <span class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control", id = "e-client-address" } })
+
+                                        @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3" for="Name">الحساب فعال </label>
+                                    <div class="col-md-9">
+                                        <div class="checkbox">
+                                            <label>
+                                                @Html.EditorFor(model => model.IsEnabled, new { htmlAttributes = new { @class = "flat", id = "e-client-isEnabled" } })
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="addPhoneSection">
+                            <div class="row">
+                                <div class="col-sm-4 col-sm-4"></div>
+
+                                <div class="col-md-4 col-sm-4">
+                                    <h4>إضافة ارقام الهواتف</h4>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom:10px;"></div>
+
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <button type="button" class="btn btn-success" id="addPhoneTextBtn">إضافة حقل جديد <span class="fa fa-plus"></span></button>
+                                </div>
+                            </div>
+                            <div style="margin-bottom:10px;"></div>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-3"></div>
+                                <div class="col-md-8 col-sm-8">
+                                    <div class="row e-phone-group">
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom:15px;"></div>
+                        </div>
+
+                        <div id="addClientCashFlow" class="tab-pane">
+                            <div class="row e-coins">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+
+                        <button id="btnEditClient" type="button" class="btn btn-primary">حفظ <span class="glyphicon glyphicon-save"></span></button>
+                        <button type="button" class="btn btn-sm btn-default" onclick="resetEditClientContainer();" data-dismiss="modal">إغلاق <span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    var clientId;
+    var selectedCoin;
+    var selectedCountry;
+    $(function () {
+
+        clientId = '@Html.Raw(Model.Id)';
+        selectedCoin =@Html.Raw(Json.Encode(Model.ClientCashes));
+        selectedCountry =@Html.Raw(Json.Encode(Model.CountryId));
+
+        $('input.flat').iCheck({
+            checkboxClass: 'icheckbox_flat-green',
+            radioClass: 'iradio_flat-green'
+        });
+
+        initialCountries();
+        initialCoins();
+
+        var $form = $("#addClientForm");
+        $.validator.unobtrusive.parse($form);
+
+        $('#btnEditClient').on("click", function (event) {
+            if ($form.valid()) {
+                var dto = {
+                    Id: clientId,
+                    FullName: $('#e-client-fullName').val(),
+                    Address: $('#e-client-address').val(),
+                    ClientPhones: getPhonesValues(),
+                    ClientCashes: getCoins(),
+                    IsEnabled: getIsEnableValue(),
+                    CountryId: getSelectedCountry()
+                };
+
+                $.ajax({
+                    url: '@Url.Action("Edit", "Client")',
+                    type: 'POST',
+                    data: dto,
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+
+                        if (data.Success == true) {
+                            $('#editClientModal').modal('hide');
+                            $('#editClientContainer').html('');
+
+                            $clientDataTable.refresh();
+                            toastr.success('تم الحفظ بنجاح')
+                        }
+                        else {
+                            alert(data.Message);
+                            toastr.error(data.Message);
+                        }
+
+                    },
+                    error: function () { toastr.error("خدث خطأ ما أثناء الإضافة"); }
+                });
+
+            }
+
+
+        });
+
+        initNewPhoneEle();
+
+        $('#addPhoneTextBtn').click(function () {
+            addPhoneTextELement();
+        });
+
+    });
+
+    //===Initial Functions===//
+
+    function initNewPhoneEle() {
+        
+        var phoneEle = getHtml();
+
+        var phones =@Html.Raw(Json.Encode(Model.ClientPhones));
+        for (var i = 0; i < phones.length; i++) {
+            var phone = phones[i];
+            $('.e-phone-group').append(phoneEle);
+
+            var inputEle = $('.e-phone-group :input.e-phone-input').last();
+            inputEle.val(phone.Phone);
+            inputEle.attr('date-phone-id', phone.Id);
+        }
+    }
+
+    function addPhoneTextELement() {
+
+        var isEmpty = false;
+        $('.e-phone-group :input.e-phone-input').each(function (data) {
+
+            var value = $(this).val();
+            if (value.trim() == "") {
+                isEmpty = true;
+                return;
+            }
+        });
+
+        if (!isEmpty) {
+            $('.e-phone-group').append(getHtml());
+
+            //remove copy value from new textbox
+            $('.e-phone-group :input.e-phone-input').last().val("")
+        }
+
+    }
+
+    function initialCountries() {
+         $.get('@Url.Action("GetAllWithProvinces", "Country")', function (data) {
+
+             var countries = data.Countries;
+
+             var option = '<option index="0"></option>';
+             $('#e-client-countryId').append(option);
+
+            for (var i = 0; i < countries.length; i++) {
+                var option = '<option value="' + countries[i].Id + '">' + countries[i].Name + '</option>';
+                $('#e-client-countryId').append(option);
+            }
+
+             $('#e-client-countryId').select2({ width: null, placeholder: "اختر منطقة" });
+
+             //$("#e-client-countryId").select2("val", "");
+             $('#e-client-countryId').val(selectedCountry).trigger('change')
+
+        });
+    }
+
+    function initialCoins() {
+        $.get('@Url.Action("GetCoinsForDropdown","Coin")', { term: "" }, function (data) {
+
+            var coins = data.Coins;
+            var selectedCoins =@Html.Raw(Json.Encode(Model.ClientCashes));
+
+            for (var i = 0; i < coins.length; i++) {
+
+                var ele = getCoinHtml(coins[i].Name, coins[i].Code, coins[i].Id);
+                $('.e-coins').append(ele);
+
+                var inputEle = $('.e-coins :input.e-coins-inputs').last();
+                var checkBoxEle = $('.e-coins :input.e-coins-checkbox').last();
+
+                inputEle.attr('data-coin-id', coins[i].Id);
+                checkBoxEle.attr('data-coin-id', coins[i].Id);
+
+                var selectedCoin = selectedCoins[i];
+                if (selectedCoin != null) {
+                    var clientCoinId = selectedCoin.Id;
+                    var initialBalance = selectedCoin.InitialBalance;
+
+                    initialCheckBoxValue(coins[i].Id, initialBalance);
+
+                    inputEle.val(Math.abs(initialBalance));
+                    inputEle.attr('data-client-coin-id', clientCoinId);
+                }
+            }
+
+            $('.e-coins :input.e-coins-checkbox').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            });
+
+        });
+    }
+
+    //===Get Functions===//
+
+    function getPhonesValues() {
+        var phones = [];
+
+        $('.e-phone-group :input.e-phone-input').each(function (data) {
+
+            var value = $(this).val();
+            if (value.trim() != "" && value != null) {
+                var id = $(this).attr('date-phone-id');
+                phones.push({ 'Id': id, 'Phone': value.trim(), 'IsEnabled': true, 'ClientId': clientId });
+            }
+        });
+
+        return phones;
+    }
+
+    function getHtml() {
+        return '<div class="col-md-8 col-sm-8 e-phone" style="margin-bottom:5px;">' +
+            '<div class="input-group">' +
+            '<input type="text" date-phone-id="0" placeholder="ادخل رقم الهاتف" class="form-control has-error e-phone-input" value="" />' +
+            '<span class="input-group-addon" onclick="this.parentElement.parentElement.remove();"><span class="fa fa-close"></span></span>' +
+            '</div > ' +
+            '</div >';
+
+    }
+
+    function getCoinHtml(coinName, coinCode, coinId) {
+        
+        var ele = '<div class="row">' +
+            '<div class="col-md-9 col-sm-9">' +
+            '<div class="form-group">' +
+            '<label class="control-label col-md-3 col-sm-3">' + coinName + ':</label>' +
+            '<div class="col-md-9 col-sm-9">' +
+            '<div class="input-group">';
+
+        ele += '<input  type="number" data-coin-id="0" data-client-coin-id="0" class="form-control e-coins-inputs" value="0" />';
+        ele += '<span class="input-group-addon">' + coinCode + '</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-3 col-sm-3">' +
+            '<div class="form-group">' +
+            '<label class="control-label col-md-2 col-sm-2" for="Name">له: </label>' +
+            '<div class="col-md-5 col-sm-5">' +
+            '   <div class="checkbox">' +
+
+            '         	<input type="checkbox" id="check-' + coinId + '" class="flat e-coins-checkbox" />' +
+
+
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+
+        return ele;
+    }
+
+    function getIsEnableValue() {
+        
+        var divChecked = $('#e-client-isEnabled').parent();
+        if (divChecked.hasClass('checked'))
+            return true;
+        else
+            return false;
+    }
+
+    function getSelectedCountry() {
+
+        var data = $('#e-client-countryId').select2('data');
+        return data[0].id;
+    }
+
+    function getCoins() {
+
+        var clientCoins = [];
+        var coinInputs = $('.e-coins-inputs');
+        debugger;
+        for (var i = 0; i < coinInputs.length; i++) {
+            var coinId = $(coinInputs[i]).attr('data-coin-id');
+            var id = $(coinInputs[i]).attr('data-client-coin-id');
+            var value = $(coinInputs[i]).val();
+
+            var isCheck = getCheckBoxValue(coinId);
+            if (!isCheck)
+                value = -value;
+
+            clientCoins.push({ 'Id': id, 'InitialBalance': value, 'Total': value, 'CoinId': coinId, 'ClientId': clientId });
+        }
+
+        return clientCoins;
+    }
+
+    function getCheckBoxValue(coinId) {
+
+        var selector = 'input#check-' + coinId;
+        var checkBox = $('.e-coins').find(selector);
+        if (checkBox != null) {
+            var divChecked = checkBox.parent();
+            if (divChecked.hasClass('checked'))
+                return true;
+        }
+
+        return false;
+    }
+
+    //===Other Functions===//
+
+    function resetEditClientContainer() {
+
+        $('#editClientModal').modal('hide');
+        $('#editClientContainer').html('');
+    }
+
+    function initialCheckBoxValue(coinId, value) {
+        debugger;
+        var selector = '#check-' + coinId;
+        var checkBox = $('.e-coins').find(selector);
+        if (checkBox != null) {
+            var divChecked = checkBox.parent();
+            if (value > 0) {
+                $(selector).iCheck('check');
+            }
+
+        }
+    }
+
+</script>

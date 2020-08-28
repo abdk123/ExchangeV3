@@ -1,0 +1,145 @@
+﻿
+@{
+
+    Layout = "";
+}
+
+<div class="portlet-title" style="margin-bottom: 4px;">
+</div>
+<div class="portlet box green">
+    <div class="portlet-title">
+        <div class="caption">
+            <button id="btnSaveExchange" class="btn btn-success btn-circle">حفظ التغييرات  <i class="fa fa-save"></i></button>
+        </div>
+        <div class="tools"> </div>
+    </div>
+    <div class="portlet-body">
+        <table class="table table-striped table-bordered table-hover dt-responsive" id="exchangeDataTable">
+            <thead>
+                <tr>
+                    <th>العملة</th>
+                    <th>سعر الصرف الاساسي</th>
+                    <th>سعر البيع</th>
+                    <th>سعر الشراء</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var $exchangeDataTable;
+    $(document).ready(function () {
+
+        $exchangeDataTable = {
+                dt: null,
+                init: function () {
+                    dt = $('#exchangeDataTable').DataTable({
+                        'language': dataTableLocalizationArValue(),
+
+                        'ajax': {
+                            'url': '@Url.Action("Get","Exchange")',
+                            method: 'POST'
+
+                        },
+                        'columns': [
+                            { 'title': ' العملة', 'data': 'Coin.Name', "width": "25%", 'searchable': true },
+                            {
+                                'title': 'سعر الصرف الاساسي',
+                                'data': 'ExchangePrice',
+                                "width": "25%",
+                                'searchable': true,
+                                render: function (data, type, row) {
+
+                                    if (data == null)
+                                        data = 0;
+                                    return '<input type="number" value="'+data+'" class="form-control exchangePrice-input" data-id="'+row.Id+'" data-coin-id="'+row.CoinId+'" />';
+                                }
+                            },
+
+                            {
+                                'title': 'سعر البيع',
+                                'data': 'SellingPrice',
+                                "width": "25%",
+                                'searchable': true,
+                                render: function (data, type, row) {
+                                    if (data == null)
+                                        data = 0;
+                                    return '<input type="number" value="'+data+'" class="form-control sellingPrice-input" />';
+                                }},
+                            {
+                                'title': 'سعر الشراء',
+                                'data': "PurchasingPrice",
+                                'width': "25%",
+                                render: function (data, type, row) {
+                                    if (data == null)
+                                        data = 0;
+                                    return '<input type="number" value="'+data+'" class="form-control purchasingPrice-input" />';
+                                }
+                            }
+                        ],
+                        'lengthMenu': [10, 25, 50, 100],
+                    });
+                },
+
+            refresh: function () {
+
+                dt.ajax.reload();
+                }
+            }
+
+        $exchangeDataTable.init();
+
+        $('#btnSaveExchange').on('click', function () {
+            saveExchang();
+        });
+
+
+    });
+
+    function saveExchang(){
+
+        var rows = $('#exchangeDataTable tr');
+        var data = [];
+
+        for (var i = 1; i < rows.length; i++) {
+            var row = rows[i];
+
+            var exchangePriceEle = $(row).find("td input")[0];
+            var exchangePrice = $(exchangePriceEle).val();
+            var id = $(exchangePriceEle).attr('data-id');
+            var coinId = $(exchangePriceEle).attr('data-coin-id');
+
+            var sellingPriceEle = $(row).find("td input")[1];
+            var sellingPrice = $(sellingPriceEle).val();
+
+            var purchasingPriceEle = $(row).find("td input")[2];
+            var purchasingPrice = $(purchasingPriceEle).val();
+
+            data.push({ 'Id': id, 'CoinId': coinId, 'ExchangePrice': exchangePrice, 'SellingPrice': sellingPrice, 'PurchasingPrice': purchasingPrice });
+        }
+
+        $.ajax({
+            url: '@Url.Action("Edit", "Exchange")',
+            type: 'POST',
+            data: {'branchCashes':data},
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+
+                if (data.Success == true) {
+
+                    $exchangeDataTable.refresh();
+                    toastr.success('تم الحفظ بنجاح')
+                }
+                else {
+
+                    toastr.error(data.Message);
+                }
+
+            },
+            error: function () { toastr.error("خدث خطأ ما أثناء الإضافة"); }
+        });
+    }
+
+</script>

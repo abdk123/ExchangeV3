@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{425798BC-ADF9-433E-AE65-D50AC0EC83AE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BWR.Domain</RootNamespace>
+    <AssemblyName>BWR.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Model\Branches\Branch.cs" />
+    <Compile Include="Model\Branches\BranchCash.cs" />
+    <Compile Include="Model\Branches\BranchCashFlow.cs" />
+    <Compile Include="Model\Branches\BranchCommission.cs" />
+    <Compile Include="Model\Clients\Client.cs" />
+    <Compile Include="Model\Clients\ClientAttatchment.cs" />
+    <Compile Include="Model\Clients\ClientCash.cs" />
+    <Compile Include="Model\Clients\ClientCashFlow.cs" />
+    <Compile Include="Model\Clients\ClientPhone.cs" />
+    <Compile Include="Model\Clients\ClientType.cs" />
+    <Compile Include="Model\Common\BoxAction.cs" />
+    <Compile Include="Model\Common\Clearing.cs" />
+    <Compile Include="Model\Common\Exchange.cs" />
+    <Compile Include="Model\Common\MoneyAction.cs" />
+    <Compile Include="Model\Common\PhoneBase.cs" />
+    <Compile Include="Model\Enums\Requester.cs" />
+    <Compile Include="Model\Settings\PublicExpense.cs" />
+    <Compile Include="Model\Settings\PublicIncome.cs" />
+    <Compile Include="Model\Common\PublicMoney.cs" />
+    <Compile Include="Model\Companies\Company.cs" />
+    <Compile Include="Model\Companies\CompanyCash.cs" />
+    <Compile Include="Model\Companies\CompanyCashFlow.cs" />
+    <Compile Include="Model\Companies\CompanyCommission.cs" />
+    <Compile Include="Model\Companies\CompanyCountry.cs" />
+    <Compile Include="Model\Companies\CompanyUser.cs" />
+    <Compile Include="Model\Logs\Log.cs" />
+    <Compile Include="Model\Security\Claim.cs" />
+    <Compile Include="Model\Security\ExternalLogin.cs" />
+    <Compile Include="Model\Security\Permission.cs" />
+    <Compile Include="Model\Security\Role.cs" />
+    <Compile Include="Model\Security\User.cs" />
+    <Compile Include="Model\Settings\Action.cs" />
+    <Compile Include="Model\Settings\Attachment.cs" />
+    <Compile Include="Model\Settings\Coin.cs" />
+    <Compile Include="Model\Settings\Country.cs" />
+    <Compile Include="Model\Settings\TypeOfPay.cs" />
+    <Compile Include="Model\Transactions\IncomeTransactionCollection.cs" />
+    <Compile Include="Model\Transactions\Transaction.cs" />
+    <Compile Include="Model\Transactions\TransactionStatus.cs" />
+    <Compile Include="Model\Transactions\TransactionType.cs" />
+    <Compile Include="Model\Treasures\Treasury.cs" />
+    <Compile Include="Model\Treasures\TreasuryCash.cs" />
+    <Compile Include="Model\Treasures\TreasuryMoneyAction.cs" />
+    <Compile Include="Model\Treasures\UserTreasury.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\IExternalLoginRepository.cs" />
+    <Compile Include="Repositories\IRoleRepository.cs" />
+    <Compile Include="Repositories\IUserRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BWR.ShareKernel\BWR.ShareKernel.csproj">
+      <Project>{258bf2a6-9987-472b-99c7-bd4946da79e7}</Project>
+      <Name>BWR.ShareKernel</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

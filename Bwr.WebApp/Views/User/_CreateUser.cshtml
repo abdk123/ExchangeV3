@@ -1,0 +1,131 @@
+﻿
+@model BWR.Application.Dtos.User.UserInsertDto
+@{
+    /**/
+
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">إضافة مستخدم</h4>
+        </div>
+        @using (Ajax.BeginForm("Create", "User", null, new AjaxOptions { HttpMethod = "Post" }, new { @class = "form-horizontal", role = "form",id="addUserForm" }))
+        {
+        <div class="modal-body ">
+            
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="FullName">الاسم الكامل <span class="text-danger">*</span></label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control", id = "a-fullName" } })
+
+                        @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="Username">اسم المستخدم <span class="text-danger">*</span></label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", id = "a-username" } })
+
+                        @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="PasswordHash">كلمة المرور <span class="text-danger">*</span></label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.PasswordHash, new { htmlAttributes = new { @class = "form-control", id = "a-password" } })
+
+                        @Html.ValidationMessageFor(model => model.PasswordHash, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="ConfirmPassword">تأكيد كلمة المرور <span class="text-danger">*</span></label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control", id = "a-confirmPassword" } })
+
+                        @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+
+                        <button id="btnAddUser" type="button" class="btn btn-primary">حفظ <span class="glyphicon glyphicon-save"></span></button>
+                        <button type="button" class="btn btn-sm btn-default" onclick="resetCreateUserContainer()" data-dismiss="modal">إغلاق <span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    
+    $(function () {
+
+        
+        var $form = $("#addUserForm");
+        $.validator.unobtrusive.parse($form);
+        
+        $('#btnAddUser').on("click", function (event) {
+            if ($form.valid()) {
+                var dto = {
+                    FullName: $('#a-fullName').val(),
+                    Username: $('#a-username').val(),
+                    PasswordHash: $('#a-password').val(),
+                    ConfirmPassword: $('#a-confirmPassword').val()
+                };
+                
+                $.ajax({
+                    url: '@Url.Action("Create", "User")',
+                    type: 'POST',
+                    data: dto,
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+
+                        if (data.Success == true) {
+
+                            resetCreateUserContainer();
+
+                            $userDataTable.refresh();
+                            toastr.success('تم الحفظ بنجاح')
+                        }
+                        else {
+                            if (data.Exist == true) {
+                                $('[data-valmsg-for="Username"]').html("");
+                                $('[data-valmsg-for="Username"]').html(data.Message);
+                            }
+                            toastr.error(data.Message);
+                        }
+
+                    },
+                    error: function () { toastr.error("خدث خطأ ما أثناء الإضافة"); }
+                });
+
+            }
+            
+
+        });
+    });
+
+
+    function resetCreateUserContainer() {
+       
+        $('#createUserModal').modal('hide');
+        $('#createUserContainer').html('');
+    }
+    
+</script>

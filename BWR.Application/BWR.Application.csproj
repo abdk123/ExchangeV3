@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B1FBDE74-4D08-4FC8-B3BF-3BFF08BB19CE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BWR.Application</RootNamespace>
+    <AssemblyName>BWR.Application</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppServices\Common\BoxActionAppService.cs" />
+    <Compile Include="AppServices\Branch\BranchCashAppService.cs" />
+    <Compile Include="AppServices\Branch\BranchCashFlowAppService.cs" />
+    <Compile Include="AppServices\Branch\BranchCommissionAppService.cs" />
+    <Compile Include="AppServices\Clients\ClientAppService.cs" />
+    <Compile Include="AppServices\Clients\ClientAttachmentAppService.cs" />
+    <Compile Include="AppServices\Clients\ClientCashAppService.cs" />
+    <Compile Include="AppServices\Clients\ClientCashFlowAppService.cs" />
+    <Compile Include="AppServices\Clients\ClientPhoneAppService.cs" />
+    <Compile Include="AppServices\Common\ExchangeAppService.cs" />
+    <Compile Include="AppServices\Common\MoneyActionAppService.cs" />
+    <Compile Include="AppServices\Common\StatementAppAservice.cs" />
+    <Compile Include="AppServices\Companies\CompanyAppService.cs" />
+    <Compile Include="AppServices\Companies\CompanyCashAppService.cs" />
+    <Compile Include="AppServices\Companies\CompanyCashFlowAppService.cs" />
+    <Compile Include="AppServices\Companies\CompanyCommissionAppService.cs" />
+    <Compile Include="AppServices\Companies\CompanyCountryAppService.cs" />
+    <Compile Include="AppServices\Security\PermissionAppService.cs" />
+    <Compile Include="AppServices\Security\RoleAppService.cs" />
+    <Compile Include="AppServices\Security\UserAppService.cs" />
+    <Compile Include="AppServices\Setting\AttachmentAppService.cs" />
+    <Compile Include="AppServices\Setting\CoinAppService.cs" />
+    <Compile Include="AppServices\Setting\CountryAppService.cs" />
+    <Compile Include="AppServices\Setting\ProvinceAppService.cs" />
+    <Compile Include="AppServices\Setting\PublicExpenseAppService.cs" />
+    <Compile Include="AppServices\Setting\PublicIncomeAppService.cs" />
+    <Compile Include="AppServices\Transactions\InnerTransactionAppService.cs" />
+    <Compile Include="AppServices\Transactions\OuterTransactionAppService.cs" />
+    <Compile Include="AppServices\Transactions\TransactionAppService.cs" />
+    <Compile Include="AppServices\Treasuries\TreasuryAppService.cs" />
+    <Compile Include="AppServices\Treasuries\TreasuryCashAppService.cs" />
+    <Compile Include="AppServices\Treasuries\TreasuryMoneyActionAppService.cs" />
+    <Compile Include="Common\DtoForDropdown.cs" />
+    <Compile Include="Common\EntityDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionClientDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionFromClientToClientDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionCompanyDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionExpensiveDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionFromClientToCompanyDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionFromCompanyToClientDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionFromCompanyToCompanyDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionIncomeDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionInitialDto.cs" />
+    <Compile Include="Dtos\Branch\BranchCashFlow\BranchCashFlowOutputDto.cs" />
+    <Compile Include="Dtos\Branch\BranchCashFlow\BranchCashFlowDto.cs" />
+    <Compile Include="Dtos\Branch\BranchCash\BranchCashDto.cs" />
+    <Compile Include="Dtos\Branch\BranchCash\BranchCashInsertDto.cs" />
+    <Compile Include="Dtos\Branch\BranchCash\BranchCashIUpdateDto.cs" />
+    <Compile Include="Dtos\Branch\BranchCommission\BranchCommissionDto.cs" />
+    <Compile Include="Dtos\Branch\BranchCommission\BranchCommissionInputDto.cs" />
+    <Compile Include="Dtos\Branch\BranchCommission\BranchCommissionInsertDto.cs" />
+    <Compile Include="Dtos\Branch\BranchCommission\BranchCommissionUpdateDto.cs" />
+    <Compile Include="Dtos\Branch\BranchDto.cs" />
+    <Compile Include="Dtos\Branch\BranchHelper.cs" />
+    <Compile Include="Dtos\Client\ClientAttatchmentDto.cs" />
+    <Compile Include="Dtos\Client\ClientCashFlow\ClientCashFlowInputDto.cs" />
+    <Compile Include="Dtos\Client\ClientCashFlow\ClientCashFlowOutputDto.cs" />
+    <Compile Include="Dtos\Client\ClientCash\ClientCashDto.cs" />
+    <Compile Include="Dtos\Client\ClientCash\ClientCashesDto.cs" />
+    <Compile Include="Dtos\Client\ClientCashFlow\ClientCashFlowDto.cs" />
+    <Compile Include="Dtos\Client\ClientDto.cs" />
+    <Compile Include="Dtos\Client\ClientForDropdownDto.cs" />
+    <Compile Include="Dtos\Client\ClientForTransactionDto.cs" />
+    <Compile Include="Dtos\Client\ClientInsertDto.cs" />
+    <Compile Include="Dtos\Client\ClientPhoneDto.cs" />
+    <Compile Include="Dtos\Client\ClientTypeDto.cs" />
+    <Compile Include="Dtos\Client\ClientUpdateDto.cs" />
+    <Compile Include="Dtos\Common\BoxActionDto.cs" />
+    <Compile Include="Dtos\Common\ExchangeDto.cs" />
+    <Compile Include="Dtos\MoneyAction\MoneyActionDetailDto.cs" />
+    <Compile Include="Dtos\MoneyAction\MoneyActionDto.cs" />
+    <Compile Include="Dtos\Common\PhoneBaseDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCashFlow\CompanyCashFlowDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCashFlow\CompanyCashFlowInputDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCashFlow\CompanyCashFlowInsertDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCashFlow\CompanyCashFlowOutputDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCashFlow\CompanyCashFlowUpdateDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCash\CompanyCashesDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCommission\CompanyCommissionDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCommission\CompanyCommissionInsertDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCommission\CompanyCommissionsDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCommission\CompanyCommissionUpdateDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCountry\CompanyCountriesDto.cs" />
+    <Compile Include="Dtos\Company\CompanyReceiverDto.cs" />
+    <Compile Include="Dtos\Log\LogDto.cs" />
+    <Compile Include="Dtos\Log\LogInsertDto.cs" />
+    <Compile Include="Dtos\Log\LogUpdateDto.cs" />
+    <Compile Include="Dtos\MoneyAction\MoneyActionOutputDto.cs" />
+    <Compile Include="Dtos\Security\Permission\PermissionDto.cs" />
+    <Compile Include="Dtos\Security\Permission\PermissionForDropdownDto.cs" />
+    <Compile Include="Dtos\Security\Permission\PermissionInsertDto.cs" />
+    <Compile Include="Dtos\Security\Permission\PermissionUpdateDto.cs" />
+    <Compile Include="Dtos\Security\Role\RoleDto.cs" />
+    <Compile Include="Dtos\Security\Role\RoleForDropdownDto.cs" />
+    <Compile Include="Dtos\Security\Role\RoleInsertDto.cs" />
+    <Compile Include="Dtos\Security\Role\RoleUpdateDto.cs" />
+    <Compile Include="Dtos\Security\User\UserDetailDto.cs" />
+    <Compile Include="Dtos\Security\User\UserDto.cs" />
+    <Compile Include="Dtos\Security\User\UserForDropdownDto.cs" />
+    <Compile Include="Dtos\Security\User\UserInsertDto.cs" />
+    <Compile Include="Dtos\Security\User\UserUpdateDto.cs" />
+    <Compile Include="Dtos\Setting\Action\ActionDto.cs" />
+    <Compile Include="Dtos\Setting\Action\ActionForDropdownDto.cs" />
+    <Compile Include="Dtos\Setting\Action\ActionInsertDto.cs" />
+    <Compile Include="Dtos\Setting\Action\ActionUpdateDto.cs" />
+    <Compile Include="Dtos\Statement\BalanceStatementDto.cs" />
+    <Compile Include="Dtos\Statement\ConclusionDto.cs" />
+    <Compile Include="Dtos\Statement\ExpensesDetailDto.cs" />
+    <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionDto.cs" />
+    <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertDto.cs" />
+    <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertInitialDto.cs" />
+    <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertListDto.cs" />
+    <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionInsertDto.cs" />
+    <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionInputDto.cs" />
+    <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionDto.cs" />
+    <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionInsertInitialDto.cs" />
+    <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionInsertInputDto.cs" />
+    <Compile Include="Dtos\Transaction\TransactionDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCash\CompanyCashDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCash\CompanyCashUpdateDto.cs" />
+    <Compile Include="Dtos\Company\CompanyCountry\CompanyCountryDto.cs" />
+    <Compile Include="Dtos\Company\CompanyForDropdownDto.cs" />
+    <Compile Include="Dtos\Company\CompanyInsertDto.cs" />
+    <Compile Include="Dtos\Company\CompanyUpdateDto.cs" />
+    <Compile Include="Dtos\Setting\Attachment\AttachmentDto.cs" />
+    <Compile Include="Dtos\Setting\Attachment\AttachmentForDropdownDto.cs" />
+    <Compile Include="Dtos\Setting\Attachment\AttachmentInsertDto.cs" />
+    <Compile Include="Dtos\Setting\Attachment\AttachmentUpdateDto.cs" />
+    <Compile Include="Dtos\Setting\Coin\CoinDto.cs" />
+    <Compile Include="Dtos\Setting\Coin\CoinForDropdownDto.cs" />
+    <Compile Include="Dtos\Setting\Coin\CoinInsertDto.cs" />
+    <Compile Include="Dtos\Setting\Coin\CoinUpdateDto.cs" />
+    <Compile Include="Dtos\Setting\Country\CountryDto.cs" />
+    <Compile Include="Dtos\Setting\Country\CountryForDropdownDto.cs" />
+    <Compile Include="Dtos\Setting\Country\CountryInsertDto.cs" />
+    <Compile Include="Dtos\Setting\Country\CountryUpdateDto.cs" />
+    <Compile Include="Dtos\Setting\Provinces\ProvinceDto.cs" />
+    <Compile Include="Dtos\Setting\Provinces\ProvinceForDropdownDto.cs" />
+    <Compile Include="Dtos\Setting\Provinces\ProvinceInsertDto.cs" />
+    <Compile Include="Dtos\Setting\Provinces\ProvinceUpdateDto.cs" />
+    <Compile Include="Dtos\Company\CompanyDto.cs" />
+    <Compile Include="Dtos\Setting\PublicExpense\PublicExpenseDto.cs" />
+    <Compile Include="Dtos\Setting\PublicExpense\PublicExpenseForDropdownDto.cs" />
+    <Compile Include="Dtos\Setting\PublicExpense\PublicExpenseInsertDto.cs" />
+    <Compile Include="Dtos\Setting\PublicExpense\PublicExpenseUpdateDto.cs" />
+    <Compile Include="Dtos\Setting\PublicIncome\PublicIncomeDto.cs" />
+    <Compile Include="Dtos\Setting\PublicIncome\IncomeForDropdownDto.cs" />
+    <Compile Include="Dtos\Setting\PublicIncome\PublicIncomeInsertDto.cs" />
+    <Compile Include="Dtos\Setting\PublicIncome\PublicIncomeUpdateDto.cs" />
+    <Compile Include="Dtos\Treasury\TreasuryCash\TreasuryCashDto.cs" />
+    <Compile Include="Dtos\Treasury\TreasuryDetailDto.cs" />
+    <Compile Include="Dtos\Treasury\TreasuryDto.cs" />
+    <Compile Include="Dtos\Treasury\TreasuryInsertDto.cs" />
+    <Compile Include="Dtos\Treasury\TreasuryMoneyAction\TreasuryActionsDto.cs" />
+    <Compile Include="Dtos\Treasury\TreasuryMoneyAction\TreasuryMoneyActionDto.cs" />
+    <Compile Include="Dtos\Treasury\TreasuryMoneyAction\TreasuryMoneyActionInputDto.cs" />
+    <Compile Include="Dtos\Treasury\TreasuryMoneyAction\TreasuryMoneyActionInsertDto.cs" />
+    <Compile Include="Dtos\Treasury\TreasurysDto.cs" />
+    <Compile Include="Dtos\Treasury\TreasuryUpdateDto.cs" />
+    <Compile Include="Dtos\Treasury\UserTreasury\UserTreasuryDto.cs" />
+    <Compile Include="Extensions\ClearingExtension.cs" />
+    <Compile Include="Extensions\ClientExtension.cs" />
+    <Compile Include="Extensions\CompanyCashFlowExtension.cs" />
+    <Compile Include="Extensions\CompanyExtension.cs" />
+    <Compile Include="Extensions\DateTimeExtension.cs" />
+    <Compile Include="Extensions\DecimalExtension.cs" />
+    <Compile Include="Extensions\EnumExtension.cs" />
+    <Compile Include="Extensions\MoneyActionExtension.cs" />
+    <Compile Include="Extensions\PublicMoneyExtension.cs" />
+    <Compile Include="Extensions\TransactionExtension.cs" />
+    <Compile Include="Interfaces\Common\IBoxActionAppService.cs" />
+    <Compile Include="Interfaces\Branch\IBranchCashAppService.cs" />
+    <Compile Include="Interfaces\Branch\IBranchCashFlowAppService.cs" />
+    <Compile Include="Interfaces\Branch\IBranchCommissionAppService.cs" />
+    <Compile Include="Interfaces\Client\IClientAppService.cs" />
+    <Compile Include="Interfaces\Client\IClientAttatchmentAppService.cs" />
+    <Compile Include="Interfaces\Client\IClientCashAppService.cs" />
+    <Compile Include="Interfaces\Client\IClientCashFlowAppService.cs" />
+    <Compile Include="Interfaces\Client\IClientPhoneAppService.cs" />
+    <Compile Include="Interfaces\Common\IExchangeAppService.cs" />
+    <Compile Include="Interfaces\Common\IMoneyActionAppService.cs" />
+    <Compile Include="Interfaces\Company\ICompanyAppService.cs" />
+    <Compile Include="Interfaces\Company\ICompanyCashAppService.cs" />
+    <Compile Include="Interfaces\Company\ICompanyCashFlowAppService.cs" />
+    <Compile Include="Interfaces\Company\ICompanyCommissionAppService.cs" />
+    <Compile Include="Interfaces\Company\ICompanyCountryAppService.cs" />
+    <Compile Include="Interfaces\IStatementAppAservice.cs" />
+    <Compile Include="Interfaces\Security\IPermissionAppService.cs" />
+    <Compile Include="Interfaces\Security\IRoleAppService.cs" />
+    <Compile Include="Interfaces\Security\IUserAppService.cs" />
+    <Compile Include="Interfaces\Setting\IAttachmentAppService.cs" />
+    <Compile Include="Interfaces\Setting\ICoinAppService.cs" />
+    <Compile Include="Interfaces\Setting\IProvinceAppService.cs" />
+    <Compile Include="Interfaces\Setting\IPublicExpenseAppService.cs" />
+    <Compile Include="Interfaces\Setting\IPublicIncomeAppService.cs" />
+    <Compile Include="Interfaces\Shared\IAppService.cs" />
+    <Compile Include="Interfaces\Setting\ICountryAppService.cs" />
+    <Compile Include="Interfaces\Shared\IAppSession.cs" />
+    <Compile Include="Interfaces\Shared\IGrudAppService.cs" />
+    <Compile Include="Interfaces\Shared\IIndexAppService.cs" />
+    <Compile Include="Interfaces\Transaction\IInnerTransactionAppService.cs" />
+    <Compile Include="Interfaces\Transaction\IOuterTransactionAppService.cs" />
+    <Compile Include="Interfaces\Transaction\ITransactionAppService.cs" />
+    <Compile Include="Interfaces\Treasury\ITreasuryAppService.cs" />
+    <Compile Include="Interfaces\Treasury\ITreasuryCashAppService.cs" />
+    <Compile Include="Interfaces\Treasury\ITreasuryMoneyActionAppService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validations\RequiredCost.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\BWR.Domain\BWR.Domain.csproj">
+      <Project>{425798BC-ADF9-433E-AE65-D50AC0EC83AE}</Project>
+      <Name>BWR.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BWR.Infrastructure\BWR.Infrastructure.csproj">
+      <Project>{733C4E66-9810-4A67-8985-7D634F31EB31}</Project>
+      <Name>BWR.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BWR.ShareKernel\BWR.ShareKernel.csproj">
+      <Project>{258BF2A6-9987-472B-99C7-BD4946DA79E7}</Project>
+      <Name>BWR.ShareKernel</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

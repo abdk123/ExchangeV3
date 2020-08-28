@@ -1,0 +1,198 @@
+﻿@model BWR.Application.Common.EntityDto
+
+@{
+
+    Layout = "";
+}
+
+<!--added margin-bottom-->
+<div class="portlet-title" style="margin-bottom: 4px;">
+
+</div>
+
+<div class="portlet box green">
+    <div class="portlet-title">
+        <div class="caption">
+
+        </div>
+        <div class="tools"> </div>
+    </div>
+    <div class="portlet-body">
+
+        <div class="row">
+            <div class="col-lg-4 col-md-4">
+                <label>اختر العملة  </label>
+                @Html.DropDownList("CoinId", new List<SelectListItem>(), new { @class = "form-control", id = "a-coinId" })
+            </div>
+            <div class="col-lg-4 col-md-4">
+                <label>من تاريخ  </label>
+
+                @Html.Editor("From", new { htmlAttributes = new { @class = "form-control", type = "date", onchange = "search();", id = "a-from" } })
+
+            </div>
+            <div class="col-lg-4 col-md-4">
+                <label>إلى تاريخ  </label>
+                @Html.Editor("To", new { htmlAttributes = new { @class = "form-control", type = "date", onchange = "search();", id = "a-to" } })
+
+            </div>
+
+
+        </div>
+
+        <br />
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <table class="table table-striped table-bordered table-hover dt-responsive"
+                       id="treasuryActionsDataTable"></table>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    var treasuryActionsDataTable;
+    var $treasuryId = '@Model.Id';
+    var $inputDto;
+    $(function () {
+
+        initialTreasuryActionsDataTable();
+        initialCoinsDropdown();
+
+
+        $('#a-coinId').on("change", function (e) {
+            
+            search();
+
+        });
+
+    });
+
+    function search() {
+        initInputDate();
+        $treasuryActionsDataTable.refresh();
+    }
+
+    function initInputDate() {
+
+        $inputDto = {
+            'From': $('#a-from').val(),
+            'To': $('#a-to').val(),
+            'CoinId': getSelectedCoin(),
+            'TreasuryId': '@Model.Id'
+        };
+
+    }
+
+    function initialTreasuryActionsDataTable() {
+
+        $inputDto = {
+            'From': '',
+            'To': '',
+            'CoinId': 0,
+            'TreasuryId': '@Model.Id'
+        };
+        $treasuryActionsDataTable = {
+                    dt: null,
+                    init: function () {
+                        dt = $('#treasuryActionsDataTable').DataTable({
+                            'language': dataTableLocalizationArValue(),
+                            'ajax': {
+                                'url': '@Url.Action("GetTreasuryActions", "TreasuryMoneyAction")',
+                                'method': 'POST',
+                                'cash': false,
+                                'data': function (d) {
+                                    d.input = $inputDto;
+                                },
+                            },
+                            'columns': [
+                                { 'title': 'الرصيد', 'data': 'Total',  'searchable': true },
+                                {
+                                    'title': 'الوارد', 'data': "Amount", 'searchable': true,
+                                    render: function (data, type, row) {
+                                        if (data < 0) {
+                                            return data * -1;
+                                        } else {
+                                            return '';
+                                        }
+                                    },
+                                },
+                                {'title': 'الصادر','data': "Amount",'searchable': true,
+                                    render: function (data, type, row) {
+                                        if (data > 0) {
+                                            return data;
+                                        } else {
+                                            return '';
+                                        }
+                                    },
+                                },
+
+                                { 'title': 'النوع', 'data': 'Type', 'searchable': true },
+                                { 'title': 'الاسم', 'data': 'Name', 'searchable': true },
+                                { 'title': 'رقم السند', 'data': 'Number', 'searchable': true },
+                                { 'title': 'التاريخ', 'data': 'Date', 'searchable': true },
+                                { 'title': 'المنشئ', 'data': 'CreatedBy', 'searchable': true },
+                                { 'title': 'ملاحظات', 'data': 'Note',  'searchable': true },
+
+                            ],
+                            'lengthMenu': [10, 25, 50, 100],
+                        });
+                    },
+
+                refresh: function () {
+
+                    dt.ajax.reload();
+                    }
+                }
+
+        $treasuryActionsDataTable.init();
+    }
+
+    function initialCoinsDropdown() {
+        
+         $.get('@Url.Action("GetCoinsForDropdown","Coin")', { term: "" }, function (data) {
+
+            var coins = data.Coins;
+            var option = '<option index="0"></option>';
+            $('#a-coinId').append(option);
+
+             for (var i = 0; i < coins.length; i++) {
+                 console.log(coins[i].Id);
+                var option = '<option value="' + coins[i].Id + '">' + coins[i].Name + '</option>';
+                $('#a-coinId').append(option);
+            }
+
+            $('#a-coinId').select2({ width: null, placeholder: "اختر عملة" });
+
+            $('#a-coinId').val('').trigger('change')
+        });
+    }
+
+    function initialActionTypes() {
+
+        $('#a-actionType').append('<option index="0"></option>');
+        $('#a-actionType').append('<option value="1">أخذ</option>');
+        $('#a-actionType').append('<option value="2">إعطاء</option>');
+
+        $('#a-actionType').select2({ width: null, placeholder: "اختر نوع الحركة" });
+
+    }
+
+    function getSelectedCoin() {
+
+        var data = $('#a-coinId').select2('data');
+        return data[0].id;
+    }
+
+
+
+</script>
+
+
+
+
+
+

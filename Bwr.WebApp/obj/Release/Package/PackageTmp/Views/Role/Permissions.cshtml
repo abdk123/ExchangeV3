@@ -1,0 +1,226 @@
+﻿@model IEnumerable<Bwr.WebApp.Models.Security.PermissionViewModel>
+
+@{
+    ViewBag.Title = "Permissions";
+}
+
+<h2><i class="fa fa-lock fa-lg" style="color:#1ABB9C;"></i>  Permissions</h2>
+<br />
+<div class="col-md-12 col-sm-12 col-xs-12 form-group pull-right top_search">
+    <div class="input-group">
+        <input id="txtSearch" type="text" class="form-control" placeholder="Search for...">
+        <span class="input-group-btn">
+            <button id="permSearch" class="btn btn-success" type="button" style="color:aliceblue;">Search !</button>
+
+        </span>
+    </div>
+</div>
+
+
+<div>
+    <div class="">
+
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <div class="col-md-2 col-sm-2 col-xs-2 ">
+                            <button id="permBtn" class="btn btn-warning" type="button"><i class="fa fa-save"></i>  Save </button>
+                        </div>
+
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li>
+                                <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li>
+                                        <a href="#">Select All </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Deselect All </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            @*<li>
+                                    <a class="close-link"><i class="fa fa-close"></i></a>
+                                </li>*@
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                        <div id="permList" role="application">
+                            <div class="demo-section k-content">
+                                <div>
+                                    <label for="optional"></label>
+                                    <label for="selected"></label>
+                                    <br />
+                                    <select id="optional"></select>
+                                    <select id="selected"></select>
+                                    <div id="appendto"></div>
+                                </div>
+                            </div>
+                            <script>
+                                $(document).ready(function () {
+                                    var roleId = getParameterFromUrl("roleId");
+
+                                    var optional = $("#optional").kendoListBox({
+                                        dataTextField: "Name",
+                                        dataValueField: "Value",
+                                        dataSource: {
+                                            type: "json",
+                                            serverPaging: true,
+                                            transport: {
+                                                read: {
+                                                    url: '@Url.Action("GetOptionalPermissions", "Role")',
+                                                    ataType: "json",
+                                                    data: { 'roleId': roleId}
+                                                }
+                                            },
+                                            pageSize: 10
+                                        },
+                                        connectWith: "selected",
+                                        selectable: "multiple",
+                                        toolbar: {
+                                            tools: ["moveUp", "moveDown", "transferTo", "transferFrom", "transferAllTo", "transferAllFrom"]
+                                        }
+                                    }).data("kendoListBox");
+
+                                    var selected = $("#selected").kendoListBox({
+                                        dataTextField: "Name",
+                                        dataValueField: "Value",
+                                        dataSource: {
+                                            type: "POST",
+                                            serverPaging: true,
+                                            transport: {
+                                                read: {
+                                                    url: '@Url.Action("GetSelectedPermissions", "Role")',
+                                                    ataType: "json",
+                                                    data: { 'roleId': roleId }
+                                                }
+                                            },
+                                            pageSize: 10
+                                        },
+                                        selectable: "multiple"
+                                    }).data("kendoListBox");
+
+                                    var Permission = kendo.data.Model.define({
+                                        id: "Value",
+                                        fields: {
+                                            "Name": {
+                                                type: "string"
+                                            }
+                                        }
+                                    });
+
+                                    $('#permBtn').click(function () {
+                                       
+                                        var perms = [];
+                                        var roleId = getParameterFromUrl("roleId");
+                                        var items = selected.items();
+
+                                        $.each(items, function (i, item) {
+                                            var dataItem = selected.dataItem(item);
+                                            perms.push(dataItem.Name);
+                                        });
+                                        
+                                        console.log(perms);
+                                        BWR.ajax('@Url.Action("SavePermissions", "Role")', { 'permissions': perms, 'roleId': roleId},
+                                            function success(data) {
+                                                if (data.Success) {
+                                                    location.reload();
+                                                }
+                                            },
+                                            function error(x, y, z) {
+
+                                            });
+
+                                    });
+
+
+                                $('#permSearch').click(function () {
+                                    
+                                    var filter = $('#txtSearch').val();
+                                    var selectedItems = [];
+                                    var listBox = $("#selected").data("kendoListBox");
+                                    var items = listBox.items();
+
+                                    $.each(items, function (index, item) {
+                                        selectedItems.push(item.innerText);
+                                    });
+
+                                    BWR.ajax('@Url.Action("SearchOptionalPermissions", "Role")', { 'selected': selectedItems, 'filter': filter },
+                                        function success(data) {
+                                            if (data.Success) {
+
+                                                optional.remove(optional.items());
+                                                var searchItems = data.Options;
+                                                for (var i = 0; i < searchItems.length; i++) {
+
+                                                    optional.add(new Permission({ Name : searchItems[i].Name}));
+                                                }
+
+                                                $('#txtSearch').val("");
+                                            }
+                                        },
+                                        function error(x, y, z) {
+
+                                        });
+                                });
+
+                                });
+
+                                function getParameterFromUrl(sParam) {
+                                    var sPageURL = window.location.search.substring(1),
+                                        sURLVariables = sPageURL.split('&'),
+                                        sParameterName,
+                                        i;
+
+                                    for (i = 0; i < sURLVariables.length; i++) {
+                                        sParameterName = sURLVariables[i].split('=');
+
+                                        if (sParameterName[0] === sParam) {
+                                            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                                        }
+                                    }
+                                };
+
+                            </script>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .demo-section label {
+        margin-bottom: 5px;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    #permList .demo-section {
+        max-width: none;
+        width: 100%;
+    }
+
+    #permList .k-listbox {
+        width: 48%;
+        height: 310px;
+    }
+
+        #permList .k-listbox:first-of-type {
+            width: 50%;
+            margin-right: 1px;
+        }
+</style>
+
+

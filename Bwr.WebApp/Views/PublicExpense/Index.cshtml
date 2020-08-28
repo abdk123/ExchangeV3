@@ -1,0 +1,223 @@
+﻿
+@{
+
+    Layout = "";
+}
+
+<!--added margin-bottom-->
+<div class="portlet-title" style="margin-bottom: 4px;">
+
+</div>
+
+<div class="portlet box green">
+    <div class="portlet-title">
+        <div class="caption">
+            <button type="button" class="btn btn-success btn-sm btn-icon-only btn-circle" data-toggle="modal" data-url="@Url.Action("Create","PublicExpense")" id="btnCreatePublicExpense">
+                <i id="Addbtn" class="glyphicon glyphicon-plus"></i>
+            </button>
+        </div>
+        <div class="tools"> </div>
+    </div>
+    <div class="portlet-body">
+
+        <table class="table table-striped table-bordered table-hover dt-responsive"
+               id="publicExpenseDataTable"></table>
+
+    </div>
+</div>
+
+
+<div class="modal fade" id="createPublicExpenseModal" tabindex="-1" role="dialog" aria-labelledby="CreatePublicExpenseModal" aria-hidden="true" data-backdrop="static">
+    <div id="createPublicExpenseContainer">
+
+    </div>
+</div>
+
+<div class="modal fade" id="editPublicExpenseModal" tabindex="-1" role="dialog" aria-labelledby="EditPublicExpenseModal" aria-hidden="true" data-backdrop="static">
+    <div id="editPublicExpenseContainer">
+    </div>
+</div>
+
+<div class="modal fade" id="detailsPublicExpenseModal" tabindex="-1" role="dialog" aria-labelledby="DetailsPublicExpenseModal" aria-hidden="true" data-backdrop="static">
+    <div id="detailsPublicExpenseContainer">
+    </div>
+</div>
+
+<div class="modal fade" id="deletePublicExpenseModal" tabindex="-1" role="dialog" aria-labelledby="DeletePublicExpenseModal" aria-hidden="true" data-backdrop="static">
+    <div id="deletePublicExpenseContainer">
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var $publicExpenseDataTable;
+    $(function () {
+
+        $publicExpenseDataTable = {
+                dt: null,
+                init: function () {
+                    dt = $('#publicExpenseDataTable').DataTable({
+                        'language': dataTableLocalizationArValue(),
+
+                        'serverSide': true,
+                        'processing': true,
+                        'ajax': {
+                            'url': '@Url.Action("Get","PublicExpense")',
+                            method: 'POST'
+
+                        },
+                        'columns': [
+                            { 'title': 'اسم نوع الإيرادات', 'data': 'Name', "width": "35%",'searchable': true },
+                            {
+                                'title': 'فعال',
+                                'data': "IsEnabled",
+                                'width': "35%",
+                                render: function (data, type, row) {
+                                    if (type === 'display') {
+                                        return getCheckBox(data);
+                                    }
+                                    return data;
+                                },
+                                className: "dt-body-center"
+                            },
+                            {
+                                'title': 'خيارات',
+                                'data': 'Id',
+                                'searchable': false,
+                                'sortable': false,
+                                'render': function (data, type, full, meta) {
+                                    return '<a href="@Url.Action("Edit","PublicExpense")?id=' + data + '" class="btn btn-defult editPublicExpense"><span class="glyphicon glyphicon-edit"></span>  تعديل</a>'
+                                        + '<a href="@Url.Action("Detail", "PublicExpense")?id=' + data + '" class="btn btn-primary detailsPublicExpense"><span class="glyphicon glyphicon-eye-open"></span>  عرض</a>'
+                                        + '<a href="@Url.Action("Delete", "PublicExpense")?id=' + data + '" class="btn btn-danger deletePublicExpense"><span class="glyphicon glyphicon-trash"></span>  حذف</a>';
+                                }
+                            }
+                        ],
+                        'lengthMenu': [10, 25, 50, 100],
+                    });
+                },
+
+            refresh: function () {
+
+                dt.ajax.reload();
+                }
+            }
+
+        $publicExpenseDataTable.init();
+
+
+
+
+        $("#btnCreatePublicExpense").on('click', function () {
+
+            var url = $(this).data('url');
+
+            $.get(url, function (data) {
+                $('#createPublicExpenseContainer').html(data);
+
+                $('#createPublicExpenseModal').modal('show');
+            });
+
+        });
+
+        $('#publicExpenseDataTable').on('click', '.editPublicExpense', function (event) {
+
+            event.preventDefault();
+
+            var url = $(this).attr('href');
+
+            $.get(url, function (data) {
+                $('#editPublicExpenseContainer').html(data);
+
+                $('#editPublicExpenseModal').modal('show');
+            });
+
+        });
+
+
+
+        $('#publicExpenseDataTable').on('click', '.detailsPublicExpense', function (event) {
+
+            event.preventDefault();
+
+            var url = $(this).attr('href');
+
+            $.get(url, function (data) {
+                $('#detailsPublicExpenseContainer').html(data);
+
+                $('#detailsPublicExpenseModal').modal('show');
+            });
+
+        });
+
+        $('#publicExpenseDataTable').on('click', '.deletePublicExpense', function (event) {
+
+                event.preventDefault();
+
+                var url = $(this).attr('href');
+
+                $.get(url, function (data) {
+                    $('#deletePublicExpenseContainer').html(data);
+
+                    $('#deletePublicExpenseModal').modal('show');
+                });
+
+        });
+
+
+        $('#detailsPublicExpenseModal').on('hide.bs.modal', function (event) {
+
+            $('#detailsPublicExpenseContainer').html('');
+
+        });
+    });
+
+    function getCheckBox(data) {
+        var ele ='<div class="md-checkbox has-success">';
+        if(data)
+            ele += '<input type = "checkbox" id = "IsEnabledChk" class="md-check" checked="checked" disabled="true" />';
+        else
+            ele += '<input type = "checkbox" id = "IsEnabledChk" class="md-check" disabled="true" />';
+        ele +='<label for="IsEnabledChk">';
+        ele+='<span class="inc"></span>';
+        ele += '<span class="check"></span>';
+        ele+='<span class="box"></span>';
+        ele+='</label>';
+        ele += '</div >';
+        return ele;
+    }
+
+
+    function editPublicExpenseSuccess(data) {
+        
+        if (data != 'success') {
+            $('#editPublicExpenseContainer').html(data);
+            return;
+        }
+        $('#editPublicExpenseModal').modal('hide');
+        $('#editPublicExpenseContainer').html('');
+
+        $publicExpenseDataTable.refresh();
+        toastr.success('تم التعديل بنجاح')
+    }
+
+    function deletePublicExpenseSuccess(data) {
+
+        if (data != 'success') {
+            $('#deletePublicExpenseContainer').html(data);
+            return;
+        }
+        $('#deletePublicExpenseModal').modal('hide');
+        $('#deletePublicExpenseContainer').html('');
+
+        $publicExpenseDataTable.refresh();
+        toastr.success('تم الحذف بنجاح')
+    }
+
+    function resetPublicExpenseContainer() {
+        $('#deletePublicExpenseModal').modal('hide');
+        $('#deletePublicExpenseContainer').html('');
+    }
+
+</script>
+
+

@@ -1,0 +1,572 @@
+﻿@using Bwr.WebApp.Models.Security
+@using BWR.ShareKernel.Permisions
+
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" dir="rtl">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>شركة صرافة 1</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="Preview page of Metronic Admin RTL Theme #1 for blank page layout" name="description" />
+    <meta content="" name="author" />
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+    <link href="~/Content/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/assets/global/plugins/bootstrap/css/bootstrap-rtl.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/assets/global/plugins/bootstrap-switch/css/bootstrap-switch-rtl.min.css" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="~/Content/assets/global/css/components-md-rtl.min.css" rel="stylesheet" id="style_components" type="text/css" />
+    <link href="~/Content/assets/global/css/plugins-md-rtl.min.css" rel="stylesheet" type="text/css" />
+    <!--Data Table Style-->
+    <link href="~/Content/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+        <link href="~/Content/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap-rtl.css" rel="stylesheet"
+              type="text/css" />
+    <!--End Data Table Style-->
+    <!--Begin Css Jquery Confirm-->
+    <link href="~/Content/Jquery-Confirm/Jquery-confrim-css.css" rel="stylesheet" />
+    <!--END Css Jquery Confirm-->
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <link href="~/Content/assets/layouts/layout/css/layout-rtl.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/assets/layouts/layout/css/themes/darkblue-rtl.min.css" rel="stylesheet" type="text/css" id="style_color" />
+    <link href="~/Content/assets/layouts/layout/css/custom-rtl.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/toastr/toastr.min.css" rel="stylesheet" />
+    <!-- END THEME LAYOUT STYLES -->
+    <!--select 2-->
+    @*<link href="~/Content/Select2/Select2Css.css" rel="stylesheet" />*@
+    <link href="~/Content/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!--select 2-->
+    @RenderSection("Style", required: false)
+    <link rel="shortcut icon" href="~/Content/assets/favicon.ico" />
+    <link href="~/Content/assets/global/plugins/icheck/skins/flat/green.css" rel="stylesheet" />
+    <!--[if lt IE 9]>
+    <script src="~/Content/assets/global/plugins/respond.min.js"></script>
+    <script src="~/Content/assets/global/plugins/excanvas.min.js"></script>
+    <script src="~/Content/assets/global/plugins/ie8.fix.min.js"></script>
+    <![endif]-->
+    <!-- BEGIN CORE PLUGINS -->
+    @*<script src="~/Content/assets/global/plugins/jquery.min.js" type="text/javascript"></script>*@
+    <script src="~/Content/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/unobtrusiveajax")
+
+    <script src="~/Content/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="~/Content/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+    <script src="~/Content/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+    <script src="~/Content/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+    <script src="~/Content/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+    <!-- END CORE PLUGINS -->
+    <!-- BEGIN THEME GLOBAL SCRIPTS -->
+    <script src="~/Content/assets/global/scripts/app.min.js" type="text/javascript"></script>
+    <!-- END THEME GLOBAL SCRIPTS -->
+    <!-- BEGIN THEME LAYOUT SCRIPTS -->
+    <script src="~/Content/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+    <script src="~/Content/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+    <!-- END THEME LAYOUT SCRIPTS -->
+    @*<script src="~/Scripts/LayoutFunctions.js"></script>*@
+    <script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Content/toastr/toastr.min.js"></script>
+    <script src="~/Content/assets/global/plugins/datatables/datatables.all.min.js"></script>
+    <!--select 2 -->
+    @*<script src="~/Content/Select2/Select2Js.js"></script>*@
+    <script src="~/Content/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+    <script src="~/Content/assets/pages/scripts/components-select2.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/GlopalScript.js"></script>
+    <!--select 2 -->
+    <script src="~/Scripts/Authorize/Authorize.js"></script>
+    <script src="~/Content/assets/global/plugins/icheck/icheck.min.js"></script>
+</head>
+<!-- END HEAD -->
+<body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white page-md">
+    <script>
+        var rootPath = '@Url.Content("~")';
+    </script>
+    <div class="page-wrapper">
+        <!-- BEGIN HEADER -->
+        <div class="page-header navbar navbar-fixed-top">
+            <!-- BEGIN HEADER INNER -->
+            <div class="page-header-inner ">
+                <!-- BEGIN LOGO -->
+                <div class="page-logo">
+                    <a href="index.html">
+                        <img src="~/Content/assets/layouts/layout/img/logo.png" alt="logo" class="logo-default" />
+                    </a>
+                    <div class="menu-toggler sidebar-toggler" id="divThanHideNavBar">
+                        <span></span>
+                    </div>
+                </div>
+                <!-- END LOGO -->
+                <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+                <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span></span>
+                </a>
+                <!-- END RESPONSIVE MENU TOGGLER -->
+                <!-- BEGIN TOP NAVIGATION MENU -->
+                <div class="top-menu">
+                    <ul class="nav navbar-nav pull-right">
+                        <!-- BEGIN USER LOGIN DROPDOWN -->
+                        <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+                        <li class="dropdown dropdown-user">
+                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                                <span class="username username-hide-on-mobile"> @UserHelper.GetUserName() </span>
+                                <i class="fa fa-angle-down"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-default">
+                                <li>
+                                    <a href="@Url.Action("ChangePassword","Account")">
+                                        <i class="icon-user"></i> تغيير كلمة المرور
+                                    </a>
+                                </li>
+                                <li class="divider"> </li>
+                                <li>
+                                    <a href="@Url.Action("LogOff","Account")">
+                                        <i class="icon-key"></i> تسجيل الخروج
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- END USER LOGIN DROPDOWN -->
+                    </ul>
+                </div>
+                <!-- END TOP NAVIGATION MENU -->
+            </div>
+            <!-- END HEADER INNER -->
+        </div>
+        <!-- END HEADER -->
+        <!-- BEGIN HEADER & CONTENT DIVIDER -->
+        <div class="clearfix"> </div>
+        <!-- END HEADER & CONTENT DIVIDER -->
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container">
+            <!-- BEGIN SIDEBAR -->
+            <div class="page-sidebar-wrapper">
+
+                <div class="page-sidebar navbar-collapse collapse">
+                                        <ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-closed" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px;display:block">
+                        <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+                        <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+                        <li class="sidebar-toggler-wrapper hide">
+                            <div class="sidebar-toggler">
+                                <span></span>
+                            </div>
+                        </li>
+                        <!-- END SIDEBAR TOGGLER BUTTON -->
+                        <!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
+                        @*<li class="nav-item start ">
+            <a href="javascript:;" class="nav-link nav-toggle">
+                <i class="icon-home"></i>
+                <span class="title">الرئيسية</span>
+                <span class="arrow"></span>
+            </a>
+        </li>*@
+                        @*<li class="nav-item start ">
+            <a data-toggle="modal" href="#OuterTransactionModel" onclick="modelSetting();" class="nav-link nav-toggle">
+                <i class="fa fa-line-chart"></i>
+                <span class="title">كشف الحوالات الصادرة</span>
+            </a>
+        </li>*@
+                        @if (PermissionHelper.CheckPermission(AppPermision.Action_OuterTransaction_CreateOuterTransaction))
+                        {
+
+                            <li class="nav-item start ">
+                                <a href="@Url.Action("CreateOuterTransaction","OuterTransaction")" class="nav-link nav-toggle">
+                                    <i class="glyphicon glyphicon-export"></i>
+                                    <span class="title">إرسال حوالة صادرة</span>
+                                </a>
+                            </li>
+                        }
+
+                        @*<li class="nav-item start ">
+            <a href="/system/index" id="exchangehref" class="nav-link nav-toggle">
+                <i class="fa fa-arrows-v"></i>
+                <span class="title" id="exchangeSpan">الصيرفة</span>
+            </a>
+        </li>*@
+
+                        @if (PermissionHelper.CheckPermission(AppPermision.Action_InnerTransaction_Index))
+                        {
+                            <li class="nav-item start ">
+                                <a href="@Url.Action("Index","InnerTransaction")" class="nav-link nav-toggle">
+                                    <i class="glyphicon glyphicon-import"></i>
+                                    <span class="title">حوالة واردة</span>
+                                </a>
+                            </li>
+                        }
+                        @if (PermissionHelper.CheckPermission(AppPermision.Action_Exchange_ExchangeTemplate))
+                        {
+                            <li class="nav-item start ">
+                                <a href="@Url.Action("ExchangeTemplate","Exchange")" class="nav-link nav-toggle">
+                                    <i class="fa fa-arrows-v"></i>
+                                    <span class="title">الصيرفة</span>
+                                </a>
+                            </li>
+                        }
+                        @if (PermissionHelper.CheckPermission(AppPermision.Page_System))
+                        {
+                            <li class="nav-item start ">
+                                <a href="@Url.Action("Index", "System")" class="nav-link nav-toggle">
+                                    <i class="icon-settings"></i>
+                                    <span class="title">الإعدادات</span>
+                                </a>
+                            </li>
+                        }
+                        @if (PermissionHelper.CheckPermission(AppPermision.Page_BranchCashFlow))
+                        {
+                            <li class="nav-item start ">
+                                <a data-toggle="modal" href="#ChooseBlance" class="nav-link nav-toggle">
+                                    <i class="fa fa-arrows-v"></i>
+                                    <span class="title">كشف حساب الصندوق</span>
+                                </a>
+                            </li>
+                        }
+                        @if (PermissionHelper.CheckPermission(AppPermision.Action_Transaction_TransactionDontDileverd))
+                        {
+                            <li class="nav-item start ">
+                                <a href="@Url.Action("TransactionDontDileverd","Transaction")" class="nav-link nav-toggle">
+                                    <i class="fa fa-line-chart"></i>
+                                    <span class="title">كشف الحوالات الغير مسلمة</span>
+                                </a>
+                            </li>
+                        }
+                        @if (PermissionHelper.CheckPermission(AppPermision.Page_BoxAction))
+                        {
+                            <li class="nav-item start ">
+                                <a data-toggle="modal" href="/BoxAction/index" class="nav-link nav-toggle">
+                                    <i class="fa fa-dropbox"></i>
+                                    <span class="title">الصندوق</span>
+                                </a>
+                            </li>
+                        }
+                        @if (PermissionHelper.CheckPermission(AppPermision.Page_User) || PermissionHelper.CheckPermission(AppPermision.Page_Role))
+                        {
+                            <li class="nav-item start ">
+                                <a data-toggle="modal" href="@Url.Action("Index", "Security")" class="nav-link nav-toggle">
+                                    <i class="fa fa-key"></i>
+                                    <span class="title">إدارة المستخدمين</span>
+                                </a>
+                            </li>
+                        }
+                        <li class="nav-item  ">
+                            <a href="javascript:;" class="nav-link nav-toggle">
+                                <i class="icon-docs"></i>
+                                <span class="title">الكشوفات</span>
+                                <span class="arrow"></span>
+                            </a>
+                            <ul class="sub-menu">
+                                <li class="nav-item">
+                                    <a data-toggle="modal" href="#PaymentsAnalysisStatementModel" class="nav-link ">
+                                        <span class="title">
+                                            كشف تحليل المدفوعات
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item ">
+                                    <a href="#" class="nav-link ">
+                                        <span class="title">
+                                            كشف تحليل المقبوضات
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a data-toggle="modal" id="allBalancesStatement" href="@Url.Action("ClientsAndCompaniesBalances","Statement")" class="nav-link nav-toggle">
+                                        <span class="title">
+                                            ارصدة العملاء و الشركات
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item  ">
+                                    <a id="outerTransactionsStatment" href="@Url.Action("OuterTransactions","Statement")" class="nav-link nav-toggle">
+                                        @*<i class="fa fa-line-chart"></i>*@
+                                        <span class="title">كشف الحوالات الصادرة</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="innerTransactionsStatment" href="@Url.Action("DileveredTransactions","Statement")" class="navbar-link nav-toggle">
+                                        <span class="title">كشف الحوالات المسلمة</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="conclusionStatement" href="@Url.Action("Conclusion","Statement")" class="navbar-link nav-toggle">
+                                        <span class="ticket-title">
+                                            الخلاصة
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <!-- END SIDEBAR MENU -->
+                    <!-- END SIDEBAR MENU -->
+                </div>
+                <!-- END SIDEBAR -->
+            </div>
+            <!-- END SIDEBAR -->
+            <!-- BEGIN CONTENT -->
+            <div class="page-content-wrapper">
+                <!-- BEGIN CONTENT BODY -->
+                <div class="page-content">
+                    <!-- BEGIN PAGE HEADER-->
+                    <!-- BEGIN PAGE BAR -->
+                    <div class="page-bar">
+                        @*<ul class="page-breadcrumb">
+                            </ul>
+                            <div class="page-toolbar">
+                                <div id="dashboard-report-range" class="pull-right tooltips btn btn-sm"
+                                     data-container="body" data-placement="bottom"
+                                     data-original-title="Change dashboard date range">
+                                    <i class="icon-calendar"></i>&nbsp;
+                                    <span class="thin uppercase hidden-xs"></span>&nbsp;
+                                    <i class="fa fa-angle-down"></i>
+                                </div>
+                            </div>*@
+                    </div>
+                    <!-- END PAGE BAR -->
+                    <!-- END PAGE HEADER-->
+                    @RenderBody()
+                </div>
+                <!-- END CONTENT BODY -->
+            </div>
+            <!-- END CONTENT -->
+        </div>
+        <!-- END CONTAINER -->
+        <!-- BEGIN FOOTER -->
+        <div class="page-footer">
+            <div class="page-footer-inner">
+                2020 &copy; Developed By
+                <a target="_blank" href="http://b-wire.co">B-wire</a> &nbsp;|&nbsp;
+                <a href="http://b-wire.co" title="Exchange Solutions" target="_blank">BW</a>
+            </div>
+            <div class="scroll-to-top">
+                <i class="icon-arrow-up"></i>
+            </div>
+        </div>
+        <!-- END FOOTER -->
+    </div>
+    <div class="modal fade draggable-modal ui-draggable" id="ChooseBlance" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header ui-draggable-handle">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">اختر العملة و التاريخ</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <label>العملة:</label>
+                            <select id="layoutmodalCoinSelect" class="form-control"></select>
+                        </div>
+                        <div class="col-lg-4">
+                            <label>من تاريخ:</label>
+                            <input type="date" class="form-control" id="LayoutmodalFromDate" />
+                        </div>
+                        <div class="col-lg-4">
+                            <label>إلى تاريخ:</label>
+                            <input type="date" class="form-control" id="LayoutmodaltoDate" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn dark btn-outline" data-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn green" id="layoutViewBlance">عرض</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade draggable-modal ui-draggable" id="outerTransactionModel" role="basic" aria-hidden="true" style="display: none;"></div>
+    <div class="modal fade draggable-modal ui-draggable" id="dileveredTransactionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none;"></div>
+    <div class="modal fade draggable-modal ui-draggable" id="allBalancesModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">    </div>
+    <div class="modal fade draggable-modal ui-draggable" id="conclusionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none;"></div>
+
+    <script>
+
+
+        var ClientSenderDiv = $('#ClientSender');
+        var AgentSenderDiv = $('#AgentSender');
+
+
+
+        $(function () {
+
+            $('input.flat').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            });
+
+            $('#clickmewow').click(function () {
+                $('#radio1003').attr('checked', 'checked');
+            });
+            @*$.post(
+                '@Url.Action("ChecekIfTherIsMaincoin", "BranchCash")',
+                function (data) {
+                    if (data == "False") {
+                        $('#exchangehref').attr("href", "");
+                        $('#exchangeSpan').text("يجب تحديد العملة الأأساسية");
+                    } else {
+                        $('#exchangehref').attr("href", '@Url.Action("Index", "Exchange")');
+                        $('#exchangeSpan').text("الصيرفة");
+                    }
+                }
+            )*@
+
+            $("#outerTransactionsStatment").on('click', function (e) {
+
+                e.preventDefault();
+
+                var url = $(this).attr('href');
+
+                $.get(url, function (data) {
+                    $('#outerTransactionModel').html(data);
+
+                    $('#outerTransactionModel').modal('show');
+                });
+
+            });
+
+            $("#innerTransactionsStatment").on('click', function (e) {
+
+                e.preventDefault();
+
+                var url = $(this).attr('href');
+
+                $.get(url, function (data) {
+                    $('#dileveredTransactionModel').html(data);
+
+                    $('#dileveredTransactionModel').modal('show');
+                });
+
+            });
+
+            $("#allBalancesStatement").on('click', function (e) {
+
+                e.preventDefault();
+
+                var url = $(this).attr('href');
+
+                $.get(url, function (data) {
+                    console.log(data);
+                    $('#allBalancesModel').html(data);
+
+                    $('#allBalancesModel').modal('show');
+                });
+
+            });
+
+            $("#conclusionStatement").on('click', function (e) {
+
+                e.preventDefault();
+
+                var url = $(this).attr('href');
+
+                $.get(url, function (data) {
+                    console.log(data);
+                    $('#conclusionModel').html(data);
+
+                    $('#conclusionModel').modal('show');
+                });
+
+            });
+
+            var divThanHideNavBar = document.getElementById('divThanHideNavBar');
+            divThanHideNavBar.click();
+            fillModalCoinSelect();
+
+            $('#layoutViewBlance').click(function () {
+                var coinId = $('#layoutmodalCoinSelect').val()
+                var from = $('#LayoutmodalFromDate').val();
+                var to = $('#LayoutmodaltoDate').val();
+                if (coinId == "") {
+                    return;
+                }
+                window.location.href = '@Url.Action("Index", "BranchCashFlow")?coinId=' + coinId + '&from=' + from + '&to=' + to;
+            });
+
+            $('#typeOfPayOuterTransaction').change(function () {
+
+                if ($(this).val() == 2) {
+                    AgentSenderDiv.css('display', 'block');
+                    ClientSenderDiv.css("display", "none");
+                } else {
+                    AgentSenderDiv.css('display', 'none');
+                    ClientSenderDiv.css("display", "block");
+                }
+
+            });
+
+
+        });
+
+        function dataTableLocalizationArValue() {
+            return {
+                'sProcessing': 'جارٍ التحميل...',
+                'sLengthMenu': ' _MENU_ أظهر',
+                'sZeroRecords': 'لم يعثر على أية سجلات',
+                'sInfo': 'إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل',
+                'sInfoEmpty': 'يعرض 0 إلى 0 من أصل 0 سجل',
+                'sInfoFiltered': '(منتقاة من مجموع _MAX_ مُدخل)',
+                'sInfoPostFix': '',
+                'sSearch': '<b>بحث</b>',
+                'sUrl': '',
+                'oPaginate': {
+                    'sFirst': 'الأول',
+                    'sPrevious': 'السابق',
+                    'sNext': 'التالي',
+                    "sLast": "الأخير"
+                }
+            };
+        }
+
+        function numberWithCommas(number, bool) {
+
+            if (number == null || number === "" || number == "لايوجد" || number == "null" || number == undefined) {
+                if (bool == true)
+                    return "لايوجد";
+                return "";
+
+            }
+            if (number == 0)
+                return 0;
+            var parts = number.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+
+
+
+        function fillModalCoinSelect() {
+            $.post(
+                '@Url.Action("GetForBranch", "BranchCash")', {
+
+                }, function (data) {
+                    var mainOption = document.createElement('option');
+                    mainOption.innerText = "اختر العملة";
+                    mainOption.value = "";
+                    var modalCoinSelect = document.getElementById('layoutmodalCoinSelect');
+                    modalCoinSelect.appendChild(mainOption);
+                    for (var i = 0; i < data.length; i++) {
+
+                        var option = document.createElement('option');
+                        option.innerText = data[i].Coin.Name;
+                        option.value = data[i].CoinId;
+                        modalCoinSelect.appendChild(option);
+                    }
+                }
+            );
+        }
+
+    </script>
+    @RenderSection("ScriptPath", required: false)
+</body>
+</html>

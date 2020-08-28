@@ -1,0 +1,168 @@
+﻿
+@using BWR.Application.Dtos.Treasury
+
+@model BWR.Application.Dtos.Treasury.TreasuryInsertDto
+@{
+    /**/
+
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">إضافة صندوق</h4>
+        </div>
+        @using (Ajax.BeginForm("Create", "Treasury", null, new AjaxOptions { HttpMethod = "Post" }, new { @class = "form-horizontal", role = "form", id = "addTreasuryForm" }))
+        {
+            <div class="modal-body ">
+                <div class="col-lg-12 col-md-12">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item active">
+                            <a class="nav-link active" id="treasury-tab" data-toggle="tab" href="#addTreasurySection" role="tab">بيانات الصندوق</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="provinces-tab" data-toggle="tab" href="#addCoinSection" role="tab">إضافة رصيد</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-12 col-md-12">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="addTreasurySection">
+                            <div class="form-horizontal">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3" for="Name">اسم الصندوق <span class="text-danger">*</span></label>
+                                    <div class="col-md-9">
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", id = "a-treasury-name" } })
+
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="tab-pane" id="addCoinSection">
+
+                            <div class="row a-coins">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+
+                        <button id="btnAddTreasury" type="button" class="btn btn-primary">حفظ <span class="glyphicon glyphicon-save"></span></button>
+                        <button type="button" class="btn btn-sm btn-default" onclick="resetTreasuryContainer()" data-dismiss="modal">إغلاق <span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+
+    $(function () {
+
+        initialCoins();
+
+        var $form = $("#addTreasuryForm");
+        $.validator.unobtrusive.parse($form);
+
+        $('#btnAddTreasury').on("click", function (event) {
+            if ($form.valid()) {
+
+                var dto = {
+                    Name: $('#a-treasury-name').val(),
+                    TreasuryCashes: getCoins()
+                };
+
+                $.ajax({
+                    url: '@Url.Action("Create", "Treasury")',
+                    type: 'POST',
+                    data: dto,
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+
+                        if (data.Success == true) {
+                            resetTreasuryContainer();
+
+                            $treasuryDataTable.refresh();
+                            toastr.success('تم الحفظ بنجاح')
+                        }
+                        else {
+                            if (data.Exist == true) {
+                                $('[data-valmsg-for="Name"]').html("");
+                                $('[data-valmsg-for="Name"]').html(data.Message);
+                            }
+                            toastr.error(data.Message);
+                        }
+
+                    },
+                    error: function () { toastr.error("خدث خطأ ما أثناء الإضافة"); }
+                });
+
+            }
+
+
+        });
+
+    });
+
+
+    function getCoins() {
+        
+        var treasuryCoins = [];
+        var coinInputs = $('.a-coins-inputs');
+        for (var i = 0; i < coinInputs.length ; i++) {
+            var id = $(coinInputs[i]).attr('data-coin-id');
+            var value = $(coinInputs[i]).val();
+
+            treasuryCoins.push({ 'InitialBalance': value, 'Total': value, 'CoinId': id });
+        }
+
+        return treasuryCoins;
+    }
+
+
+    function initialCoins() {
+        $.get('@Url.Action("GetCoinsForDropdown","Coin")', { term: "" }, function (data) {
+
+            var coins = data.Coins;
+            for (var i = 0; i < coins.length; i++) {
+                var ele = '<div class="form-group">' +
+                    '<label class="control-label col-md-3 col-sm-3">' + coins[i].Name + ':</label>' +
+                    '<div class="col-md-8 col-sm-8">' +
+                    '<div class="input-group">' +
+                    '<input  type="number" data-coin-id="' + coins[i].Id+'" class="form-control a-coins-inputs" value="0" />' +
+                    '<span class="input-group-addon">' + coins[i].Code + '</span>' +
+
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+
+                $('.a-coins').append(ele);
+            }
+
+        });
+    }
+
+    function resetTreasuryContainer() {
+
+        $('#createTreasuryModal').modal('hide');
+        $('#createTreasuryContainer').html('');
+    }
+
+
+</script>

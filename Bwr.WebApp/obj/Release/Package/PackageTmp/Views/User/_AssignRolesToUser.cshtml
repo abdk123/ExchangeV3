@@ -1,0 +1,170 @@
+﻿@model BWR.Application.Dtos.User.UserDto
+@{
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <a href="#"><h4> إسناد الادوار للمستخدم <span id="p-role-name" class="badge">@Model.FullName</span></h4></a>
+        </div>
+
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <table class="class=" table table-striped table-bordered table-hover dt-responsive"" id="roleDataTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" class="head-role-checkbox" /></th>
+                                <th>اسم الدور</th>
+
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="col-md-1"></div>
+
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button id="role-add" class="btn btn-success" type="button">
+                        <i class="fa fa-save"></i>   حفظ
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">إغلاق <span class="glyphicon glyphicon-remove"></span></button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    var roleTable;
+    $(function () {
+        $('input.flat').iCheck({
+            checkboxClass: 'icheckbox_flat-green',
+            radioClass: 'iradio_flat-green'
+        });
+
+        roleTable = $('#roleDataTable').dataTable({
+            'language': dataTableLocalizationArValue(),
+            "scrollY": "300px",
+            "scrollCollapse": true,
+            "paging": false
+        });
+
+
+        initialRolesDataTable();
+
+        $('#role-add').on('click', function () {
+            var checkedRoles = getCheckedRoles();
+            $.ajax({
+                url: '@Url.Action("AssignRolesToUser", "User")',
+                type: 'POST',
+                data: { 'roles': checkedRoles,'userId':'@Model.UserId'},
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+
+                        if (data.Success == true) {
+                            $('#assignRolesToUserModal').modal('hide');
+                            $('#assignRolesToUserContainer').html('');
+
+                            toastr.success('تم الحفظ بنجاح')
+                        }
+                        else {
+
+                            toastr.error("خدث خطأ ما أثناء الحفظ");
+                        }
+
+                    },
+                    error: function () { toastr.error("خدث خطأ ما أثناء الحفظ"); }
+                });
+        });
+    });
+
+    function getCheckedRoles() {
+        var checkedRoles = [];
+        
+        
+        $(".role-checkbox", roleTable.fnGetNodes()).each(function () {
+            if ($(this).is(":checked"))
+                checkedRoles.push({ 'RoleId': $(this).attr('role-Id'), 'Name': $(this).attr('role-name') });
+
+        });
+
+        return checkedRoles;
+    }
+
+    function initialRolesDataTable() {
+
+        //var roleDT = $('#roleDataTable').DataTable();
+
+        $.get('@Url.Action("GetRoles", "User")', { userId: '@Html.Raw(Model.UserId)' },
+            function (data, textStatus, jqXHR) {
+                if (textStatus == 'success') {
+
+                    initCheckBox(data);
+                }
+
+            });
+        }
+
+    function resetRolesCoinContainer() {
+
+        $('#detailsCoinModal').modal('hide');
+        $('#detailsCoinContainer').html('');
+    }
+
+    function initCheckBox(data) {
+
+        var roleDT = $('#roleDataTable').DataTable();
+
+        var roles = data.Roles;
+        var checkedCount = 0;
+        for (var i = 0; i < roles.length; i++) {
+            var roleName = roles[i].Name;
+            var roleId = roles[i].RoleId;
+            var isChecked = roles[i].IsExist;
+
+            var checkBoxEle = '<input type="checkbox" class="role-checkbox" role-name="' + roleName + '" role-Id="' + roleId + '" />';
+            if (isChecked) {
+                checkBoxEle = '<input type="checkbox" class="role-checkbox" checked="checked" role-name="' + roleName + '" role-Id="' + roleId + '" />';
+                checkedCount++;
+            }
+                
+
+            roleDT.row.add([checkBoxEle, roleName]).draw(false);
+        }
+
+        if (roles.length == checkedCount) {
+            $('.head-role-checkbox').prop('checked', true);
+        }
+
+        $('.role-checkbox').change(function () {
+            
+            if (!$(this).is(":checked")) {
+                $('.head-role-checkbox').prop('checked', false);
+            }
+
+        });
+
+        $('.head-role-checkbox').change(function () {
+           
+            $(".role-checkbox", roleTable.fnGetNodes()).each(function () {
+                if ($('.head-role-checkbox').is(":checked"))
+                    $(this).prop('checked', true);
+                else
+                    $(this).prop('checked', false);
+            });
+        });
+    }
+
+    
+
+</script>

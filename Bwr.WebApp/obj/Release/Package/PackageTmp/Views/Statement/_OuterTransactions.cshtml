@@ -1,0 +1,166 @@
+﻿@using BWR.Domain.Model.Settings
+@using BWR.Application.Extensions
+@using BWR.Application.Dtos.Setting.Coin
+@using BWR.Application.Dtos.Company
+@using BWR.Application.Dtos.Setting.Country
+@using BWR.Application.Dtos.Client
+
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header ui-draggable-handle">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title">الحوالات الصادرة</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-lg-4">
+                    <label>نوع الدفع:</label>
+                    <select class="form-control" id="typeOfPayOuterTransaction">
+                        <option value="@TypeOfPay.None">---اختياري----</option>
+                        <option value="@TypeOfPay.Cash">@TypeOfPay.Cash.ToString().GetArabicTextValue()</option>
+                        <option value="@TypeOfPay.ClientsReceivables">@TypeOfPay.ClientsReceivables.ToString().GetArabicTextValue()</option>
+                        <option value="@TypeOfPay.CompaniesReceivables">@TypeOfPay.CompaniesReceivables.ToString().GetArabicTextValue()</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label>الجهة:</label>
+                    <select class="form-control" id="countryOuterTransaction">
+                        <option value="">---اختياري----</option>
+                       
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label>الشركة:</label>
+                    <select class="form-control" id="companyOuterTransaction">
+                        <option value="">---اختياري----</option>
+                      
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <label>المستفيد:</label>
+                    <select id="reciverClientSelectOuterTransaction"></select>
+                </div>
+                <div class="col-lg-4">
+                    <div id="AgentSender" style="display:none">
+                        <label>العميل:</label>
+                        <select class="form-control" id="agentSenderOuterTransaction">
+                            <option value="">--اختياري--</option>
+                           
+                        </select>
+                    </div>
+                    <div id="ClientSender">
+                        <label>المرسل:</label>
+                        <select id="senderClientSelectOuterTransaction"></select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <label> العملة:</label>
+                    <select class="form-control" id="coinOuterTransaction">
+                        <option value="">---اختياري----</option>
+                      
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <label>من تاريخ:</label>
+                    <input type="date" class="form-control" id="fromOuterTransaction" />
+                </div>
+                <div class="col-lg-4">
+                    <label>إلى تاريخ:</label>
+                    <input type="date" class="form-control" id="toOuterTransaction" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn green" id="outerTrnasactionFilterButton">عرض</button>
+            <button type="button" class="btn dark btn-outline" data-dismiss="modal">إلغاء</button>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</div>
+<!-- /.modal-dialog -->
+
+
+<script>
+    var typeOfPayOuterTransaction = $('#typeOfPayOuterTransaction');
+    var reciverClientSelectOuterTransaction = $('#reciverClientSelectOuterTransaction');
+    var senderClientSelectOuterTransaction = $('#senderClientSelectOuterTransaction');
+    var countryOuterTransaction = $('#countryOuterTransaction');
+    var companyOuterTransaction = $('#companyOuterTransaction');
+    var agentSenderOuterTransaction = $('#agentSenderOuterTransaction');
+    var coinOuterTransaction = $('#coinOuterTransaction');
+    var fromOuterTransaction = $('#fromOuterTransaction');
+    var toOuterTransaction = $('#toOuterTransaction');
+
+    $(function () {
+        onLoadModel();
+
+         $('#outerTrnasactionFilterButton').click(() => {
+                var senderClientId;
+                if (typeOfPayOuterTransaction.val() == 2) {
+                    senderClientId = agentSenderOuterTransaction.val();
+                } else {
+                    senderClientId = senderClientSelectOuterTransaction.val();
+                }
+                if (senderClientId == "") {
+                    senderClientId = null;
+                }
+
+                window.location.replace('@Url.Action("Index", "OuterTransaction")?coinId=' + coinOuterTransaction.val() + '&typeOfPay=' + typeOfPayOuterTransaction.val() + '&countryId=' + countryOuterTransaction.val() + '&recviecrClientId=' + reciverClientSelectOuterTransaction.val() + '&senderClientId=' + senderClientId + '&from=' + fromOuterTransaction.val() + '&to=' + toOuterTransaction.val());
+        });
+
+    });
+    function onLoadModel() {
+            $.post('@Url.Action("InitialOuterTransactionData", "OuterTransaction")', function (data) {
+
+                var receivers = data.Clients;
+                for (var i = 0; i < receivers.length; i++) {
+                    var option = '<option value="' + receivers[i].Id + '">' + receivers[i].FullName + '</option>';
+                    $('#reciverClientSelectOuterTransaction').append(option);
+                }
+
+                var senders = data.Clients;
+                for (var i = 0; i < senders.length; i++) {
+                    var option = '<option value="' + senders[i].Id + '">' + senders[i].FullName + '</option>';
+                    $('#senderClientSelectOuterTransaction').append(option);
+                }
+
+                var agents = data.Agents;
+                for (var i = 0; i < agents.length; i++) {
+                    var option = '<option value="' + agents[i].Id + '">' + agents[i].FullName + '</option>';
+                    $('#agentSenderOuterTransaction').append(option);
+                }
+
+                var countries = data.Countries;
+                for (var i = 0; i < countries.length; i++) {
+                    var option = '<option value="' + countries[i].Id + '">' + countries[i].Name + '</option>';
+                    $('#countryOuterTransaction').append(option);
+                }
+
+                var companies = data.Companies;
+                for (var i = 0; i < companies.length; i++) {
+                    var option = '<option value="' + companies[i].Id + '">' + companies[i].Name + '</option>';
+                    $('#companyOuterTransaction').append(option);
+                }
+
+                var coins = data.Coins;
+                for (var i = 0; i < coins.length; i++) {
+                    var option = '<option value="' + coins[i].Id + '">' + coins[i].Name + '</option>';
+                    $('#coinOuterTransaction').append(option);
+                }
+
+                $('#reciverClientSelectOuterTransaction').select2({ width: null });
+                $('#senderClientSelectOuterTransaction').select2({ width: null });
+                $('#typeOfPayOuterTransaction').select2({ width: null });
+                $('#agentSenderOuterTransaction').select2({ width: null });
+                $('#countryOuterTransaction').select2({ width: null });
+                $('#companyOuterTransaction').select2({ width: null });
+                $('#coinOuterTransaction').select2({ width: null });
+
+            });
+        }
+</script>

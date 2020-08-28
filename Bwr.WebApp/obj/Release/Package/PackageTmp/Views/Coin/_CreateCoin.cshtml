@@ -1,0 +1,130 @@
+﻿
+@model BWR.Application.Dtos.Setting.Coin.CoinInsertDto
+@{
+    /**/
+
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">إضافة عملة</h4>
+        </div>
+        @using (Ajax.BeginForm("Create", "Coin", null, new AjaxOptions { HttpMethod = "Post" }, new { @class = "form-horizontal", role = "form",id="addCoinForm" }))
+        {
+        <div class="modal-body ">
+            
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="Name">اسم العملة <span class="text-danger">*</span></label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", id = "a-name" } })
+
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="Name">الكود <span class="text-danger">*</span></label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control", id = "a-code" } })
+
+                        @Html.ValidationMessageFor(model => model.Code, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="Name">ايزو كود <span class="text-danger"></span></label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.ISOCode, new { htmlAttributes = new { @class = "form-control",id="a-isoCode" } })
+
+                        @Html.ValidationMessageFor(model => model.ISOCode, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+
+                        <button id="btnAddCoin" type="button" class="btn btn-primary">حفظ <span class="glyphicon glyphicon-save"></span></button>
+                        <button type="button" class="btn btn-sm btn-default" onclick="resetCreateCoinContainer()" data-dismiss="modal">إغلاق <span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    var aTable;
+    var oldData;
+    $(function () {
+
+        var $form = $("#addCoinForm");
+        $.validator.unobtrusive.parse($form);
+        
+        $('#btnAddCoin').on("click", function (event) {
+            if ($form.valid()) {
+                var dto = {
+                    Name: $('#a-name').val(),
+                    Code: $('#a-code').val(),
+                    ISOCode: $('#a-isoCode').val(),
+                    //IsEnabled: getIsEnableValue()
+                };
+                console.log(dto);
+                $.ajax({
+                    url: '@Url.Action("Create", "Coin")',
+                    type: 'POST',
+                    data: dto,
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+
+                        if (data.Success == true) {
+
+                            resetCreateCoinContainer();
+
+                            $coinDataTable.refresh();
+                            toastr.success('تم الحفظ بنجاح')
+                        }
+                        else {
+                            if (data.Exist == true) {
+                                $('[data-valmsg-for="Name"]').html("");
+                                $('[data-valmsg-for="Name"]').html(data.Message);
+                            }
+                            toastr.error(data.Message);
+                        }
+
+                    },
+                    error: function () { toastr.error("خدث خطأ ما أثناء الإضافة"); }
+                });
+
+            }
+            
+
+        });
+    });
+
+
+    function getIsEnableValue() {
+        var divChecked = $('#IsEnabled').parent();
+        if (divChecked.hasClass('checked'))
+            return true;
+        else
+            return false;
+    }
+
+    function resetCreateCoinContainer() {
+       
+        $('#createCoinModal').modal('hide');
+        $('#createCoinContainer').html('');
+    }
+    
+</script>

@@ -1,0 +1,13 @@
+F:\Projects\bw101600-master\BWR.Domain\bin\Release\BWR.Domain.dll
+F:\Projects\bw101600-master\BWR.Domain\bin\Release\BWR.Domain.pdb
+F:\Projects\bw101600-master\BWR.Domain\bin\Release\BWR.ShareKernel.dll
+F:\Projects\bw101600-master\BWR.Domain\bin\Release\EntityFramework.dll
+F:\Projects\bw101600-master\BWR.Domain\bin\Release\EntityFramework.SqlServer.dll
+F:\Projects\bw101600-master\BWR.Domain\bin\Release\BWR.ShareKernel.pdb
+F:\Projects\bw101600-master\BWR.Domain\bin\Release\EntityFramework.xml
+F:\Projects\bw101600-master\BWR.Domain\bin\Release\EntityFramework.SqlServer.xml
+F:\Projects\bw101600-master\BWR.Domain\obj\Release\BWR.Domain.csprojAssemblyReference.cache
+F:\Projects\bw101600-master\BWR.Domain\obj\Release\BWR.Domain.csproj.CoreCompileInputs.cache
+F:\Projects\bw101600-master\BWR.Domain\obj\Release\BWR.Domain.csproj.CopyComplete
+F:\Projects\bw101600-master\BWR.Domain\obj\Release\BWR.Domain.dll
+F:\Projects\bw101600-master\BWR.Domain\obj\Release\BWR.Domain.pdb

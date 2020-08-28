@@ -1,0 +1,66 @@
+﻿
+
+@model BWR.Application.Dtos.Branch.BranchCommissionDto
+@{
+    Layout = null;
+
+    string type = Model.Cost != 0 ? "العمولة" : "النسبة";
+    decimal value = Model.Cost != 0 ? Model.Cost : Model.Ratio;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">حذف عمولة</h4>
+        </div>
+        @using (Ajax.BeginForm("Delete", "BranchCommission", null, new AjaxOptions { HttpMethod = "Post", OnSuccess = "deleteBranchCommissionSuccess" }, new { @class = "form-horizontal", role = "form" }))
+        {
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    @Html.HiddenFor(model => model.Id)
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    <a href="#"><h4>هل انت متأكد من حذف العمولة  </h4></a>
+                    <br />
+                    <ul class="list-group">
+                        <li class="list-group-item"><a href="#"><h5>العملة  <span class="badge">@Model.Coin.Name</span></h5></a></li>
+                        <li class="list-group-item"><a href="#"><h5>البلد  <span class="badge">@Model.Country.Name</span></h5></a></li>
+                        <li class="list-group-item"><a href="#"><h5>من  <span class="badge">@Model.StartRange</span></h5></a></li>
+                        <li class="list-group-item"><a href="#"><h5>إلى  <span class="badge">@Model.EndRange</span></h5></a></li>
+                        <li class="list-group-item"><a href="#"><h5> @type  <span class="badge">@value</span></h5></a></li>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-danger">حذف <span class="glyphicon glyphicon-trash"></span></button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">إغلاق <span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function deleteBranchCommissionSuccess(data) {
+
+        if (data != 'success') {
+            $('#deleteBranchCommissionContainer').html(data);
+            return;
+        }
+        resetDeleteBranchCommissionContainer();
+
+        $branchCommissionDataTable.refresh();
+        toastr.success('تم الحذف بنجاح');
+    }
+
+    function resetDeleteBranchCommissionContainer() {
+
+        $('#deleteBranchCommissionModal').modal('hide');
+        $('#deleteBranchCommissionContainer').html('');
+    }
+</script>

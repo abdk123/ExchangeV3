@@ -1,0 +1,60 @@
+﻿@model BWR.Application.Dtos.Transaction.InnerTransaction.InnerTransactionDto
+@using BWR.Domain.Model.Settings
+@using BWR.Application.Extensions
+@using System.Globalization;
+@{
+    ViewBag.Title = "_InnerTransactionDetail";
+    Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
+}
+
+
+<h2>كشف حوالة واردة</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                العملة
+            </th>
+            <th>
+                الكمية
+            </th>
+            <th>
+                نوع الدفع
+            </th>
+            <th>
+                الشركة الأساسية
+            </th>
+            <th>
+                تاريخ التسليم
+            </th>
+            <th>
+                الملاحظات
+            </th>
+        </tr>
+
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Coin.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Amount)
+            </td>
+            <td>
+                @Model.TypeOfPay.ToString().GetArabicTextValue()
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.ReceiverCompany.Name)
+            </td>
+            <td>
+                @{
+                    Write(Model.DeliverdDate.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")));
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Note)
+            </td>
+        </tr>
+    </thead>
+</table>
+
+

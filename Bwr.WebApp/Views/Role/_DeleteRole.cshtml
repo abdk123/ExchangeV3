@@ -1,0 +1,58 @@
+﻿
+@model BWR.Application.Dtos.Role.RoleDto
+@{
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">حذف دور</h4>
+        </div>
+        @using (Ajax.BeginForm("Delete", "Role", null, new AjaxOptions { HttpMethod = "Post", OnSuccess = "deleteRoleSuccess" }, new { @class = "form-horizontal", role = "form" }))
+        {
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    @Html.HiddenFor(model => model.RoleId)
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger",id="d-Id" })
+
+                    <a href="#"><h4>هل انت متأكد من حذف الدور <span class="badge">@Model.Name</span></h4></a>
+                    <br />
+                    <div class="alert alert-danger">
+                        <strong>ملاحظة!</strong> لايمكن حذف دور مرتبط بكيان آخر
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-danger">حذف <span class="glyphicon glyphicon-trash"></span></button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">إغلاق <span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function deleteRoleSuccess(data) {
+
+        if (data != 'success') {
+            $('#deleteRoleContainer').html(data);
+            return;
+        }
+        resetDeleteRoleContainer();
+
+        $roleDataTable.refresh();
+        toastr.success('تم الحذف بنجاح')
+    }
+
+    function resetDeleteRoleContainer() {
+
+        $('#deleteRoleModal').modal('hide');
+        $('#deleteRoleContainer').html('');
+    }
+</script>

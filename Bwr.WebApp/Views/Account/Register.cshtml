@@ -1,0 +1,111 @@
+﻿@model Bwr.WebApp.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+}
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>@ViewBag.Login</title>
+
+    @Styles.Render("~/Content/css")
+    <link href="~/Content/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="~/Content/nprogress/nprogress.css" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="~/Content/iCheck/skins/flat/green.css" rel="stylesheet">
+    <!-- Custom Theme Style -->
+    <link href="~/Content/build/css/custom.min.css" rel="stylesheet">
+
+
+    @*@Scripts.Render("~/bundles/jquery")*@
+    <script src="~/Scripts/jquery.js"></script>
+    <script src="~/Scripts/moment.min.js"></script>
+</head>
+<body class="roro-bg">
+
+   
+        <div class="login_wrapper" >
+            <section class="login_content">
+                @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <h1>Create Account</h1>
+                    
+                    @Html.ValidationSummary()
+
+                    <div>
+                        <input type="text" name="FullName" id="fullName" class="form-control" placeholder="Full name" required="" />
+                    </div>
+                    <div>
+                        <input type="text" name="UserName" id="userName" class="form-control" placeholder="Username" required="" />
+                    </div>
+                    <div>
+                        <input type="password" name="Password" id="password" class="form-control" placeholder="Password" required="" />
+                    </div>
+                    <div>
+                        <input type="password" name="ConfirmPassword" id="confirmPassword" class="form-control" placeholder="Confirm Password" required="" />
+                    </div>
+                    <div>
+                        <input type="text" name="Email" id="email" class="form-control" placeholder="Email" required="" />
+                    </div>
+                    <div>
+                        <input type="submit" class="btn btn-default" value="Register" />
+                    </div>
+                }
+                <div class="clearfix"></div>
+
+
+                <div class="separator">
+                    <p class="change_link">
+                        New to site?
+                        <a href="#signup" class="to_register"> Create Account </a>
+                    </p>
+                    <div class="clearfix"></div>
+                    <br />
+                    <div>
+                        <h1><i class="fa fa-ship"></i>RoroLeaders</h1>
+                        <p>©2016 All Rights Reserved. Bwr Leaders</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+  
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+
+
+
+    @Scripts.Render("~/bundles/bootstrap")
+
+    <!-- FastClick -->
+    <script src="~/Scripts/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="~/Scripts/nprogress.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="~/Scripts/custom.min.js"></script>
+
+    <!-- Kendo UI -->
+
+
+
+
+</body>
+</html>
+
+<script>
+        window.applicationpath = "@Url.Content("~")";
+</script>
