@@ -48,3 +48,14 @@ F:\Projects\bw101600-master\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.Cor
 F:\Projects\bw101600-master\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CopyComplete
 F:\Projects\bw101600-master\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.dll
 F:\Projects\bw101600-master\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\bin\Debug\BWR.ShareKernel.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\bin\Debug\BWR.ShareKernel.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.xml
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csprojAssemblyReference.cache
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CoreCompileInputs.cache
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CopyComplete
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.pdb

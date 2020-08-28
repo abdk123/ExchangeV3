@@ -72,3 +72,16 @@ F:\Projects\bw101600-master\BWR.Domain\obj\Debug\BWR.Domain.csproj.CoreCompileIn
 F:\Projects\bw101600-master\BWR.Domain\obj\Debug\BWR.Domain.csproj.CopyComplete
 F:\Projects\bw101600-master\BWR.Domain\obj\Debug\BWR.Domain.dll
 F:\Projects\bw101600-master\BWR.Domain\obj\Debug\BWR.Domain.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\bin\Debug\BWR.Domain.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\bin\Debug\BWR.Domain.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\bin\Debug\BWR.ShareKernel.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\bin\Debug\EntityFramework.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\bin\Debug\BWR.ShareKernel.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\bin\Debug\EntityFramework.xml
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\obj\Debug\BWR.Domain.csprojAssemblyReference.cache
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\obj\Debug\BWR.Domain.csproj.CoreCompileInputs.cache
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\obj\Debug\BWR.Domain.csproj.CopyComplete
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\obj\Debug\BWR.Domain.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Domain\obj\Debug\BWR.Domain.pdb
