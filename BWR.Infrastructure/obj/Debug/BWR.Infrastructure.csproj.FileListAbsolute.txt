@@ -92,3 +92,21 @@ F:\Projects\bw101600-master\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.cspr
 F:\Projects\bw101600-master\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.csproj.CopyComplete
 F:\Projects\bw101600-master\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.dll
 F:\Projects\bw101600-master\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\bin\Debug\BWR.Infrastructure.dll.config
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\bin\Debug\BWR.Infrastructure.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\bin\Debug\BWR.Infrastructure.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\bin\Debug\BWR.Domain.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\bin\Debug\BWR.ShareKernel.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\bin\Debug\EntityFramework.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\bin\Debug\BWR.Domain.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\bin\Debug\BWR.ShareKernel.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\bin\Debug\EntityFramework.xml
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.csprojAssemblyReference.cache
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.Migrations.first.resources
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.csproj.GenerateResource.cache
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.csproj.CopyComplete
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.pdb

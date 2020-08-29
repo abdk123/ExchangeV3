@@ -122,3 +122,22 @@ F:\Projects\bw101600-master\BWR.Application\obj\Debug\BWR.Application.csproj.Cor
 F:\Projects\bw101600-master\BWR.Application\obj\Debug\BWR.Application.csproj.CopyComplete
 F:\Projects\bw101600-master\BWR.Application\obj\Debug\BWR.Application.dll
 F:\Projects\bw101600-master\BWR.Application\obj\Debug\BWR.Application.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\BWR.Application.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\BWR.Application.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\AutoMapper.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\BWR.Domain.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\BWR.Infrastructure.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\BWR.ShareKernel.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\EntityFramework.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\BWR.Domain.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\BWR.Infrastructure.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\BWR.Infrastructure.dll.config
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\BWR.ShareKernel.pdb
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\EntityFramework.xml
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\obj\Debug\BWR.Application.csprojAssemblyReference.cache
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\obj\Debug\BWR.Application.csproj.CoreCompileInputs.cache
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\obj\Debug\BWR.Application.csproj.CopyComplete
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\obj\Debug\BWR.Application.dll
+C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.Application\obj\Debug\BWR.Application.pdb

@@ -15,7 +15,8 @@ namespace BWR.Application.Extensions
 
         public static string GetFirstPhone(this ClientDto client)
         {
-            if (client != null || client.ClientPhones.Any())
+
+            if (client != null && client.ClientPhones.Any())
                 return client.ClientPhones[0].Phone;
             return string.Empty;
         }
