@@ -389,7 +389,7 @@
             fromClientToClient($('#agents').val(), $('#secoundAgentSelect').val(), $('#coins').val(), amount, note);
 
         } else if (secoundAcount == 2 && firstAcountType == 3 && actionType == 1) {
-            debugger;
+            
             amount = parseFloat(amount);
             fromClientToClient($('#agents').val(), $('#secoundAgentSelect').val(), $('#coins').val(), amount, note);
         } else if (secoundAcount == 2 && firstAcountType == 4 && actionType == -1) {
@@ -611,7 +611,7 @@
     }
 
     function fromClientToClient(agentId, clientSecondAcount, coinId, amount, note) {
-        debugger;
+        
         $.post(
             '@Url.Action("FromClientToClient", "BoxAction")', {
                 FirstClientId: agentId,

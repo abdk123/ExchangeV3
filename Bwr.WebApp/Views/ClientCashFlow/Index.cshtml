@@ -161,7 +161,7 @@
     });
 
     function getData() {
-        debugger;
+        
         var dto = {
             'ClientId': $clientId,
             'CoinId': getSelectedCoin(),
@@ -173,7 +173,7 @@
     }
 
     function initialCoins() {
-        debugger;
+        
         $.get('@Url.Action("GetCoinsForDropdown","Coin")', { term: "" }, function (data) {
 
             var coins = data.Coins;

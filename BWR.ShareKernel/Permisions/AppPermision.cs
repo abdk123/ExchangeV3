@@ -9,7 +9,7 @@
 
         /*=====OuterTransaction=====*/
         public const string Action_OuterTransaction_CreateOuterTransaction = "Action.OuterTransaction.CreateOuterTransaction";
-
+        
         /*=====InnerTransaction=====*/
         public const string Action_InnerTransaction_Index = "Action.InnerTransaction.Index";
 
@@ -69,6 +69,7 @@
         public const string Action_User_Delete = "Action.User.Delete";
         public const string Action_User_Viewe = "Action.User.View";
         public const string Action_User_AssignRolesToUser = "Action.User.AssignRolesToUser";
+        public const string Action_User_HasPermissionToBreakWall = "Action.User.HasPermissionToBreakWall";
 
         /*=====Company=====*/
         public const string Page_Company = "Pages.Company";

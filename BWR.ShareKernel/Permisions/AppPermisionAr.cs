@@ -69,6 +69,7 @@
         public const string Action_User_Delete = "حذف مستخدم";
         public const string Action_User_Viewe = "عرض مستخدم";
         public const string Action_User_AssignRolesToUser = "إسناد الادوار للمستخدم";
+        public const string Action_User_HasPermissionToBreakWall = "تخطي اكبر قيمة دائن و مدين";
 
         /*=====Company=====*/
         public const string Page_Company = "صفحة الشركة";

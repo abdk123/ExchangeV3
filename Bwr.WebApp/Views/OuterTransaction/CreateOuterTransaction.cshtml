@@ -11,7 +11,6 @@
     @*<link href="~/Content/Select2/Select2Css.css" rel="stylesheet" />*@
 }
 <h2 style="display:inline;margin-left:10px">حوالة صادرة</h2>
-
 <div class="row">
     <div class="col-lg-6">
         <div class="portlet light bordered">
@@ -62,7 +61,6 @@
             <div class="portlet-body form">
                 <div class="row" style="margin-bottom:10px">
                     <div class="col-lg-12">
-
                         <select id="TypeOfPay" class="form-control">
                             <option value="0" index="0"></option>
                             <option value="1">نقدي</option>
@@ -208,7 +206,6 @@
                         <input type="text" class="form-control" placeholder="العمولة" onkeypress="validation(this,event);" onkeyup="FormaittingNumber(this);" id="comission" autocomplete="off" onkeydown="CallcRequierdMoney();" onchange="CallcRequierdMoney();" style="margin-bottom:10px" />
                         @*<input type="text" class="form-control" placeholder="العمولة" onkeypress="validation(this,event);" onkeyup="FormaittingNumber(this);" id="comission" onkeydown="CallcRequierdMoney();" onchange="CallcRequierdMoney();" style="margin-bottom:10px" readonly />*@
                     </div>
-
                     <div class="col-lg-4">
                         <input type="text" class="form-control" placeholder="عمولة الشركة" onkeypress="validation(this, event, true);" onkeyup="FormaittingNumber(this);" autocomplete="off" id="companycomission" style="margin-bottom:10px" />
                         @* <input type="text" class="form-control" placeholder="عمولة الشركة" onkeypress="validation(this, event, true);" onkeyup="FormaittingNumber(this);" id="companycomission" style="margin-bottom:10px" readonly />*@
@@ -336,7 +333,7 @@
 
         $('#reciverClientSelect').select2({
             tags: true,
-            
+
         });
         $('#clientSenderByCompant').select2({ tags: true, });
 
@@ -363,7 +360,7 @@
         $('#reciverCompanyCurrentBalance').text('');
         $('#reciverCompanyCurrentBalanceStatus').text('');
         var companyId = $(this).val();
-        
+
         if (companyId != null && companyId != "") {
             $.post(
             '@Url.Action("GetCompanyMaxAndDeptByCoin","CompanyCash")', {
@@ -483,7 +480,7 @@
                 $('#senderCompanyCurrentBalanceStatuse').text(status);
             }
         )
-        
+
         if (this.value != "" && this.value != null) {
             $.post(
             '@Url.Action("GetCompanyMaxAndDeptByCoin","CompanyCash")', {
@@ -495,7 +492,7 @@
             }
         )
         }
-        
+
     });
 
     function FillSecoundCompany(companyId) {
@@ -862,7 +859,7 @@
     }
 
     $('#submit').click(function () {
-        
+
         var CountryId = document.getElementById('countryId');
         if (CountryId.value == "") {
             toastr["error"]("يجب ان تحدد الوجهة", "خطاْ");
@@ -1061,7 +1058,8 @@
             var seldnerId = document.getElementById('agentSelect').value;
             if (seldnerId == undefined || seldnerId == "")
                 return;
-            var reciveingAmount = document.getElementById('RecivingAmount').value;
+            
+            var reciveingAmount = deleteCommaFromNumber( document.getElementById('RecivingAmount').value);
             var AgetComission = document.getElementById('AgetComission').value;
 
 
@@ -1128,7 +1126,7 @@
 
             /////////////////////////////////////////////////////////////////////////////////////////
         else if (TypeOfPayId.value == 3) {
-            debugger;
+
             var senderId;
             if (isNaN($('#clientSenderByCompant').val())) {
                 var formData = new FormData();
@@ -1188,11 +1186,11 @@
                     });
             }
             var secounCompanyCommission = $('#secoundCompanyCommission').val();
-            
+
             if (secounCompanyCommission == "") {
                 secounCompanyCommission = "0";
             }
-            
+
             $.post(
                 '@Url.Action("OuterCompanyTransaction", "OuterTransaction")',
                 {
@@ -1358,7 +1356,7 @@
             commission = 0;
         }
         var companyCommission = $('#secoundCompanyCommission').val();
-        
+
         if (companyCommission == "") {
             companyCommission = 0;
         } else {

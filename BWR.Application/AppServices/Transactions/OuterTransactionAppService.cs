@@ -25,7 +25,7 @@ using BWR.Domain.Model.Branches;
 
 namespace BWR.Application.AppServices.Transactions
 {
-    public class OuterTransactionAppService: IOuterTransactionAppService
+    public class OuterTransactionAppService : IOuterTransactionAppService
     {
         private readonly IUnitOfWork<MainContext> _unitOfWork;
         private readonly IAppSession _appSession;
@@ -114,10 +114,10 @@ namespace BWR.Application.AppServices.Transactions
                 .Select(x => new CountryForDropdownDto() { Id = x.Id, Name = x.Name }).ToList();
 
             var clients = _unitOfWork.GenericRepository<Client>().FindBy(x => x.ClientType == ClientType.Normal)
-                .Select(x => new ClientDto() { Id = x.Id, FullName = x.FullName , IsEnabled = x.IsEnabled}).ToList();
+                .Select(x => new ClientDto() { Id = x.Id, FullName = x.FullName, IsEnabled = x.IsEnabled }).ToList();
 
             var agents = _unitOfWork.GenericRepository<Client>().FindBy(x => x.ClientType == ClientType.Client)
-                .Select(x => new ClientDto() { Id = x.Id, FullName = x.FullName , IsEnabled = x.IsEnabled }).ToList();
+                .Select(x => new ClientDto() { Id = x.Id, FullName = x.FullName, IsEnabled = x.IsEnabled }).ToList();
 
             var companies = _unitOfWork.GenericRepository<Company>().GetAll()
                 .Select(x => new CompanyForDropdownDto() { Id = x.Id, Name = x.Name }).ToList();
@@ -210,7 +210,7 @@ namespace BWR.Application.AppServices.Transactions
                     CompanyId = dto.SenderCompanyId.Value,
                     MoneyActionId = moneyAction.Id,
                     CoinId = dto.CoinId,
-                    Amount = dto.Amount + dto.SenderCompanyComission.Value,
+                    Amount = dto.Amount,
                     Total = companyCash.Total,
                     Matched = false
                 };
@@ -257,12 +257,12 @@ namespace BWR.Application.AppServices.Transactions
                 _unitOfWork.Rollback();
                 return false;
             }
-            
+
         }
 
         public bool OuterAgentTransaction(OuterTransactionInsertDto dto)
         {
-            
+
             try
             {
                 _unitOfWork.CreateTransaction();
@@ -334,7 +334,7 @@ namespace BWR.Application.AppServices.Transactions
                     CompanyId = dto.SenderCompanyId.Value,
                     MoenyAction = moneyAction,
                     CoinId = dto.CoinId,
-                    Amount = dto.Amount+dto.SenderCompanyComission.Value,
+                    Amount = dto.Amount,
                     Total = companyCash.Total,
                     Matched = false
                 };
@@ -358,19 +358,18 @@ namespace BWR.Application.AppServices.Transactions
                 #region Client Cash Flow
                 var clientCashFlow = new ClientCashFlow()
                 {
-                    ClientId=dto.SenderClientId.Value,
+                    ClientId = dto.SenderClientId.Value,
                     Total = clientCash.Total,
                     MoenyAction = moneyAction,
                     CoinId = dto.CoinId,
                     Matched = false,
-                    CreatedBy=_appSession.GetUserName(),
+                    CreatedBy = _appSession.GetUserName(),
+                    Amount =- dto.Amount
                 };
-
-                clientCashFlow.Amount -= dto.Amount;
-                if (dto.SenderCleirntCommission!=null && dto.SenderCleirntCommission != 0)
-                {
-                    clientCashFlow.Amount += dto.SenderCleirntCommission.Value;
-                }
+                //if (dto.SenderCleirntCommission != null && dto.SenderCleirntCommission != 0)
+                //{
+                //    clientCashFlow.Amount -= dto.SenderCleirntCommission.Value;
+                //}
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlow);
 
                 #endregion
@@ -442,7 +441,7 @@ namespace BWR.Application.AppServices.Transactions
                     CompanyId = dto.SenderCompanyId.Value,
                     MoenyAction = moneyAction,
                     CoinId = dto.CoinId,
-                    Amount = dto.Amount + dto.SenderCompanyComission.Value,
+                    Amount = dto.Amount,
                     Total = senderCompanyCash.Total,
                     Matched = false
                 };
@@ -502,7 +501,7 @@ namespace BWR.Application.AppServices.Transactions
                 _unitOfWork.Rollback();
                 return false;
             }
-            
+
         }
 
         public bool ReciveFromClientForMainBoxMethond(int transactionId, int clientId, int coinId, decimal amount, string note = "")
@@ -590,8 +589,6 @@ namespace BWR.Application.AppServices.Transactions
                 return false;
             }
         }
-
-
 
     }
 }

@@ -98,7 +98,6 @@ namespace BWR.Application.AppServices.Companies
                                 SecondCommission = clientCashFlow.MoenyAction.ClientComission(input.ClientId),
                                 Commission = clientCashFlow.MoenyAction.OurCommission(),
                                 Type = clientCashFlow.MoenyAction.GetTypeName(Requester.Agent, clientCashFlow.ClientId),
-                                Name = _moneyActionAppService.GetActionName(clientCashFlow.MoenyAction),
                                 Number = clientCashFlow.MoenyAction.GetActionId(),
                                 Date = clientCashFlow.Created != null ? clientCashFlow.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
                                 Note = clientCashFlow.MoenyAction.GetNote(Requester.Agent, clientCashFlow.ClientId)

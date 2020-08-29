@@ -14,6 +14,10 @@ namespace BWR.Application.Extensions
     {
         public static decimal? OurCommission(this MoneyAction moneyAction)
         {
+            if (moneyAction.BoxActionsId != null)
+            {
+                return null;
+            }
             if (moneyAction.Transaction != null)
             {
                 return moneyAction.Transaction.OurComission;
@@ -73,6 +77,10 @@ namespace BWR.Application.Extensions
 
         public static decimal ClientComission(this MoneyAction moneyAction, int clientId)
         {
+            if (moneyAction.BoxActionsId != null)
+            {
+                return 0;
+            }
             if (moneyAction.Transaction != null)
             {
                 return moneyAction.Transaction.ClientCommission(clientId: clientId);
@@ -128,17 +136,18 @@ namespace BWR.Application.Extensions
 
         public static string GetTypeName(this MoneyAction moneyAction,Requester requester, int? objectId)
         {
-            if (moneyAction.TransactionId != null)
-                return moneyAction.Transaction.GetTypeName(requester, objectId);
-            if (moneyAction.PublicMoney != null)
-                return moneyAction.PublicMoney.GetTypeName();
-            //get Company or ClientName 
             if (moneyAction.BoxAction != null)
             {
                 if (moneyAction.BoxAction.IsIncmoe)
                     return "فبض";
                 return "صرف";
             }
+            if (moneyAction.TransactionId != null)
+                return moneyAction.Transaction.GetTypeName(requester, objectId);
+            if (moneyAction.PublicMoney != null)
+                return moneyAction.PublicMoney.GetTypeName();
+            //get Company or ClientName 
+            
             if (moneyAction.ExchangeId != null)
             {
                 var unitOfWork = new UnitOfWork<MainContext>();
