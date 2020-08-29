@@ -575,6 +575,8 @@
         CallcBalanceForClient($('#agentSelect').val(), $(this).val());
     });
     $('#clientSelect').change(function () {
+        debugger;
+        var id = $(this).val();
         if (!isNaN($(this).val())) {
             $.post(
                 '@Url.Action("GetClientImage", "Client")', {
@@ -588,7 +590,7 @@
                         var Attachment = document.getElementById('Attachment');
                         Attachment.value = data.AttachmentId;
                         var sendrPhone = document.getElementById('sendrPhone');
-                        sendrPhone.value = data.phone;
+                        sendrPhone.value = data.phone.Phone;
                     } else {
                         var senderNormalClientImg = document.getElementById('senderNormalClientImg');
                         senderNormalClientImg.src = "";
