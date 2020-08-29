@@ -369,17 +369,16 @@ namespace Bwr.WebApp.Controllers
         public ActionResult GetClientImage(int clientId)
         {
             var clientAttachmentDto = _clientAttatchmentAppService.GetForSpecificClient(clientId).LastOrDefault();
-            if (clientAttachmentDto == null)
-                return Json("null");
+            
             var client = _clientAppService.GetById(clientId);
 
             var customar = new
             {
-                path = clientAttachmentDto.Path,
-                Id = clientAttachmentDto.Id,
-                AttachmentId = clientAttachmentDto.AttachmentId,
+                path = clientAttachmentDto != null ? clientAttachmentDto.Path : string.Empty,
+                Id = clientAttachmentDto != null ? clientAttachmentDto.Id : null,
+                AttachmentId = clientAttachmentDto != null ? clientAttachmentDto.AttachmentId : 0,
                 address = client.Address,
-                phone = client.ClientPhones.OrderByDescending(x => x.Id).FirstOrDefault()
+                phone = (client != null && client.ClientPhones.Any()) ? client.ClientPhones.OrderByDescending(x => x.Id).FirstOrDefault() : null
             };
             return Json(customar);
         }
