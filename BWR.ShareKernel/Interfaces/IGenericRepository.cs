@@ -14,5 +14,6 @@ namespace BWR.ShareKernel.Interfaces
         void RefershEntity(T obj);
         object Save();
         IEnumerable<T> FindBy(Expression<Func<T, bool>> predicate);
+        IEnumerable<T> FindBy(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] propertySelectors);
     }
 }

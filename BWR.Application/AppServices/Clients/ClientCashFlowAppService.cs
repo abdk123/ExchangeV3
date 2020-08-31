@@ -51,8 +51,8 @@ namespace BWR.Application.AppServices.Companies
                         lastBalance = clientCash.InitialBalance;
                     }
                     var clientCashFlows = _unitOfWork.GenericRepository<ClientCashFlow>()
-                        .FindBy(x => x.CoinId.Equals(input.CoinId) && x.ClientId.Equals(input.ClientId));
-
+                        .FindBy(x => x.CoinId.Equals(input.CoinId) && x.ClientId.Equals(input.ClientId),c=>c.MoenyAction,c=>c.MoenyAction.Clearing,c=>c.MoenyAction.Clearing.ToClient
+                        ,c => c.MoenyAction.Clearing.FromClient);
                     var clientCashFlowsBeforeFromDate = clientCashFlows.Where(x => x.Created.Value.Date < input.From);
                     if (clientCashFlowsBeforeFromDate.Any())
                     {
