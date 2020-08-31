@@ -137,11 +137,22 @@
                         'columns': [
                             { 'title': 'معرف العملة', 'data': 'CoinId', "visible": false},
                             { 'title': 'العملة', 'data': 'CoinName', "width": "20%", 'searchable': true },
-                            { 'title': 'له', 'data': 'ForHim', "width": "20%", 'searchable': true },
-                            { 'title': 'عليه', 'data': 'OnHim', "width": "20%", 'searchable': true },
+                            {
+                                'title': 'له', 'data': 'ForHim', "width": "20%", 'searchable': true,
+                                render: function (data, type, row) {
+                                    return numberWithCommas(Math.abs(data));
+                                }
+
+                            },
+                            {
+                                'title': 'عليه', 'data': 'OnHim', "width": "20%", 'searchable': true
+                                ,
+                                render: function (data, type, row) {
+                                    return numberWithCommas( Math.abs(data));
+                                }
+                            },
                             { 'title': 'أكبر قيمة دائن', 'data': 'MaxCreditor', "width": "20%", 'searchable': true },
                             { 'title': 'أكبر قيمة مدين', 'data': 'MaxDebit', "width": "20%",'searchable': true },
-
                         ],
                         'lengthMenu': [10, 25, 50, 100],
                     });
@@ -152,7 +163,6 @@
                 dt.ajax.reload();
                 }
             }
-
         $companyBalanceDT.init();
     }
 

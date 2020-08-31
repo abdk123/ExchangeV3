@@ -18,7 +18,6 @@ using System.Linq;
 using BWR.Application.Interfaces.Company;
 using System;
 using BWR.Application.Dtos.Statement;
-
 namespace BWR.Application.AppServices.Companies
 {
     public class CompanyCashFlowAppService : ICompanyCashFlowAppService

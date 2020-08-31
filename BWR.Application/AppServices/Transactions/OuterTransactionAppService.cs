@@ -152,7 +152,8 @@ namespace BWR.Application.AppServices.Transactions
                 outerTransaction.TransactionType = TransactionType.ExportTransaction;
                 outerTransaction.TypeOfPay = TypeOfPay.Cash;
                 outerTransaction.CreatedBy = _appSession.GetUserName();
-
+                //outerTransaction.SenderClientId = dto.SenderClientId;
+                //outerTransaction.ReciverClientId = dto.ReciverClientId;
                 _unitOfWork.GenericRepository<Transaction>().Insert(outerTransaction);
 
                 _unitOfWork.Save();

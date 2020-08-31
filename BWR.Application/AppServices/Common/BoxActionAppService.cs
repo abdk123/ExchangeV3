@@ -575,7 +575,8 @@ namespace BWR.Application.AppServices.BoxActions
                     Total = secounClientCahs.Total,
                 };
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(SecoundClientCashFlow);
-
+                _unitOfWork.Save();
+                _unitOfWork.Commit();
                 return true;
             }
             catch

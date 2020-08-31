@@ -65,7 +65,7 @@
                         { 'title': 'مطابقة', 'data': 'Id', 'searchable': true },
                         {
                             'title': 'الرصيد', 'data': "Balance", 'searchable': true,
-                            render: function (data, type, row) {
+                            render: function (data, type, row) {        
                                 if (data > 0) {
 
                                     return 'له/' + numberWithCommas(data);
