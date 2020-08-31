@@ -326,6 +326,7 @@
         if (!validate()) {
             return;
         }
+        debugger;
         var secoundAcount = $('#secoundAcount').val();
         var coinId = $('#coins').val();
         var note = $('#note').val();
@@ -334,7 +335,6 @@
         amount = deleteCommaFromNumber(amount);
         var actionType = parseInt($('#typeOfAction').val());
         var firstAcountType = $('#firstAcountSelect').val();
-
         if (secoundAcount == 1 && firstAcountType == 1 && actionType == -1) {
 
             payExpenciveFromMainBox(parseInt($('#publicExpenses').val()), coinId, amount, note);
@@ -358,8 +358,7 @@
                 toastr["error"]("يجب عليك اختيار عميل", "");
                 return;
             }
-
-            reciveFromClientToMainBox($('#agents').val(), $('#coins').val().amount, note);
+            reciveFromClientToMainBox($('#agents').val(), $('#coins').val(), amount, note);
 
         } else if (secoundAcount == 1 && firstAcountType == 4 && actionType == -1) {
 
@@ -556,7 +555,11 @@
             });
     }
 
-    function reciveFromClientToMainBox(clientId, coinId, amount, note){
+    function reciveFromClientToMainBox(clientId, coinId, amount, note) {
+        alert(clientId);
+        alert(coinId);
+        alert(amount);
+        alert(note);
         $.post(
             '@Url.Action("ReciveFromClientToMainBox", "BoxAction")', {
                 ClientId: clientId,
@@ -574,13 +577,18 @@
     }
 
     function payForCompanyFromMainBox(companyId, coinId, amount, not) {
+        debugger;
+        alert(companyId);
+        alert(coinId);
+        alert(amount);
+        alert(not);
         $.post(
             '@Url.Action("PayForCompanyFromMainBox", "BoxAction")'
             , {
                 CompanyId: companyId,
                 CoinId: coinId,
                 Amount: amount,
-                Note: note
+                Note: not
             }
             , function (data) {
                 if (data.Success) {
