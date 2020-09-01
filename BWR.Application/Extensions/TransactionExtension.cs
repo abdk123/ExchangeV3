@@ -10,7 +10,7 @@ namespace BWR.Application.Extensions
     {
         public static string GetTypeName(this Transaction transaction, Requester requester, int? objectId)
         {
-            if (requester == Requester.Company && objectId != null)
+            if (requester == Requester.Company || requester == Requester.Agent && objectId != null)
             {
                 if (transaction.ReceiverCompanyId == (int)objectId)
                 {
@@ -52,6 +52,10 @@ namespace BWR.Application.Extensions
                     return 0;
                 else
                     return (decimal)transaction.SenderCompanyComission;
+            else if (transaction.ReceiverCompanyId == companyId)
+            {
+                return transaction.OurComission;
+            }
             return 0;
         }
 

@@ -152,6 +152,18 @@ namespace BWR.Infrastructure.Common
             Context.Entry(entity).Reload();
         }
 
-      
+
+        public IEnumerable<T> FindBy(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] propertySelectors)
+        {
+            var entities = Entities.Where(predicate);
+            if (propertySelectors != null)
+            {
+                foreach (var item in propertySelectors)
+                {
+                    entities = entities.Include(item);
+                }
+            }
+            return entities;
+        }
     }
 }

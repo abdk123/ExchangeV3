@@ -373,7 +373,7 @@
 
         var clientCoins = [];
         var coinInputs = $('.e-coins-inputs');
-        debugger;
+        
         for (var i = 0; i < coinInputs.length; i++) {
             var coinId = $(coinInputs[i]).attr('data-coin-id');
             var id = $(coinInputs[i]).attr('data-client-coin-id');
@@ -411,7 +411,7 @@
     }
 
     function initialCheckBoxValue(coinId, value) {
-        debugger;
+        
         var selector = '#check-' + coinId;
         var checkBox = $('.e-coins').find(selector);
         if (checkBox != null) {

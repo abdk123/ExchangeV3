@@ -27,9 +27,9 @@ namespace Bwr.WebApp.Controllers
         private bool _success;
 
         public ClientController(
-            IClientAppService clientAppService, 
-            IProvinceAppService provinceAppService, 
-            IClientAttatchmentAppService clientAttatchmentAppService, 
+            IClientAppService clientAppService,
+            IProvinceAppService provinceAppService,
+            IClientAttatchmentAppService clientAttatchmentAppService,
             IAppSession appSession)
         {
             _clientAppService = clientAppService;
@@ -177,7 +177,7 @@ namespace Bwr.WebApp.Controllers
 
             return View("_DetailsClient", dto);
         }
-        
+
         #endregion
 
         public ActionResult UpdateAddressAndPhoneNumberIfNotExist(int clientId, string phone, string address)
@@ -321,8 +321,9 @@ namespace Bwr.WebApp.Controllers
                             _clientAttatchmentAppService.Insert(clientAttachmentDto);
                         }
                     }
+                    return Json(clientDto.Id);
                 }
-                
+
                 _success = true;
             }
             catch (BwrException excption)
@@ -369,7 +370,7 @@ namespace Bwr.WebApp.Controllers
         public ActionResult GetClientImage(int clientId)
         {
             var clientAttachmentDto = _clientAttatchmentAppService.GetForSpecificClient(clientId).LastOrDefault();
-            
+
             var client = _clientAppService.GetById(clientId);
 
             var customar = new
@@ -462,7 +463,7 @@ namespace Bwr.WebApp.Controllers
 
         public bool ChechIfPhoneRepeated(IList<ClientPhoneDto> phones)
         {
-            var phonesRepeated = phones.Select(x=>x.Phone).Distinct().ToList();
+            var phonesRepeated = phones.Select(x => x.Phone).Distinct().ToList();
 
             if (phonesRepeated.Count != phones.Count)
                 return true;

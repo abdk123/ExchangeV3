@@ -10,6 +10,8 @@ using PagedList;
 using System.Collections.Generic;
 using BWR.Domain.Model.Settings;
 using BWR.Application.Interfaces.Treasury;
+using BWR.ShareKernel.Permisions;
+using Bwr.WebApp.Models.Security;
 
 namespace Bwr.WebApp.Controllers.Transaction
 {
@@ -129,6 +131,7 @@ namespace Bwr.WebApp.Controllers.Transaction
         {
             try
             {
+
                 if (_outerTransactionAppService.OuterAgentTransaction(input))
                     _success = true;
                 else

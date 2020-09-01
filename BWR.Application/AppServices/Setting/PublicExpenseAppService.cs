@@ -114,12 +114,11 @@ namespace BWR.Application.AppServices.Setting
                 var publicMoney = new PublicMoney()
                 {
                     CreatedBy = _appSession.GetUserName(),
-                    PublicExpense = publicExpense
+                    ExpenseId = publicExpense.Id
                 };
 
                 _unitOfWork.GenericRepository<PublicMoney>().Insert(publicMoney);
                 _unitOfWork.Save();
-
                 _unitOfWork.Commit();
 
                 publicExpenseDto = Mapper.Map<PublicExpense, PublicExpenseDto>(publicExpense);
