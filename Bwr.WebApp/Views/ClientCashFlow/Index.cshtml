@@ -24,20 +24,18 @@
         </div>
     </div>
 </div>
-
 <div class="row">
     <div class="col-md-12">
         <table class="table table-striped table-bordered table-hover dt-responsive" id="clientCashFlowDataTable"></table>
     </div>
 </div>
-
 <script src="~/Scripts/GlopalScript.js"></script>
 <script type="text/javascript">
     var $clientCashFlowDataTable;
     var $clientId;
     var $inputDto;
     $(function () {
-        
+
         initialCoins();
         $clientId = '@Model.ClientId';
         $inputDto =  {
@@ -69,11 +67,11 @@
                             render: function (data, type, row) {
                                 if (data > 0) {
 
-                                    return 'له/' + data;
+                                    return 'له/' +numberWithCommas( data);
 
                                 } else if(data < 0) {
 
-                                    return 'عليه/' + Math.abs(data);
+                                    return 'عليه/' + numberWithCommas(  Math.abs(data));
 
                                 }else{
                                 return "";
@@ -84,7 +82,7 @@
                             'title': 'له', 'data': "Amount", 'searchable': true,
                             render: function (data, type, row) {
                                 if (data > 0) {
-                                    return data;
+                                    return numberWithCommas(  data);
                                 } else {
                                     return "";
                                 }
@@ -95,7 +93,7 @@
                             'title': 'عليه', 'data': "Amount", 'searchable': true,
                             render: function (data, type, row) {
                                 if (data < 0) {
-                                    return Math.abs(data);
+                                    return numberWithCommas(  Math.abs(data));
                                 } else {
                                     return "";
                                 }
@@ -107,7 +105,7 @@
                                 if (data == 0 || data == null) {
                                     return 'لا يوجد';
                                 }
-                                return data;
+                                return numberWithCommas(  data);
                             },
                         },
                         {
@@ -116,7 +114,7 @@
                                 if (data == 0 || data == null) {
                                     return 'لا يوجد';
                                 }
-                                return data;
+                                return numberWithCommas(  data);
                             },
                         },
                         { 'title': 'التاريخ', 'data': 'Date', 'searchable': true },
@@ -152,7 +150,7 @@
 
 
         $('#a-flow-coinId').on("change", function (e) {
-           
+
             $inputDto = getData();
             $clientCashFlowDataTable.refresh();
         });
@@ -161,7 +159,7 @@
     });
 
     function getData() {
-        
+
         var dto = {
             'ClientId': $clientId,
             'CoinId': getSelectedCoin(),
@@ -173,7 +171,7 @@
     }
 
     function initialCoins() {
-        
+
         $.get('@Url.Action("GetCoinsForDropdown","Coin")', { term: "" }, function (data) {
 
             var coins = data.Coins;

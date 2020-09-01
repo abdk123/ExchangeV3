@@ -49,11 +49,14 @@ namespace BWR.Application.Extensions
             //    return "";
             //return "none";
             if (moneyAction.BoxAction != null)
-                return moneyAction.BoxAction.Note;
+                if (moneyAction.PubLicMoneyId == null)
+                    return moneyAction.BoxAction.Note;
+                else
+                    return moneyAction.BoxAction.Note + "/" + moneyAction.PublicMoney.GetActionName();
             if (moneyAction.ClearingId != null)
-            {
-                return moneyAction.Clearing.GetNote(requester, (int)objectId);
-            }
+                {
+                    return moneyAction.Clearing.GetNote(requester, (int)objectId);
+                }
             return "GetNoteMoenyAction";
         }
 
@@ -88,17 +91,25 @@ namespace BWR.Application.Extensions
             return 0;
         }
 
-        public static string ReciverName(this MoneyAction moneyAction)
+        public static string ReciverName(this MoneyAction moneyAction, Requester requester, int requeserId)
         {
             if (moneyAction.TransactionId != null)
                 return moneyAction.Transaction.ReceiverName();
+            if (moneyAction.Clearing != null)
+            {
+                return moneyAction.Clearing.ReciverName(requester, requeserId);
+            }
             return "";
         }
 
-        public static string SenderName(this MoneyAction moneyAction)
+        public static string SenderName(this MoneyAction moneyAction, Requester requester, int requeserId)
         {
             if (moneyAction.TransactionId != null)
                 return moneyAction.Transaction.SenderName();
+            if (moneyAction.Clearing != null)
+            {
+                return moneyAction.Clearing.GetSenderName(requester, (int)requeserId);
+            }
             return "";
         }
 
@@ -134,20 +145,27 @@ namespace BWR.Application.Extensions
             return moneyAction.CreatedBy;
         }
 
-        public static string GetTypeName(this MoneyAction moneyAction,Requester requester, int? objectId)
+        public static string GetTypeName(this MoneyAction moneyAction, Requester requester, int? objectId)
         {
             if (moneyAction.BoxAction != null)
             {
-                if (moneyAction.BoxAction.IsIncmoe)
-                    return "فبض";
-                return "صرف";
+                if (moneyAction.Clearing == null)
+                {
+                    if (moneyAction.BoxAction.IsIncmoe)
+                        return "قبض";
+                    return "صرف";
+                }
+                else
+                {
+                    return moneyAction.Clearing.GetTypeName(requester, (int)objectId);
+                }
             }
             if (moneyAction.TransactionId != null)
                 return moneyAction.Transaction.GetTypeName(requester, objectId);
             if (moneyAction.PublicMoney != null)
                 return moneyAction.PublicMoney.GetTypeName();
             //get Company or ClientName 
-            
+
             if (moneyAction.ExchangeId != null)
             {
                 var unitOfWork = new UnitOfWork<MainContext>();
@@ -161,6 +179,6 @@ namespace BWR.Application.Extensions
             return "GetTypeName";
         }
 
-       
+
     }
 }

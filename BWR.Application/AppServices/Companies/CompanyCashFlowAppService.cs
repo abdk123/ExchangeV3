@@ -51,7 +51,13 @@ namespace BWR.Application.AppServices.Companies
                         lastBalance = companyCash.InitialBalance;
                     }
                     var companyCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>()
-                        .FindBy(x => x.CoinId.Equals(input.CoinId) && x.CompanyId.Equals(input.CompanyId));
+                        .FindBy(x => x.CoinId.Equals(input.CoinId) && x.CompanyId.Equals(input.CompanyId)
+                        ,c=>c.MoenyAction.Clearing.FromClient
+                        ,c => c.MoenyAction.Clearing.ToClient,c=> c.MoenyAction.Clearing.ToCompany,c => c.MoenyAction.Clearing.ToCompany
+                        , c => c.MoenyAction.Clearing.FromCompany
+                        ,c=>c.MoenyAction.PublicMoney.PublicExpense
+                        , c => c.MoenyAction.PublicMoney.PublicIncome
+                        );
 
                     var companyCashFlowsBeforeFromDate = companyCashFlows.Where(x => x.Created < input.From);
                     if (companyCashFlowsBeforeFromDate.Any())
@@ -97,8 +103,8 @@ namespace BWR.Application.AppServices.Companies
                                 Amount = companyCashFlow.Amount,
                                 Commission = companyCashFlow.Commission(),
                                 SecondCommission = companyCashFlow.SecounCommission(),
-                                ReceiverName = companyCashFlow.ReceiverName(),
-                                SenderName = companyCashFlow.SenderName(),
+                                ReceiverName = companyCashFlow.ReceiverName(Requester.Company, input.CompanyId),
+                                SenderName = companyCashFlow.SenderName(Requester.Company,input.CompanyId),
                                 CountryName = companyCashFlow.CountryName(),
                                 Type = companyCashFlow.MoenyAction.GetTypeName(Requester.Company, companyCashFlow.CompanyId),
                                 Name = _moneyActionAppService.GetActionName(companyCashFlow.MoenyAction),
