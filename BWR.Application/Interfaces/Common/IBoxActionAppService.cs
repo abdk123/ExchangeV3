@@ -14,8 +14,11 @@ namespace BWR.Application.Interfaces.BoxAction
         bool FromCompanyToClient(BoxActionFromCompanyToClientDto dto);
         bool FromClientToCompany(BoxActionFromClientToCompanyDto dto);
         bool FromCompanyToCompany(BoxActionFromCompanyToCompanyDto dto);
-
+        bool FromClientToPublicExpenes(BoxActionFromClientToPublicExpenesDto dto);
+        bool FromClientToPublicIncome(BoxActionFromClientToPublicIncomeDto dto);
+        bool FromCompanyToPublicExpenes(BoxActionFromCompanyToPublicExpenesDto dto);
+        bool FromCompanyToPublicIncome(BoxActionFromCompanyToPublicIncomeDto dto);
         BoxActionInitialDto InitialInputData();
-        
+
     }
 }

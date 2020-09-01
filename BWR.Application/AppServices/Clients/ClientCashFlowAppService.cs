@@ -51,10 +51,12 @@ namespace BWR.Application.AppServices.Companies
                         lastBalance = clientCash.InitialBalance;
                     }
                     var clientCashFlows = _unitOfWork.GenericRepository<ClientCashFlow>()
-                        .FindBy(x => x.CoinId.Equals(input.CoinId) && x.ClientId.Equals(input.ClientId),c=>c.MoenyAction,c=>c.MoenyAction.Clearing,c=>c.MoenyAction.Clearing.ToClient
-                        ,c => c.MoenyAction.Clearing.FromClient
+                        .FindBy(x => x.CoinId.Equals(input.CoinId) && x.ClientId.Equals(input.ClientId), c => c.MoenyAction, c => c.MoenyAction.Clearing, c => c.MoenyAction.Clearing.ToClient
+                        , c => c.MoenyAction.Clearing.FromClient
                         , c => c.MoenyAction.Clearing.FromCompany
-                        , c => c.MoenyAction.Clearing.ToCompany);
+                        , c => c.MoenyAction.Clearing.ToCompany
+                        , c => c.MoenyAction.PublicMoney.PublicExpense
+                        , c => c.MoenyAction.PublicMoney.PublicIncome);
                     var clientCashFlowsBeforeFromDate = clientCashFlows.Where(x => x.Created.Value.Date < input.From);
                     if (clientCashFlowsBeforeFromDate.Any())
                     {
@@ -137,7 +139,7 @@ namespace BWR.Application.AppServices.Companies
             return clientCashFlowDto;
         }
 
-        
+
         public void Delete(int id)
         {
             try

@@ -49,11 +49,14 @@ namespace BWR.Application.Extensions
             //    return "";
             //return "none";
             if (moneyAction.BoxAction != null)
-                return moneyAction.BoxAction.Note;
+                if (moneyAction.PubLicMoneyId != null)
+                    return moneyAction.BoxAction.Note;
+                else
+                    return moneyAction.BoxAction.Note + "/" + moneyAction.PublicMoney.GetActionName();
             if (moneyAction.ClearingId != null)
-            {
-                return moneyAction.Clearing.GetNote(requester, (int)objectId);
-            }
+                {
+                    return moneyAction.Clearing.GetNote(requester, (int)objectId);
+                }
             return "GetNoteMoenyAction";
         }
 

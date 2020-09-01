@@ -1,5 +1,4 @@
 ﻿@model BWR.Application.Dtos.BoxAction.BoxActionInitialDto
-
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
@@ -62,7 +61,6 @@
         </div>
         <div id="companyDiv" name="acountDiv" hidden="hidden">
             <div class="col-lg-6">
-
                 <label>الشركات</label>
                 @Html.DropDownList("Companies", new SelectList(Model.Companies, "Id", "Name"), "", htmlAttributes: new { @class = "form-control", id = "companies" })
             </div>
@@ -102,7 +100,6 @@
             </select>
         </div>
         <div class="col-lg-8" style="display:none" id="secounAcountDetials">
-
             <div id="secoundCompanyDiv" style="display:none">
                 <div class="col-lg-8">
                     <label> اختر الشركة</label>
@@ -115,17 +112,14 @@
                     <select id="secoundAgentSelect"></select>
                 </div>
             </div>
-
         </div>
     </div>
     <button class="btn btn-primary" style="margin-top:10px" id="submit">حفظ</button>
 </div>
-
 @section ScriptPath{
     <script src="~/Scripts/GlopalScript.js"></script>
     @*<script src="~/Scripts/BoxAction/Index.js"></script>*@
 }
-
 <script>
     var clientBalnae;
     var companyBalnce;
@@ -387,7 +381,7 @@
             fromClientToClient($('#agents').val(), $('#secoundAgentSelect').val(), $('#coins').val(), amount, note);
 
         } else if (secoundAcount == 2 && firstAcountType == 3 && actionType == 1) {
-            
+
             amount = parseFloat(amount);
             fromClientToClient($('#agents').val(), $('#secoundAgentSelect').val(), $('#coins').val(), amount, note);
         } else if (secoundAcount == 2 && firstAcountType == 4 && actionType == -1) {
@@ -422,9 +416,23 @@
         } else if (secoundAcount == 3 && firstAcountType == 4 && actionType == 1) {
 
             amount = parseFloat(amount);
-            amount = amount * -1;
             fromCompanyToCompany($('#companies').val(), $('#secoundCompanySelect').val(), $('#coins').val(), amount, note);
-
+        }
+        else if (secoundAcount == 3 && firstAcountType == 1 && actionType == -1) {
+            amount = parseFloat(amount);
+            fromCompanyToPublicExpenes(coinId, $('#secoundCompanySelect').val(), $('#publicExpenses').val(), amount, note);
+        }
+        else if (secoundAcount == 3 && firstAcountType == 1 && actionType == 1) {
+            amount = parseFloat(amount);
+            fromCompanyToPublicIncome(coinId, $('#secoundCompanySelect').val(), $('#publicIncomes').val(), amount, note);
+        }
+        else if (secoundAcount == 2 && firstAcountType == 1 && actionType == -1) {
+            amount = parseFloat(amount);
+            fromClientToPublicExpenes(coinId, $('#secoundAgentSelect').val(), $('#publicExpenses').val(), amount, note);
+        }
+        else if (secoundAcount == 2 && firstAcountType == 1 && actionType == 1) {
+            amount = parseFloat(amount);
+            fromClientToPublicIncome(coinId, $('#secoundAgentSelect').val(), $('#publicIncomes').val(), amount, note);
         }
 
     });
@@ -554,10 +562,6 @@
     }
 
     function reciveFromClientToMainBox(clientId, coinId, amount, note) {
-        alert(clientId);
-        alert(coinId);
-        alert(amount);
-        alert(note);
         $.post(
             '@Url.Action("ReciveFromClientToMainBox", "BoxAction")', {
                 ClientId: clientId,
@@ -575,11 +579,7 @@
     }
 
     function payForCompanyFromMainBox(companyId, coinId, amount, not) {
-        debugger;
-        alert(companyId);
-        alert(coinId);
-        alert(amount);
-        alert(not);
+
         $.post(
             '@Url.Action("PayForCompanyFromMainBox", "BoxAction")'
             , {
@@ -617,7 +617,7 @@
     }
 
     function fromClientToClient(agentId, clientSecondAcount, coinId, amount, note) {
-        
+
         $.post(
             '@Url.Action("FromClientToClient", "BoxAction")', {
                 FirstClientId: agentId,
@@ -679,7 +679,6 @@
     }
 
     function fromCompanyToCompany(companyId, secondCompanyId, coinId, amount, note) {
-        alert(secondCompanyId);
         if (secondCompanyId == undefined)
             return;
         if (secondCompanyId == "")
@@ -701,5 +700,84 @@
                         }
                     }
                 )
+    }
+    function fromClientToPublicExpenes(coinId, clientId, publicExpenseId, amount, note) {
+        console.log(clientId);
+        console.log(publicExpenseId);
+        $.post(
+            '@Url.Action("FromClientToPublicExpenes","BoxAction")', {
+                CoinId: coinId,
+                ClientId: clientId,
+                PublicExpenseId: publicExpenseId,
+                Amount: amount,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
             }
+        );
+    }
+    function fromClientToPublicIncome(coinId, clientId, publicIncomeId, amount, note) {
+        $.post(
+            '@Url.Action("FromClientToPublicIncome", "BoxAction")', {
+                CoinId: coinId,
+                ClientId, clientId,
+                PublicIncomeId: publicIncomeId,
+                Amount: amount,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+    function fromCompanyToPublicExpenes(coinId, companyId, publicExpenseId, amount, note) {
+        $.post(
+            '@Url.Action("FromCompanyToPublicExpenes", "BoxAction")', {
+                CoinId: coinId,
+                CompanyId, companyId,
+                PublicExpenseId: publicExpenseId,
+                Amount: amount,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+    function fromCompanyToPublicIncome(coinId, companyId, publicIncomeId, amount, note) {
+        $.post(
+            '@Url.Action("FromCompanyToPublicIncome", "BoxAction")', {
+                CoinId: coinId,
+                CompanyId, companyId,
+                PublicIncomeId: publicIncomeId,
+                Amount: amount,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+
 </script>

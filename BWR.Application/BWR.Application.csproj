@@ -90,8 +90,12 @@
     <Compile Include="Dtos\BoxAction\BoxActionCompanyDto.cs" />
     <Compile Include="Dtos\BoxAction\BoxActionExpensiveDto.cs" />
     <Compile Include="Dtos\BoxAction\BoxActionFromClientToCompanyDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionFromClientToPublicExpenesDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionFromClientToPublicIncomeDto.cs" />
     <Compile Include="Dtos\BoxAction\BoxActionFromCompanyToClientDto.cs" />
     <Compile Include="Dtos\BoxAction\BoxActionFromCompanyToCompanyDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionFromCompanyToPublicExpenesDto.cs" />
+    <Compile Include="Dtos\BoxAction\BoxActionFromCompanyToPublicIncomeDto.cs" />
     <Compile Include="Dtos\BoxAction\BoxActionIncomeDto.cs" />
     <Compile Include="Dtos\BoxAction\BoxActionInitialDto.cs" />
     <Compile Include="Dtos\Branch\BranchCashFlow\BranchCashFlowOutputDto.cs" />

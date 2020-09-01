@@ -126,6 +126,34 @@ namespace Bwr.WebApp.Controllers
                 _success = true;
             return Json(new { Success = _success }, JsonRequestBehavior.AllowGet);
         }
+        [HttpPost]
+        public ActionResult FromClientToPublicExpenes(BoxActionFromClientToPublicExpenesDto dto)
+        {   
+            if (_boxActionAppService.FromClientToPublicExpenes(dto))
+                _success = true;
+            return Json(new { Success = _success }, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public ActionResult FromClientToPublicIncome(BoxActionFromClientToPublicIncomeDto dto)
+        {
+            if (_boxActionAppService.FromClientToPublicIncome(dto))
+                _success = true;
+            return Json(new { Success = _success }, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public ActionResult FromCompanyToPublicExpenes(BoxActionFromCompanyToPublicExpenesDto dto)
+        {
+            if (_boxActionAppService.FromCompanyToPublicExpenes(dto))
+                _success = true;
+            return Json(new { Success = _success }, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public ActionResult FromCompanyToPublicIncome(BoxActionFromCompanyToPublicIncomeDto dto)
+        {
+            if (_boxActionAppService.FromCompanyToPublicIncome(dto))
+                _success = true;
+            return Json(new { Success = _success }, JsonRequestBehavior.AllowGet);
+        }
 
         private bool CheckTreasury()
         {
