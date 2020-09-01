@@ -632,6 +632,7 @@ namespace BWR.Application.AppServices.BoxActions
                     Total = clientCash.Total,
                 };
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlow);
+                _unitOfWork.Save();
                 _unitOfWork.Commit();
                 return true;
             }
@@ -686,7 +687,7 @@ namespace BWR.Application.AppServices.BoxActions
                     Total = companyChash.Total,
                 };
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(companyCashFlow);
-
+                _unitOfWork.Save();
                 _unitOfWork.Commit();
                 return true;
             }
@@ -741,10 +742,11 @@ namespace BWR.Application.AppServices.BoxActions
                     Total = secounCompanyCahs.Total,
                 };
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(SecoundCompanyCashFlow);
+                _unitOfWork.Save();
                 _unitOfWork.Commit();
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
                 _unitOfWork.Rollback();
                 return false;

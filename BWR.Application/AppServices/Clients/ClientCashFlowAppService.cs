@@ -52,7 +52,9 @@ namespace BWR.Application.AppServices.Companies
                     }
                     var clientCashFlows = _unitOfWork.GenericRepository<ClientCashFlow>()
                         .FindBy(x => x.CoinId.Equals(input.CoinId) && x.ClientId.Equals(input.ClientId),c=>c.MoenyAction,c=>c.MoenyAction.Clearing,c=>c.MoenyAction.Clearing.ToClient
-                        ,c => c.MoenyAction.Clearing.FromClient);
+                        ,c => c.MoenyAction.Clearing.FromClient
+                        , c => c.MoenyAction.Clearing.FromCompany
+                        , c => c.MoenyAction.Clearing.ToCompany);
                     var clientCashFlowsBeforeFromDate = clientCashFlows.Where(x => x.Created.Value.Date < input.From);
                     if (clientCashFlowsBeforeFromDate.Any())
                     {

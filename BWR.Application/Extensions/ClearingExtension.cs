@@ -76,5 +76,44 @@ namespace BWR.Application.Extensions
             }
             return "GetNoteClearing";
         }
+        public static string GetSenderName(this Clearing clearing,Requester requester ,int requeserId)
+        {
+            if (requester == Requester.Company)
+            {
+                if (clearing.ToCompanyId == requeserId)
+                {
+                    if (clearing.FromClient != null)
+                    {
+                        return clearing.FromClient.FullName;
+                    }
+                }
+                if( clearing.FromCompanyId == requeserId)
+                {
+                    if (clearing.ToClient != null)
+                    {
+                        return clearing.Note + "/" + clearing.ToClient.FullName;
+                    }
+                }
+            }
+            return "";
+        }
+        public static string ReciverName(this Clearing clearing ,Requester requester, int requesterId)
+        {
+            if(requester == Requester.Company)
+            {
+                if (clearing.ToCompanyId == requesterId)
+                {
+                    if (clearing.FromClient != null)
+                    {
+                        return clearing.Note;
+                    }
+                }
+                if (clearing.FromCompanyId == requesterId)
+                {
+                    return clearing.Note;
+                }
+            }
+            return "";
+        }
     }
 }

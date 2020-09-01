@@ -326,7 +326,6 @@
         if (!validate()) {
             return;
         }
-        debugger;
         var secoundAcount = $('#secoundAcount').val();
         var coinId = $('#coins').val();
         var note = $('#note').val();
@@ -410,7 +409,6 @@
 
             fromClientToCompany($('#agents').val(), $('#secoundCompanySelect').val(), $('#coins').val(), amount, note);
         } else if (secoundAcount == 3 && firstAcountType == 3 && actionType == 1) {
-
             amount = parseFloat(amount);
 
             fromClientToCompany($('#agents').val(), $('#secoundCompanySelect').val(), $('#coins').val(), amount, note);
@@ -680,11 +678,16 @@
         );
     }
 
-    function fromCompanyToCompany(companyId, secondCompanyId, coinId, amount, note){
+    function fromCompanyToCompany(companyId, secondCompanyId, coinId, amount, note) {
+        alert(secondCompanyId);
+        if (secondCompanyId == undefined)
+            return;
+        if (secondCompanyId == "")
+            return;
                 $.post(
                     '@Url.Action("FromCompanyToCompany", "BoxAction")', {
                         FirstCompanyId: companyId,
-                        SecounCompanyId: secondCompanyId,
+                        SecondCompanyId: secondCompanyId,
                         CoinId: coinId,
                         Amount: amount,
                         Note: note
