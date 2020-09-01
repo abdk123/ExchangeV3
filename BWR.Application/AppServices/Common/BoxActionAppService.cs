@@ -927,7 +927,7 @@ namespace BWR.Application.AppServices.BoxActions
             try
             {
                 _unitOfWork.CreateTransaction();
-                var publicMoenyId = _unitOfWork.GenericRepository<PublicMoney>().FindBy(c => c.IncomeId == dto.PublicExpenseId).First().Id;
+                var publicMoenyId = _unitOfWork.GenericRepository<PublicMoney>().FindBy(c => c.IncomeId == dto.PublicIncomeId).First().Id;
                 var boxAction = new BoxAction()
                 {
                     CoinId = dto.CoinId,

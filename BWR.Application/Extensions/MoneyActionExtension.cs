@@ -49,7 +49,7 @@ namespace BWR.Application.Extensions
             //    return "";
             //return "none";
             if (moneyAction.BoxAction != null)
-                if (moneyAction.PubLicMoneyId != null)
+                if (moneyAction.PubLicMoneyId == null)
                     return moneyAction.BoxAction.Note;
                 else
                     return moneyAction.BoxAction.Note + "/" + moneyAction.PublicMoney.GetActionName();

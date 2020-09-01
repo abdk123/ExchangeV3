@@ -726,7 +726,7 @@
         $.post(
             '@Url.Action("FromClientToPublicIncome", "BoxAction")', {
                 CoinId: coinId,
-                ClientId, clientId,
+                ClientId: clientId,
                 PublicIncomeId: publicIncomeId,
                 Amount: amount,
                 Note: note
@@ -761,10 +761,11 @@
         );
     }
     function fromCompanyToPublicIncome(coinId, companyId, publicIncomeId, amount, note) {
+        console.log(publicIncomeId);
         $.post(
             '@Url.Action("FromCompanyToPublicIncome", "BoxAction")', {
                 CoinId: coinId,
-                CompanyId, companyId,
+                CompanyId:companyId,
                 PublicIncomeId: publicIncomeId,
                 Amount: amount,
                 Note: note
