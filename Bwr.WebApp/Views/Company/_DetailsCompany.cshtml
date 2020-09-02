@@ -46,7 +46,7 @@
                                     <a href="#comission" data-url="@Url.Action("Index","CompanyCommission")?companyId=@Model.Id" data-toggle="tab">تهيئة العمولة</a>
                                 </li>
                                 <li>
-                                    <a href="#cashFlow" data-url="@Url.Action("Index","CompanyCashFlow")?companyId=@Model.Id" data-toggle="tab">كشف حساب الصندوق </a>
+                                    <a href="#cashFlow" id="cashFlowbtn" data-url="@Url.Action("Index","CompanyCashFlow")?companyId=@Model.Id" data-toggle="tab">كشف حساب الصندوق </a>
                                 </li>
                             </ul>
                         </div>
@@ -180,4 +180,9 @@
         ele += '</div >';
         return ele;
     }
+    $(document).ready(function () {
+        if (location.hash == "#cashFlowbtn") {
+            $('#cashFlowbtn').click();
+        }
+    });
 </script>

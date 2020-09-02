@@ -41,7 +41,7 @@
                                     <a href="#comission" data-url="@Url.Action("Index","ClientCommission")?clientId=@Model.Id" data-toggle="tab">تهيئة العمولة</a>
                                 </li>*@
                                 <li>
-                                    <a href="#cashFlow" data-url="@Url.Action("Index","ClientCashFlow")?clientId=@Model.Id" data-toggle="tab">كشف حساب الصندوق </a>
+                                    <a href="#cashFlow" id="cashFlowbtn" data-url="@Url.Action("Index","ClientCashFlow")?clientId=@Model.Id" data-toggle="tab">كشف حساب الصندوق </a>
                                 </li>
                             </ul>
                         </div>
@@ -88,8 +88,9 @@
 <script>
     var $clientBalanceDT;
     var $clientCoinDT;
-    $(function () {
-       
+    $(function () {       
+
+        
         $('input.flat').iCheck({
             checkboxClass: 'icheckbox_flat-green',
             radioClass: 'iradio_flat-green'
@@ -97,15 +98,13 @@
         var clientId = '@Model.Id';
         
         initialClientBalanceDT(clientId);
-
+        
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             var url = $(e.target).attr('data-url');
             var id = e.target.href.split("#")[1];
             $('#' + id).load(url);
         });
-
     });
-
     function initialClientBalanceDT(clientId) {
         
         $clientBalanceDT = {
@@ -156,4 +155,9 @@
         ele += '</div >';
         return ele;
     }
+    $(document).ready(function () {
+        if (location.hash == "#cashFlowbtn") {
+            $('#cashFlowbtn').click();
+        }
+    });
 </script>

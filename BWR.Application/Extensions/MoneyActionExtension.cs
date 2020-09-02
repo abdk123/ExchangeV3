@@ -149,15 +149,19 @@ namespace BWR.Application.Extensions
         {
             if (moneyAction.BoxAction != null)
             {
-                if (moneyAction.Clearing == null)
+                if (moneyAction.Clearing == null&&moneyAction.PubLicMoneyId==null&&requester!=Requester.Branch)
                 {
                     if (moneyAction.BoxAction.IsIncmoe)
                         return "قبض";
                     return "صرف";
                 }
-                else
+                else if(moneyAction.ClearingId!=null)
                 {
                     return moneyAction.Clearing.GetTypeName(requester, (int)objectId);
+                }
+                else if(moneyAction.PubLicMoneyId!=null)
+                {
+                    return moneyAction.BoxAction.IsIncmoe ? "صرف له" : "قبض منه";
                 }
             }
             if (moneyAction.TransactionId != null)

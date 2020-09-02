@@ -104,7 +104,8 @@ namespace BWR.Application.AppServices.Companies
                                 Type = clientCashFlow.MoenyAction.GetTypeName(Requester.Agent, clientCashFlow.ClientId),
                                 Number = clientCashFlow.MoenyAction.GetActionId(),
                                 Date = clientCashFlow.Created != null ? clientCashFlow.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
-                                Note = clientCashFlow.MoenyAction.GetNote(Requester.Agent, clientCashFlow.ClientId)
+                                Note = clientCashFlow.MoenyAction.GetNote(Requester.Agent, clientCashFlow.ClientId),
+                                MoneyActionId = clientCashFlow.MoenyActionId
                             });
                     }
                 }

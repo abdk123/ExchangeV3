@@ -244,6 +244,11 @@ namespace Bwr.WebApp.Controllers
             var companies = _companyAppService.GetAll().Where(x => x.Id != id).Select(x => new { Id = x.Id, Name = x.Name });
             return Json(companies);
         }
+        [HttpGet]
+        public ActionResult GetCompanyForSelect2()
+        {
+            return Json(this._companyAppService.GetSelect2(), JsonRequestBehavior.AllowGet);
+        }
 
         #region Helper Method
 

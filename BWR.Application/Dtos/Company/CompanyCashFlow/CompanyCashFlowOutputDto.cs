@@ -8,6 +8,7 @@ namespace BWR.Application.Dtos.Company.CompanyCashFlow
         public decimal? Amount { get; set; }
         public decimal? Commission { get; set; }
         public decimal? SecondCommission { get; set; }
+        public int? MoneyActionId { get; set; }
         public string ReceiverName { get; set; }
         public string SenderName { get; set; }
         public string CountryName { get; set; }
@@ -16,6 +17,7 @@ namespace BWR.Application.Dtos.Company.CompanyCashFlow
         public int? Number { get; set; }
         public string Date { get; set; }
         public string Note { get; set; }
+
 
 
     }

@@ -110,7 +110,8 @@ namespace BWR.Application.AppServices.Companies
                                 Name = _moneyActionAppService.GetActionName(companyCashFlow.MoenyAction),
                                 Number = companyCashFlow.MoenyAction.GetActionId(),
                                 Date = companyCashFlow.Created != null ? companyCashFlow.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
-                                Note = companyCashFlow.MoenyAction.GetNote(Requester.Company, companyCashFlow.CompanyId)
+                                Note = companyCashFlow.MoenyAction.GetNote(Requester.Company, companyCashFlow.CompanyId),
+                                MoneyActionId= companyCashFlow.MoneyActionId
                             });
                     }
                 }

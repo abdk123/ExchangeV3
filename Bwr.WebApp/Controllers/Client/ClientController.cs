@@ -470,6 +470,11 @@ namespace Bwr.WebApp.Controllers
 
             return false;
         }
+        [HttpGet]
+        public ActionResult GetAgentForSelect2()
+        {
+            return Json(this._clientAppService.GetSelect2(c=>c.ClientType==ClientType.Client), JsonRequestBehavior.AllowGet);
+        }
 
 
         #endregion
