@@ -206,6 +206,18 @@ namespace Bwr.WebApp
             Mapper.CreateMap<OuterTransactionInsertDto, Transaction>();
             Mapper.CreateMap<Transaction, OuterTransactionDto>();
 
+
+
+
+            //select2 
+            Mapper.CreateMap<Client, Select2Dto<int>>()
+                .ForMember(rs => rs.id, opt => opt.MapFrom(sr => sr.Id))
+                .ForMember(rs=>rs.text,opt=>opt.MapFrom(sr=>sr.FullName));
+
+            Mapper.CreateMap<Company,Select2Dto<int>>()
+                .ForMember(rs=>rs.id,opt=>opt.MapFrom(sr=>sr.Id))
+                .ForMember(rs => rs.text, opt => opt.MapFrom(sr => sr.Name));
+
         }
     }
 

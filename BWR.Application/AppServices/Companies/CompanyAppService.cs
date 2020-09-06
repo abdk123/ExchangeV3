@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BWR.Application.Dtos.Common;
 using BWR.Application.Dtos.Company;
 using BWR.Application.Interfaces.Company;
 using BWR.Application.Interfaces.Shared;
@@ -10,6 +11,7 @@ using BWR.ShareKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace BWR.Application.AppServices.Companies
 {
@@ -245,6 +247,29 @@ namespace BWR.Application.AppServices.Companies
             return false;
         }
 
-        
+        public IList<Select2Dto<int>> GetSelect2(Expression<Func<Company, bool>> predicate = null)
+        {
+            var select2Dtos = new List<Select2Dto<int>>();
+            try
+            {
+
+                if (predicate != null)
+                {
+                    var companies = _unitOfWork.GenericRepository<Company>().FindBy(predicate).ToList();
+                    select2Dtos = Mapper.Map<List<Company>, List<Select2Dto<int>>>(companies);
+                }
+                else
+                {    
+                    var companies = _unitOfWork.GenericRepository<Company>().GetAll().ToList();
+                    select2Dtos = Mapper.Map<List<Company>, List<Select2Dto<int>>>(companies);
+                }
+            }
+            catch (Exception ex)
+            {
+                Tracing.SaveException(ex);
+            }
+
+            return select2Dtos;
+        }
     }
 }

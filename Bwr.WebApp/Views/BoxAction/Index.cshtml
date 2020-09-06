@@ -702,8 +702,6 @@
                 )
     }
     function fromClientToPublicExpenes(coinId, clientId, publicExpenseId, amount, note) {
-        console.log(clientId);
-        console.log(publicExpenseId);
         $.post(
             '@Url.Action("FromClientToPublicExpenes","BoxAction")', {
                 CoinId: coinId,
@@ -745,7 +743,7 @@
         $.post(
             '@Url.Action("FromCompanyToPublicExpenes", "BoxAction")', {
                 CoinId: coinId,
-                CompanyId, companyId,
+                CompanyId: companyId,
                 PublicExpenseId: publicExpenseId,
                 Amount: amount,
                 Note: note

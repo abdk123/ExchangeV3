@@ -126,11 +126,11 @@
                         { 'title': 'ملاحظات', 'data': 'Note', 'searchable': true },
                         {
                             'title': 'تفاصيل',
-                            'data': 'Id',
+                            'data': 'MoneyActionId',
                             'searchable': false,
                             'sortable': false,
                             'render': function (data, type, full, meta) {
-                                return '<a href="@Url.Action("Detail","ClientCashFlow")?id=' + data + '" class="btn btn-defult editClientCommission"><span class="glyphicon glyphicon-eye"></span>  تفاصيل</a>';
+                                return '<a href="@Url.Action("Index", "MoneyAction")?id=' + data + '" class="btn btn-defult editClientCommission"><span class="glyphicon glyphicon-eye"></span>  تفاصيل</a>';
 
                             }
                         }

@@ -32,19 +32,26 @@ namespace BWR.Application.AppServices.Common
 
         public string GetActionName(MoneyAction moneyAction)
         {
-            if (moneyAction.Transaction != null && moneyAction.BoxAction == null)
-                return moneyAction.Transaction.GetActionName();
-            if (moneyAction.PublicMoney != null)
-                return moneyAction.PublicMoney.GetActionName();
-            if (moneyAction.BoxAction != null)
+            try
             {
-                if (moneyAction.ClientCashFlows != null && moneyAction.ClientCashFlows.Count > 0)
-                    return new List<ClientCashFlow>(moneyAction.ClientCashFlows)[0].Client.FullName;
-                return new List<CompanyCashFlow>(moneyAction.CompanyCashFlows)[0].CompanyName();
+                if (moneyAction.Transaction != null && moneyAction.BoxAction == null)
+                    return moneyAction.Transaction.GetActionName();
+                if (moneyAction.PublicMoney != null)
+                    return moneyAction.PublicMoney.GetActionName();
+                if (moneyAction.BoxAction != null)
+                {
+                    if (moneyAction.ClientCashFlows != null && moneyAction.ClientCashFlows.Count > 0)
+                        return new List<ClientCashFlow>(moneyAction.ClientCashFlows)[0].Client.FullName;
+                    return new List<CompanyCashFlow>(moneyAction.CompanyCashFlows)[0].CompanyName();
+                }
+                if (moneyAction.Exchange != null)
+                {
+                    return _unitOfWork.GenericRepository<Coin>().GetById(moneyAction.Exchange.SecoundCoinId).Name;
+                }
             }
-            if (moneyAction.Exchange != null)
+            catch(Exception ex)
             {
-                return _unitOfWork.GenericRepository<Coin>().GetById(moneyAction.Exchange.SecoundCoinId).Name;
+                Tracing.SaveException(ex);
             }
             return "GetActionName";
         }
@@ -76,6 +83,8 @@ namespace BWR.Application.AppServices.Common
             {
                 var moneyActions = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.TransactionId == transactionId).ToList();
+                //var moneyActions = _unitOfWork.GenericRepository<MoneyAction>()
+                //    .FindBy(x => x.TransactionId == transactionId, c => c.CompanyCashFlows, c => c.ClientCashFlows, c => c.BranchCashFlows).ToList();
 
                 moneyActionDetailsDto = Mapper.Map<List<MoneyAction>, List<MoneyActionDetailDto>>(moneyActions);
             }

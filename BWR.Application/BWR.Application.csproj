@@ -124,6 +124,7 @@
     <Compile Include="Dtos\Client\ClientUpdateDto.cs" />
     <Compile Include="Dtos\Common\BoxActionDto.cs" />
     <Compile Include="Dtos\Common\ExchangeDto.cs" />
+    <Compile Include="Dtos\Common\Select2Dto.cs" />
     <Compile Include="Dtos\MoneyAction\MoneyActionDetailDto.cs" />
     <Compile Include="Dtos\MoneyAction\MoneyActionDto.cs" />
     <Compile Include="Dtos\Common\PhoneBaseDto.cs" />

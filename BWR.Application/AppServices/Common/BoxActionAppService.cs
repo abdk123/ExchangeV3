@@ -752,6 +752,7 @@ namespace BWR.Application.AppServices.BoxActions
                 return false;
             }
         }
+
         public bool FromClientToPublicExpenes(BoxActionFromClientToPublicExpenesDto dto)
         {
             try
@@ -773,12 +774,12 @@ namespace BWR.Application.AppServices.BoxActions
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
                 var clientCash= _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.ClientId == dto.ClientId && c.CoinId == dto.CoinId).Single();
-                clientCash.Total -= dto.Amount;
+                clientCash.Total += dto.Amount;
                 _unitOfWork.GenericRepository<ClientCash>().Update(clientCash);
                 var clientCashFlow = new ClientCashFlow()
                 {
                     CoinId = dto.CoinId,
-                    Amount=  -dto.Amount,
+                    Amount=  dto.Amount,
                     ClientId = dto.ClientId,
                     Total = clientCash.Total,
                     MoenyActionId= moneyAction.Id,
@@ -794,44 +795,6 @@ namespace BWR.Application.AppServices.BoxActions
                 Tracing.SaveException(ex);
                 return false;
             }
-        }
-
-        public BoxActionInitialDto InitialInputData()
-        {
-            var boxActionInitialDto = new BoxActionInitialDto();
-            try
-            {
-                var currentTreasuryId = _appSession.GetCurrentTreasuryId();
-                var treasuryCashes = _unitOfWork.GenericRepository<TreasuryCash>().FindBy(x => x.TreasuryId == currentTreasuryId).ToList();
-                var coins = treasuryCashes.Select(x => new CoinForDropdownDto() { Name = x.Coin.Name, Id = x.Coin.Id }).ToList();
-
-                var agents = _unitOfWork.GenericRepository<Client>().FindBy(x => x.ClientType == ClientType.Client)
-                    .Select(x => new ClientDto() { Id = x.Id, FullName = x.FullName, IsEnabled = x.IsEnabled }).ToList();
-
-                var companies = _unitOfWork.GenericRepository<Company>().GetAll()
-                    .Select(x => new CompanyForDropdownDto() { Id = x.Id, Name = x.Name }).ToList();
-
-                var publicExpenses = _unitOfWork.GenericRepository<PublicExpense>().GetAll()
-                   .Select(x => new PublicExpenseForDropdownDto() { Id = x.Id, Name = x.Name }).ToList();
-
-                var publicIncomes = _unitOfWork.GenericRepository<PublicIncome>().GetAll()
-                   .Select(x => new PublicIncomeForDropdownDto() { Id = x.Id, Name = x.Name }).ToList();
-
-                boxActionInitialDto = new BoxActionInitialDto()
-                {
-                    Agents = agents,
-                    TreasuryId = currentTreasuryId,
-                    Coins = coins,
-                    Companies = companies,
-                    PublicExpenses = publicExpenses,
-                    PublicIncomes = publicIncomes
-                };
-            }
-            catch (Exception ex)
-            {
-                Tracing.SaveException(ex);
-            }
-            return boxActionInitialDto;
         }
 
         public bool FromClientToPublicIncome(BoxActionFromClientToPublicIncomeDto dto)
@@ -855,12 +818,12 @@ namespace BWR.Application.AppServices.BoxActions
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
                 var clientCash = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.ClientId == dto.ClientId && c.CoinId == dto.CoinId).Single();
-                clientCash.Total += dto.Amount;
+                clientCash.Total -= dto.Amount;
                 _unitOfWork.GenericRepository<ClientCash>().Update(clientCash);
                 var clientCashFlow = new ClientCashFlow()
                 {
                     CoinId = dto.CoinId,
-                    Amount = dto.Amount,
+                    Amount = -dto.Amount,
                     ClientId = dto.ClientId,
                     Total = clientCash.Total,
                     MoenyActionId = moneyAction.Id,
@@ -899,12 +862,12 @@ namespace BWR.Application.AppServices.BoxActions
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
                 var companyCash = _unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CompanyId== dto.CompanyId && c.CoinId == dto.CoinId).Single();
-                companyCash.Total -= dto.Amount;
+                companyCash.Total += dto.Amount;
                 _unitOfWork.GenericRepository<CompanyCash>().Update(companyCash);
                 var companyCashFlow = new CompanyCashFlow()
                 {
                     CoinId = dto.CoinId,
-                    Amount = -dto.Amount,
+                    Amount = +dto.Amount,
                     CompanyId = dto.CompanyId,
                     Total = companyCash.Total,
                     MoneyActionId = moneyAction.Id,
@@ -942,18 +905,19 @@ namespace BWR.Application.AppServices.BoxActions
                     PubLicMoneyId = publicMoenyId
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
-                var clientCash = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.ClientId == dto.ClientId && c.CoinId == dto.CoinId).Single();
-                clientCash.Total += dto.Amount;
-                _unitOfWork.GenericRepository<ClientCash>().Update(clientCash);
-                var clientCashFlow = new ClientCashFlow()
+                var companyCash = _unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CompanyId == dto.CompanyId && c.CoinId == dto.CoinId).Single();
+                companyCash.Total -= dto.Amount;
+                _unitOfWork.GenericRepository<CompanyCash>().Update(companyCash);
+
+                var companyCashFlow = new CompanyCashFlow()
                 {
                     CoinId = dto.CoinId,
-                    Amount = dto.Amount,
-                    ClientId = dto.ClientId,
-                    Total = clientCash.Total,
-                    MoenyActionId = moneyAction.Id,
+                    Amount = -dto.Amount,
+                    CompanyId = dto.CompanyId,
+                    Total = companyCash.Total,
+                    MoneyActionId = moneyAction.Id
                 };
-                _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlow);
+                _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(companyCashFlow);
                 _unitOfWork.Save();
                 _unitOfWork.Commit();
                 return true;
@@ -964,6 +928,43 @@ namespace BWR.Application.AppServices.BoxActions
                 Tracing.SaveException(ex);
                 return false;
             }
+        }
+        public BoxActionInitialDto InitialInputData()
+        {
+            var boxActionInitialDto = new BoxActionInitialDto();
+            try
+            {
+                var currentTreasuryId = _appSession.GetCurrentTreasuryId();
+                var treasuryCashes = _unitOfWork.GenericRepository<TreasuryCash>().FindBy(x => x.TreasuryId == currentTreasuryId).ToList();
+                var coins = treasuryCashes.Select(x => new CoinForDropdownDto() { Name = x.Coin.Name, Id = x.Coin.Id }).ToList();
+
+                var agents = _unitOfWork.GenericRepository<Client>().FindBy(x => x.ClientType == ClientType.Client)
+                    .Select(x => new ClientDto() { Id = x.Id, FullName = x.FullName, IsEnabled = x.IsEnabled }).ToList();
+
+                var companies = _unitOfWork.GenericRepository<Company>().GetAll()
+                    .Select(x => new CompanyForDropdownDto() { Id = x.Id, Name = x.Name }).ToList();
+
+                var publicExpenses = _unitOfWork.GenericRepository<PublicExpense>().GetAll()
+                   .Select(x => new PublicExpenseForDropdownDto() { Id = x.Id, Name = x.Name }).ToList();
+
+                var publicIncomes = _unitOfWork.GenericRepository<PublicIncome>().GetAll()
+                   .Select(x => new PublicIncomeForDropdownDto() { Id = x.Id, Name = x.Name }).ToList();
+
+                boxActionInitialDto = new BoxActionInitialDto()
+                {
+                    Agents = agents,
+                    TreasuryId = currentTreasuryId,
+                    Coins = coins,
+                    Companies = companies,
+                    PublicExpenses = publicExpenses,
+                    PublicIncomes = publicIncomes
+                };
+            }
+            catch (Exception ex)
+            {
+                Tracing.SaveException(ex);
+            }
+            return boxActionInitialDto;
         }
     }
 }
