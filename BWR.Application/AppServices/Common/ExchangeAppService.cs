@@ -96,7 +96,7 @@ namespace BWR.Application.AppServices.Common
                     CoinId = sellingCoinId,
                     TreasuryId = treasuryId,
                     Total = sellingCoinTreasuryCash.Total,
-                    BranchCashFlowId = branchCashFlowForFirstCoin.Id,
+                    BranchCashFlow = branchCashFlowForFirstCoin,
                 };
                 _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(sellingCoinTreasuryMoeyAction);
                 var branChCashFlowForSecoundCoin = new BranchCashFlow()
@@ -119,9 +119,10 @@ namespace BWR.Application.AppServices.Common
                     CoinId = purchasingCoinId,
                     TreasuryId = treasuryId,
                     Total = secoundCoinTreasuryCash.Total,
-                    BranchCashFlowId = branChCashFlowForSecoundCoin.Id,
+                    BranchCashFlow = branChCashFlowForSecoundCoin,
                 };
                 _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(secoundCoinTreasuryMoeyAction);
+                _unitOfWork.Save();
                 _unitOfWork.Commit();
                 return true;
             }
@@ -278,7 +279,7 @@ namespace BWR.Application.AppServices.Common
             }
         }
 
-        public decimal CalcForFirstCoin(int sellingCoinId, int purchasingCoinId, decimal amountFromFirstCoin)
+        public decimal CalcForFirstCoin(int sellingCoinId, int purchasingCoinId, decimal amount)
         {
             decimal value = 0;
             var mainCoin = _unitOfWork.GenericRepository<BranchCash>().GetAll().Where(c => c.IsMainCoin).FirstOrDefault();
@@ -288,25 +289,67 @@ namespace BWR.Application.AppServices.Common
                 var branchCash = branchCashes.Where(c => c.CoinId == purchasingCoinId).FirstOrDefault();
                 if (branchCash != null)
                 {
-                    value = (decimal)((branchCash.SellingPrice ?? 0) * amountFromFirstCoin);
+                    value = CalcFromMainCoin(branchCash, amount);
                 }
             }
             else if (purchasingCoinId == mainCoin.CoinId)
             {
                 var branchCash = branchCashes.Where(c => c.CoinId == sellingCoinId).FirstOrDefault();
-                if (branchCash != null && branchCash.PurchasingPrice != 0)
+                if (branchCash != null)
                 {
-                    value = (decimal)(amountFromFirstCoin * (branchCash.PurchasingPrice ?? 0));
+                    value = CalcToMainCoin(branchCash, amount);
                 }
             }
             else
             {
-                var fromFirstCoinForMainCoin = (amountFromFirstCoin / branchCashes.Where(c => c.CoinId == sellingCoinId).FirstOrDefault().PurchasingPrice ?? 1);
-                var fromMainCoinForSecounCoin = (branchCashes.Where(c => c.CoinId == purchasingCoinId).FirstOrDefault().SellingPrice ?? 1 * fromFirstCoinForMainCoin);
-                return fromMainCoinForSecounCoin;
+                var firstCoin = branchCashes.Where(c => c.CoinId == sellingCoinId).FirstOrDefault();
+                var seconcCoin = branchCashes.Where(c => c.CoinId == purchasingCoinId).FirstOrDefault();
+                var firstCoinAmount = CalcToMainCoin(firstCoin, amount);
+                value= CalcFromMainCoin(seconcCoin, firstCoinAmount);
             }
 
-            return Math.Round(value, 1);
+            return Math.Round(value, 3);
         }
+
+        private decimal CalcToMainCoin(BranchCash branchCash, decimal amount)
+        {
+            return (branchCash.ExchangePrice != null && branchCash.ExchangePrice != 0) ? amount / branchCash.ExchangePrice.Value : 0;
+        }
+
+        private decimal CalcFromMainCoin(BranchCash branchCash, decimal amount)
+        {
+            return (branchCash.ExchangePrice != null && branchCash.ExchangePrice != 0) ? amount * branchCash.ExchangePrice.Value : 0;
+        }
+
+        //public decimal CalcForFirstCoin(int sellingCoinId, int purchasingCoinId, decimal amountFromFirstCoin)
+        //{
+        //    decimal value = 0;
+        //    var mainCoin = _unitOfWork.GenericRepository<BranchCash>().GetAll().Where(c => c.IsMainCoin).FirstOrDefault();
+        //    var branchCashes = _unitOfWork.GenericRepository<BranchCash>().GetAll();
+        //    if (sellingCoinId == mainCoin.CoinId)
+        //    {
+        //        var branchCash = branchCashes.Where(c => c.CoinId == purchasingCoinId).FirstOrDefault();
+        //        if (branchCash != null)
+        //        {
+        //            value = (decimal)((branchCash.SellingPrice ?? 0) * amountFromFirstCoin);
+        //        }
+        //    }
+        //    else if (purchasingCoinId == mainCoin.CoinId)
+        //    {
+        //        var branchCash = branchCashes.Where(c => c.CoinId == sellingCoinId).FirstOrDefault();
+        //        if (branchCash != null && branchCash.PurchasingPrice != 0)
+        //        {
+        //            value = (decimal)(amountFromFirstCoin * (branchCash.PurchasingPrice ?? 0));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        var fromFirstCoinForMainCoin = (amountFromFirstCoin / branchCashes.Where(c => c.CoinId == sellingCoinId).FirstOrDefault().PurchasingPrice ?? 1);
+        //        var fromMainCoinForSecounCoin = (branchCashes.Where(c => c.CoinId == purchasingCoinId).FirstOrDefault().SellingPrice ?? 1 * fromFirstCoinForMainCoin);
+        //        return fromMainCoinForSecounCoin;
+        //    }
+
+        //    return Math.Round(value, 1);
+        //}
     }
 }

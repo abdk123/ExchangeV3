@@ -10,6 +10,7 @@ using BWR.ShareKernel.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Threading.Tasks;
 
 namespace BWR.Application.AppServices.Treasuries
 {
@@ -65,6 +66,33 @@ namespace BWR.Application.AppServices.Treasuries
                 _unitOfWork.Rollback();
             }
             return treasuryCashDto;
+        }
+
+        public Task<TreasuryCashDto> InsertAsync(TreasuryCashDto dto)
+        {
+            return Task.Factory.StartNew(()=> {
+                TreasuryCashDto treasuryCashDto = null;
+                try
+                {
+                    var treasuryCash = Mapper.Map<TreasuryCashDto, TreasuryCash>(dto);
+                    treasuryCash.CreatedBy = _appSession.GetUserName();
+                    treasuryCash.IsEnabled = true;
+                    _unitOfWork.CreateTransaction();
+
+                    _unitOfWork.GenericRepository<TreasuryCash>().Insert(treasuryCash);
+                    _unitOfWork.Save();
+
+                    _unitOfWork.Commit();
+
+                    treasuryCashDto = Mapper.Map<TreasuryCash, TreasuryCashDto>(treasuryCash);
+                }
+                catch (Exception ex)
+                {
+                    Tracing.SaveException(ex);
+                    _unitOfWork.Rollback();
+                }
+                return treasuryCashDto;
+            });
         }
 
         public TreasuryCashDto Update(TreasuryCashDto dto)

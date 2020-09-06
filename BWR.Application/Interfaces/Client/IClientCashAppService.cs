@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BWR.Application.Dtos.Client;
 namespace BWR.Application.Interfaces.Client
 {
@@ -11,5 +12,6 @@ namespace BWR.Application.Interfaces.Client
         ClientCashDto Update(ClientCashDto dto);
         ClientCashDto UpdateBalance(ClientCashesDto dto);
         void Delete(int id);
+        Task<ClientCashDto> InsertAsync(ClientCashDto clientCashInsertDto);
     }
 }

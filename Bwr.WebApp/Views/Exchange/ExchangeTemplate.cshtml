@@ -18,11 +18,11 @@
         @Html.DropDownList("SecondCoins", null, "اختر العملة", htmlAttributes: new { @class = "form-control", id = "secondCoin" })
     </div>
     <div class="col-lg-2" id="purchasingPriceDiv">
-        <label style="display:block;font-size:20px">سعر الشراء للعملة الأولى</label>
+        <label style="display:block;font-size:20px">السعر الرئيسي للعملة الأولى</label>
         <label id="firstCoinExchange"></label>
     </div>
     <div class="col-lg-2" id="sellingPriceDiv">
-        <label style="display:block;font-size:20px">سعر المبيع للعملة الثانية</label>
+        <label style="display:block;font-size:20px">السعر الرئيسي للعملة الثانية</label>
         <label id="secoundCoinExchangePrice"></label>
     </div>
 </div>
@@ -270,6 +270,7 @@
                     if (companyCash.CoinId == firtCoin) {
 
                         $('#companyFirstBalanceSpan').html(companyCash.Total);
+                        
                     } else if (companyCash.CoinId == secoundCoin) {
 
                         $('#companySecondBalanceSpan').html(companyCash.Total);

@@ -52,9 +52,10 @@ namespace Bwr.WebApp.Controllers.Setting
                 return RedirectToAction("NoTreasury", "Home");
 
             var initialInputs = _outerTransactionAppService.InitialInputData();
+            var coins = _branchCashAppService.GetAll().Select(x => new { Id = x.CoinId, Name = x.Coin.Name });
 
-            ViewBag.FirstCoins = new SelectList(initialInputs.Coins, "Id", "Name");
-            ViewBag.SecondCoins = new SelectList(initialInputs.Coins, "Id", "Name");
+            ViewBag.FirstCoins = new SelectList(coins, "Id", "Name");
+            ViewBag.SecondCoins = new SelectList(coins, "Id", "Name");
 
             ViewData["Clients"] = initialInputs.Clients;
             ViewBag.Agents = new SelectList(initialInputs.Agents, "Id", "FullName");

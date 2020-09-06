@@ -10,6 +10,7 @@ using BWR.ShareKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BWR.Application.AppServices.Clients
 {
@@ -192,6 +193,31 @@ namespace BWR.Application.AppServices.Clients
             }
         }
 
-        
+        public Task<ClientCashDto> InsertAsync(ClientCashDto dto)
+        {
+            return Task.Factory.StartNew(()=> {
+                ClientCashDto clientCashDto = null;
+                try
+                {
+                    var clientCash = Mapper.Map<ClientCashDto, ClientCash>(dto);
+                    clientCash.CreatedBy = _appSession.GetUserName();
+                    clientCash.IsEnabled = true;
+                    _unitOfWork.CreateTransaction();
+
+                    _unitOfWork.GenericRepository<ClientCash>().Insert(clientCash);
+                    _unitOfWork.Save();
+
+                    _unitOfWork.Commit();
+
+                    clientCashDto = Mapper.Map<ClientCash, ClientCashDto>(clientCash);
+                }
+                catch (Exception ex)
+                {
+                    Tracing.SaveException(ex);
+                    _unitOfWork.Rollback();
+                }
+                return clientCashDto;
+            });
+        }
     }
 }

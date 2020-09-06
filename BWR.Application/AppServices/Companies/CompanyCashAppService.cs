@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using BWR.Application.Dtos.Company;
 using BWR.Application.Interfaces.Company;
@@ -137,6 +138,34 @@ namespace BWR.Application.AppServices.Companies
                 _unitOfWork.Rollback();
             }
             return companyCashDto;
+        }
+
+        public Task<CompanyCashDto> InsertAsync(CompanyCashDto dto)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                CompanyCashDto companyCashDto = null;
+                try
+                {
+                    var companyCash = Mapper.Map<CompanyCashDto, CompanyCash>(dto);
+                    companyCash.CreatedBy = _appSession.GetUserName();
+                    companyCash.IsEnabled = true;
+                    _unitOfWork.CreateTransaction();
+
+                    _unitOfWork.GenericRepository<CompanyCash>().Insert(companyCash);
+                    _unitOfWork.Save();
+
+                    _unitOfWork.Commit();
+
+                    companyCashDto = Mapper.Map<CompanyCash, CompanyCashDto>(companyCash);
+                }
+                catch (Exception ex)
+                {
+                    Tracing.SaveException(ex);
+                    _unitOfWork.Rollback();
+                }
+                return companyCashDto;
+            });
         }
 
         public CompanyCashDto Update(CompanyCashDto dto)

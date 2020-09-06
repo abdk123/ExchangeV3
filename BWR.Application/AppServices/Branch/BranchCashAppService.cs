@@ -11,6 +11,7 @@ using BWR.Infrastructure.Context;
 using BWR.Infrastructure.Exceptions;
 using BWR.Domain.Model.Treasures;
 using BWR.Domain.Model.Common;
+using System.Threading.Tasks;
 
 namespace BWR.Application.AppServices.Branch
 {
@@ -117,6 +118,39 @@ namespace BWR.Application.AppServices.Branch
                 _unitOfWork.Rollback();
             }
             return branchCashDto;
+        }
+
+        public Task<BranchCashDto> InsertAsync(BranchCashInsertDto dto)
+        {
+            return Task.Factory.StartNew(()=>{
+
+                BranchCashDto branchCashDto = null;
+                try
+                {
+                    var checkIfExist = _unitOfWork.GenericRepository<BranchCash>().FindBy(x => x.CoinId == dto.CoinId).Any();
+                    if (!checkIfExist)
+                    {
+                        var branchCash = Mapper.Map<BranchCashInsertDto, BranchCash>(dto);
+                        branchCash.CreatedBy = _appSession.GetUserName();
+                        branchCash.IsEnabled = true;
+                        _unitOfWork.CreateTransaction();
+
+                        _unitOfWork.GenericRepository<BranchCash>().Insert(branchCash);
+                        _unitOfWork.Save();
+
+                        _unitOfWork.Commit();
+
+                        branchCashDto = Mapper.Map<BranchCash, BranchCashDto>(branchCash);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Tracing.SaveException(ex);
+                    _unitOfWork.Rollback();
+                }
+                return branchCashDto;
+            });
+            
         }
 
         public BranchCashDto Update(BranchCashUpdateDto dto)

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using BWR.Application.Dtos.Treasury;
 
@@ -12,5 +9,6 @@ namespace BWR.Application.Interfaces.Treasury
         IList<TreasuryCashDto> GetTreasuryCashes(int treasuryId);
         TreasuryCashDto Insert(TreasuryCashDto dto);
         TreasuryCashDto Update(TreasuryCashDto dto);
+        Task<TreasuryCashDto> InsertAsync(TreasuryCashDto treasuryInsertDto);
     }
 }
