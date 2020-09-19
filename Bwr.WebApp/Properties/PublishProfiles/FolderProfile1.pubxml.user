@@ -19,37 +19,37 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/15/2020 02:10:49</publishTime>
     </File>
     <File Include="bin/BWR.Application.dll">
-      <publishTime>08/25/2020 22:24:38</publishTime>
+      <publishTime>09/06/2020 18:43:07</publishTime>
     </File>
     <File Include="bin/BWR.Application.pdb">
-      <publishTime>08/25/2020 22:24:38</publishTime>
+      <publishTime>09/06/2020 18:43:07</publishTime>
     </File>
     <File Include="bin/BWR.Domain.dll">
-      <publishTime>08/25/2020 22:24:37</publishTime>
+      <publishTime>09/06/2020 18:43:06</publishTime>
     </File>
     <File Include="bin/BWR.Domain.pdb">
-      <publishTime>08/25/2020 22:24:37</publishTime>
+      <publishTime>09/06/2020 18:43:06</publishTime>
     </File>
     <File Include="bin/BWR.Infrastructure.dll">
-      <publishTime>08/25/2020 22:24:38</publishTime>
+      <publishTime>09/06/2020 18:43:06</publishTime>
     </File>
     <File Include="bin/BWR.Infrastructure.dll.config">
       <publishTime>07/15/2020 02:10:49</publishTime>
     </File>
     <File Include="bin/BWR.Infrastructure.pdb">
-      <publishTime>08/25/2020 22:24:38</publishTime>
+      <publishTime>09/06/2020 18:43:06</publishTime>
     </File>
     <File Include="bin/BWR.ShareKernel.dll">
-      <publishTime>08/25/2020 22:24:37</publishTime>
+      <publishTime>09/06/2020 18:43:05</publishTime>
     </File>
     <File Include="bin/BWR.ShareKernel.pdb">
-      <publishTime>08/25/2020 22:24:37</publishTime>
+      <publishTime>09/06/2020 18:43:05</publishTime>
     </File>
     <File Include="bin/Bwr.WebApp.dll">
-      <publishTime>08/25/2020 22:24:39</publishTime>
+      <publishTime>09/06/2020 19:25:21</publishTime>
     </File>
     <File Include="bin/Bwr.WebApp.pdb">
-      <publishTime>08/25/2020 22:24:39</publishTime>
+      <publishTime>09/06/2020 19:25:21</publishTime>
     </File>
     <File Include="bin/Castle.Core.dll">
       <publishTime>07/15/2020 02:10:49</publishTime>
@@ -18454,7 +18454,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/15/2020 02:10:49</publishTime>
     </File>
     <File Include="Scripts/GlopalScript.js">
-      <publishTime>08/24/2020 10:08:23</publishTime>
+      <publishTime>08/26/2020 10:26:06</publishTime>
     </File>
     <File Include="Scripts/jquery-1.10.2.js">
       <publishTime>07/15/2020 02:10:49</publishTime>
@@ -18544,7 +18544,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/15/2020 02:10:49</publishTime>
     </File>
     <File Include="Views/BoxAction/Index.cshtml">
-      <publishTime>08/22/2020 18:02:09</publishTime>
+      <publishTime>09/06/2020 18:37:22</publishTime>
     </File>
     <File Include="Views/BranchCash/Index.cshtml">
       <publishTime>07/24/2020 17:48:42</publishTime>
@@ -18571,7 +18571,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/24/2020 16:26:54</publishTime>
     </File>
     <File Include="Views/Client/Index.cshtml">
-      <publishTime>07/17/2020 16:13:04</publishTime>
+      <publishTime>09/06/2020 18:37:22</publishTime>
     </File>
     <File Include="Views/Client/_CreateClient.cshtml">
       <publishTime>08/24/2020 12:40:45</publishTime>
@@ -18580,16 +18580,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/15/2020 02:10:49</publishTime>
     </File>
     <File Include="Views/Client/_DetailsClient.cshtml">
-      <publishTime>07/17/2020 17:38:00</publishTime>
+      <publishTime>09/06/2020 18:37:22</publishTime>
     </File>
     <File Include="Views/Client/_EditClient.cshtml">
-      <publishTime>08/24/2020 12:52:31</publishTime>
+      <publishTime>09/01/2020 14:36:45</publishTime>
     </File>
     <File Include="Views/ClientCash/Index.cshtml">
-      <publishTime>07/17/2020 16:09:13</publishTime>
+      <publishTime>09/01/2020 14:36:45</publishTime>
     </File>
     <File Include="Views/ClientCashFlow/Index.cshtml">
-      <publishTime>08/24/2020 18:29:16</publishTime>
+      <publishTime>09/06/2020 18:37:22</publishTime>
     </File>
     <File Include="Views/Coin/Index.cshtml">
       <publishTime>07/15/2020 02:10:49</publishTime>
@@ -18619,22 +18619,22 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/15/2020 02:10:49</publishTime>
     </File>
     <File Include="Views/Company/_DetailsCompany.cshtml">
-      <publishTime>07/17/2020 16:06:07</publishTime>
+      <publishTime>09/06/2020 18:37:22</publishTime>
     </File>
     <File Include="Views/Company/_EditCompany.cshtml">
-      <publishTime>08/24/2020 12:49:22</publishTime>
+      <publishTime>09/06/2020 13:59:08</publishTime>
     </File>
     <File Include="Views/CompanyCash/Index.cshtml">
-      <publishTime>07/23/2020 23:53:17</publishTime>
+      <publishTime>09/01/2020 14:36:45</publishTime>
     </File>
     <File Include="Views/CompanyCashFlow/Index.cshtml">
-      <publishTime>07/17/2020 16:27:59</publishTime>
+      <publishTime>09/06/2020 18:37:22</publishTime>
     </File>
     <File Include="Views/CompanyCommission/Index.cshtml">
       <publishTime>07/15/2020 02:10:49</publishTime>
     </File>
     <File Include="Views/CompanyCommission/_CreateCompanyCommission.cshtml">
-      <publishTime>07/15/2020 02:10:49</publishTime>
+      <publishTime>09/01/2020 14:36:45</publishTime>
     </File>
     <File Include="Views/CompanyCommission/_DeleteCompanyCommission.cshtml">
       <publishTime>07/15/2020 02:10:49</publishTime>
@@ -18661,7 +18661,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/15/2020 02:10:49</publishTime>
     </File>
     <File Include="Views/Exchange/ExchangeTemplate.cshtml">
-      <publishTime>08/17/2020 22:42:43</publishTime>
+      <publishTime>09/06/2020 18:32:44</publishTime>
     </File>
     <File Include="Views/Exchange/Index.cshtml">
       <publishTime>07/24/2020 17:11:41</publishTime>
@@ -18685,19 +18685,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/27/2020 17:33:02</publishTime>
     </File>
     <File Include="Views/InnerTransaction/Index.cshtml">
-      <publishTime>08/25/2020 22:00:45</publishTime>
+      <publishTime>09/01/2020 14:36:45</publishTime>
     </File>
     <File Include="Views/InnerTransaction/InnerTransactionDetails.cshtml">
       <publishTime>07/30/2020 12:41:12</publishTime>
     </File>
     <File Include="Views/OuterTransaction/CreateOuterTransaction.cshtml">
-      <publishTime>08/24/2020 17:09:29</publishTime>
+      <publishTime>09/01/2020 14:36:45</publishTime>
     </File>
     <File Include="Views/OuterTransaction/Index.cshtml">
-      <publishTime>08/09/2020 20:11:09</publishTime>
+      <publishTime>09/01/2020 19:51:07</publishTime>
     </File>
     <File Include="Views/OuterTransaction/OuterTransactionDetails.cshtml">
-      <publishTime>08/24/2020 13:33:47</publishTime>
+      <publishTime>09/06/2020 18:37:22</publishTime>
     </File>
     <File Include="Views/Province/Index.cshtml">
       <publishTime>07/15/2020 02:10:49</publishTime>
@@ -18769,7 +18769,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/15/2020 02:10:49</publishTime>
     </File>
     <File Include="Views/Shared/_BlankPageLayout.cshtml">
-      <publishTime>08/24/2020 13:21:44</publishTime>
+      <publishTime>09/06/2020 19:24:03</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
       <publishTime>07/15/2020 02:10:49</publishTime>
@@ -18778,13 +18778,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/29/2020 09:56:00</publishTime>
     </File>
     <File Include="Views/Statement/AllBalances.cshtml">
-      <publishTime>08/12/2020 15:07:36</publishTime>
+      <publishTime>09/01/2020 14:36:45</publishTime>
     </File>
     <File Include="Views/Statement/_ClientsAndCompaniesBalances.cshtml">
       <publishTime>08/12/2020 14:42:24</publishTime>
     </File>
     <File Include="Views/Statement/_Conclusion.cshtml">
-      <publishTime>08/15/2020 19:11:35</publishTime>
+      <publishTime>09/01/2020 14:36:45</publishTime>
     </File>
     <File Include="Views/Statement/_DileveredTransactions.cshtml">
       <publishTime>08/09/2020 21:20:22</publishTime>
@@ -18793,7 +18793,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/15/2020 19:28:59</publishTime>
     </File>
     <File Include="Views/Statement/_OuterTransactions.cshtml">
-      <publishTime>08/09/2020 20:19:12</publishTime>
+      <publishTime>09/06/2020 18:37:22</publishTime>
     </File>
     <File Include="Views/System/Index.cshtml">
       <publishTime>08/24/2020 13:19:03</publishTime>
@@ -18817,10 +18817,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/15/2020 02:10:49</publishTime>
     </File>
     <File Include="Views/Treasury/_DetailsTreasury.cshtml">
-      <publishTime>07/17/2020 18:05:58</publishTime>
+      <publishTime>09/01/2020 14:36:45</publishTime>
     </File>
     <File Include="Views/Treasury/_EditTreasury.cshtml">
-      <publishTime>07/15/2020 02:10:49</publishTime>
+      <publishTime>09/06/2020 14:26:32</publishTime>
     </File>
     <File Include="Views/TreasuryMoneyAction/TreasuryActions.cshtml">
       <publishTime>07/17/2020 18:19:45</publishTime>
@@ -18853,7 +18853,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/15/2020 02:10:49</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>08/18/2020 00:22:39</publishTime>
+      <publishTime>09/06/2020 18:43:14</publishTime>
     </File>
   </ItemGroup>
 </Project>

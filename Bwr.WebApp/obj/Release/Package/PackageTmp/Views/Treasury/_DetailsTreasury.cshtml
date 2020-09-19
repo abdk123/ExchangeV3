@@ -96,7 +96,7 @@
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             var url = $(e.target).attr('data-url');
-            debugger;
+            
             if (url == null) {
                 $treasuryBalanceDataTable.refresh();
             }

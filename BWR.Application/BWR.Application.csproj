@@ -68,6 +68,7 @@
     <Compile Include="AppServices\Companies\CompanyCashFlowAppService.cs" />
     <Compile Include="AppServices\Companies\CompanyCommissionAppService.cs" />
     <Compile Include="AppServices\Companies\CompanyCountryAppService.cs" />
+    <Compile Include="AppServices\Factories\CashFowFactory.cs" />
     <Compile Include="AppServices\Security\PermissionAppService.cs" />
     <Compile Include="AppServices\Security\RoleAppService.cs" />
     <Compile Include="AppServices\Security\UserAppService.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Dtos\Client\ClientAttatchmentDto.cs" />
     <Compile Include="Dtos\Client\ClientCashFlow\ClientCashFlowInputDto.cs" />
     <Compile Include="Dtos\Client\ClientCashFlow\ClientCashFlowOutputDto.cs" />
+    <Compile Include="Dtos\Client\ClientCashFlow\ClientMatchDto.cs" />
     <Compile Include="Dtos\Client\ClientCash\ClientCashDto.cs" />
     <Compile Include="Dtos\Client\ClientCash\ClientCashesDto.cs" />
     <Compile Include="Dtos\Client\ClientCashFlow\ClientCashFlowDto.cs" />
@@ -123,8 +125,10 @@
     <Compile Include="Dtos\Client\ClientTypeDto.cs" />
     <Compile Include="Dtos\Client\ClientUpdateDto.cs" />
     <Compile Include="Dtos\Common\BoxActionDto.cs" />
+    <Compile Include="Dtos\Common\CashFlowDto.cs" />
     <Compile Include="Dtos\Common\ExchangeDto.cs" />
     <Compile Include="Dtos\Common\Select2Dto.cs" />
+    <Compile Include="Dtos\Company\CompanyCashFlow\CompanyMatchDto.cs" />
     <Compile Include="Dtos\MoneyAction\MoneyActionDetailDto.cs" />
     <Compile Include="Dtos\MoneyAction\MoneyActionDto.cs" />
     <Compile Include="Dtos\Common\PhoneBaseDto.cs" />
@@ -242,6 +246,7 @@
     <Compile Include="Interfaces\Company\ICompanyCashFlowAppService.cs" />
     <Compile Include="Interfaces\Company\ICompanyCommissionAppService.cs" />
     <Compile Include="Interfaces\Company\ICompanyCountryAppService.cs" />
+    <Compile Include="Interfaces\Factories\ICashFowFactory.cs" />
     <Compile Include="Interfaces\IStatementAppAservice.cs" />
     <Compile Include="Interfaces\Security\IPermissionAppService.cs" />
     <Compile Include="Interfaces\Security\IRoleAppService.cs" />

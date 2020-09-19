@@ -1,6 +1,5 @@
 ﻿@using Bwr.WebApp.Models.Security
 @using BWR.ShareKernel.Permisions
-
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
@@ -27,8 +26,8 @@
     <link href="~/Content/assets/global/css/plugins-md-rtl.min.css" rel="stylesheet" type="text/css" />
     <!--Data Table Style-->
     <link href="~/Content/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
-        <link href="~/Content/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap-rtl.css" rel="stylesheet"
-              type="text/css" />
+    <link href="~/Content/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap-rtl.css" rel="stylesheet"
+          type="text/css" />
     <!--End Data Table Style-->
     <!--Begin Css Jquery Confirm-->
     <link href="~/Content/Jquery-Confirm/Jquery-confrim-css.css" rel="stylesheet" />
@@ -58,7 +57,6 @@
     <script src="~/Content/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/unobtrusiveajax")
-
     <script src="~/Content/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="~/Content/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
     <script src="~/Content/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
@@ -149,9 +147,8 @@
         <div class="page-container">
             <!-- BEGIN SIDEBAR -->
             <div class="page-sidebar-wrapper">
-
                 <div class="page-sidebar navbar-collapse collapse">
-                                        <ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-closed" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px;display:block">
+                    <ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-closed" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px;display:block">
                         <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
                         <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
                         <li class="sidebar-toggler-wrapper hide">
@@ -162,18 +159,18 @@
                         <!-- END SIDEBAR TOGGLER BUTTON -->
                         <!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
                         @*<li class="nav-item start ">
-            <a href="javascript:;" class="nav-link nav-toggle">
-                <i class="icon-home"></i>
-                <span class="title">الرئيسية</span>
-                <span class="arrow"></span>
-            </a>
-        </li>*@
+                                <a href="javascript:;" class="nav-link nav-toggle">
+                                    <i class="icon-home"></i>
+                                    <span class="title">الرئيسية</span>
+                                    <span class="arrow"></span>
+                                </a>
+                            </li>*@
                         @*<li class="nav-item start ">
-            <a data-toggle="modal" href="#OuterTransactionModel" onclick="modelSetting();" class="nav-link nav-toggle">
-                <i class="fa fa-line-chart"></i>
-                <span class="title">كشف الحوالات الصادرة</span>
-            </a>
-        </li>*@
+                                <a data-toggle="modal" href="#OuterTransactionModel" onclick="modelSetting();" class="nav-link nav-toggle">
+                                    <i class="fa fa-line-chart"></i>
+                                    <span class="title">كشف الحوالات الصادرة</span>
+                                </a>
+                            </li>*@
                         @if (PermissionHelper.CheckPermission(AppPermision.Action_OuterTransaction_CreateOuterTransaction))
                         {
 
@@ -186,12 +183,11 @@
                         }
 
                         @*<li class="nav-item start ">
-            <a href="/system/index" id="exchangehref" class="nav-link nav-toggle">
-                <i class="fa fa-arrows-v"></i>
-                <span class="title" id="exchangeSpan">الصيرفة</span>
-            </a>
-        </li>*@
-
+                                <a href="/system/index" id="exchangehref" class="nav-link nav-toggle">
+                                    <i class="fa fa-arrows-v"></i>
+                                    <span class="title" id="exchangeSpan">الصيرفة</span>
+                                </a>
+                            </li>*@
                         @if (PermissionHelper.CheckPermission(AppPermision.Action_InnerTransaction_Index))
                         {
                             <li class="nav-item start ">
@@ -240,7 +236,7 @@
                         @if (PermissionHelper.CheckPermission(AppPermision.Page_BoxAction))
                         {
                             <li class="nav-item start ">
-                                <a data-toggle="modal" href="/BoxAction/index" class="nav-link nav-toggle">
+                                <a data-toggle="modal" href="@Url.Action("Index", "BoxAction")" class="nav-link nav-toggle">
                                     <i class="fa fa-dropbox"></i>
                                     <span class="title">الصندوق</span>
                                 </a>
@@ -255,7 +251,7 @@
                                 </a>
                             </li>
                         }
-                        <li class="nav-item  ">
+                        <li class="nav-item">
                             <a href="javascript:;" class="nav-link nav-toggle">
                                 <i class="icon-docs"></i>
                                 <span class="title">الكشوفات</span>
@@ -302,6 +298,18 @@
                                     </a>
                                 </li>
                             </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a data-toggle="modal" href="#LayoutclientCashFlowModal" class="nav-link nav-toggle">
+                                <i class="fa fa-user"></i>
+                                <span class="title">كشف حساب العملاء</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a data-toggle="modal" href="#LayoutCompanyCashFlowModal" class="nav-link nav-toggle">
+                                <i class="fa fa-building"></i>
+                                <span class="title">كشف حساب الشركات</span>
+                            </a>
                         </li>
                     </ul>
                     <!-- END SIDEBAR MENU -->
@@ -351,6 +359,89 @@
         </div>
         <!-- END FOOTER -->
     </div>
+
+
+
+    @*<div class="modal fade draggable-modal ui-draggable" id="clientCashFlow" role="dialog" aria-hidden="true" style="display: none;" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header ui-draggable-handle">
+                    <button type="butto n" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">اختر العميل</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <label>العميل</label>
+                            <select id="layoutModalClientCashAgentSelect" style="width:100%"> </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn dark btn-outline" data-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn green" id="layoutModalClientCashViewBtn">عرض</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>*@
+
+    
+    <div class="modal fade draggable-modal ui-draggable" id="LayoutCompanyCashFlowModal" role="dialog" aria-hidden="true" style="display: none;" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header ui-draggable-handle">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">اخرت الشركة</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <label>الشركة</label>
+                            <select id="layoutModalCompanyCashSelect" style="width:100%"> </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn dark btn-outline" data-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn green" id="layoutModalCompanyCashViewBtn">عرض</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade draggable-modal ui-draggable" id="LayoutclientCashFlowModal" role="dialog" aria-hidden="true" style="display: none;" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header ui-draggable-handle">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">اختر العميل</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <label>العميل</label>
+                            <select id="layoutModalClientCashAgentSelect" style="width:100%"> </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn dark btn-outline" data-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn green" id="layoutModalClientCashViewBtn">عرض</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+
+
     <div class="modal fade draggable-modal ui-draggable" id="ChooseBlance" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -383,12 +474,10 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-
     <div class="modal fade draggable-modal ui-draggable" id="outerTransactionModel" role="basic" aria-hidden="true" style="display: none;"></div>
     <div class="modal fade draggable-modal ui-draggable" id="dileveredTransactionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none;"></div>
     <div class="modal fade draggable-modal ui-draggable" id="allBalancesModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">    </div>
     <div class="modal fade draggable-modal ui-draggable" id="conclusionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none;"></div>
-
     <script>
 
 
@@ -398,7 +487,8 @@
 
 
         $(function () {
-
+            fillAgentModelSelect();
+            fillCompanyModelSelect();
             $('input.flat').iCheck({
                 checkboxClass: 'icheckbox_flat-green',
                 radioClass: 'iradio_flat-green'
@@ -407,18 +497,6 @@
             $('#clickmewow').click(function () {
                 $('#radio1003').attr('checked', 'checked');
             });
-            @*$.post(
-                '@Url.Action("ChecekIfTherIsMaincoin", "BranchCash")',
-                function (data) {
-                    if (data == "False") {
-                        $('#exchangehref').attr("href", "");
-                        $('#exchangeSpan').text("يجب تحديد العملة الأأساسية");
-                    } else {
-                        $('#exchangehref').attr("href", '@Url.Action("Index", "Exchange")');
-                        $('#exchangeSpan').text("الصيرفة");
-                    }
-                }
-            )*@
 
             $("#outerTransactionsStatment").on('click', function (e) {
 
@@ -566,6 +644,39 @@
             );
         }
 
+        function fillCompanyModelSelect() {
+            console.log('xxx');
+            $.get(
+                '@Url.Action("GetCompanyForSelect2", "Company")',
+                function (companies) {
+                    console.log(companies);
+                    for (var i = 0; i < companies.length; i++) {
+                        $('#layoutModalCompanyCashSelect').append(new Option(companies[i].text, companies[i].id));
+                    }
+                    $('#layoutModalCompanyCashSelect').select2();
+                }
+            )
+        }
+        function fillAgentModelSelect() {
+            $.get(
+            '@Url.Action("GetAgentForSelect2", "Client")',
+                function (clients) {
+                               for (var i = 0; i < clients.length; i++) {
+                                   $('#layoutModalClientCashAgentSelect').append(new Option(clients[i].text, clients[i].id));
+                               }
+                               $('#layoutModalClientCashAgentSelect').select2();
+
+                    }
+                )
+
+            }
+
+        $('#layoutModalClientCashViewBtn').click(function () {
+            window.location.href = '@Url.Action("Detail", "Client")?id=' + $('#layoutModalClientCashAgentSelect').val() +"#cashFlowbtn";
+        });
+        $('#layoutModalCompanyCashViewBtn').click(function () {
+            window.location.href = '@Url.Action("Detail", "Company")?id=' + $('#layoutModalCompanyCashSelect').val() +"#cashFlowbtn";
+        });
     </script>
     @RenderSection("ScriptPath", required: false)
 </body>

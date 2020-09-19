@@ -303,18 +303,18 @@ namespace BWR.Application.AppServices.Transactions
                 #endregion
 
                 #region Branch Cash Flow
-                var branchCashFlow = new BranchCashFlow()
-                {
-                    BranchId = BranchHelper.Id,
-                    CreatedBy = _appSession.GetUserName(),
-                    MoenyAction = moneyAction,
-                    TreasuryId = treasuryId,
-                    CoinId = dto.CoinId,
-                    Amount = dto.Amount + dto.OurComission,
-                    Total = branchCash.Total
-                };
+                //var branchCashFlow = new BranchCashFlow()
+                //{
+                //    BranchId = BranchHelper.Id,
+                //    CreatedBy = _appSession.GetUserName(),
+                //    MoenyAction = moneyAction,
+                //    TreasuryId = treasuryId,
+                //    CoinId = dto.CoinId,
+                //    Amount = dto.Amount + dto.OurComission,
+                //    Total = branchCash.Total
+                //};
 
-                _unitOfWork.GenericRepository<BranchCashFlow>().Insert(branchCashFlow);
+                //_unitOfWork.GenericRepository<BranchCashFlow>().Insert(branchCashFlow);
                 #endregion
 
                 #region Company Cash

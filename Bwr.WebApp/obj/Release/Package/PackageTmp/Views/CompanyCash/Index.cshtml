@@ -195,7 +195,7 @@
 
     function initialDtInputs(e) {
         var tr = getRowFormAnyElement(e);
-        debugger;
+        
 
         tr.find('a.save-dt').css('display', 'inline');
         tr.find('a.cancel-dt').css('display', 'inline');
@@ -260,7 +260,7 @@
 
             var tds = editRow.find('td');
             var currentTr = getRowFormAnyElement(e);
-            debugger;
+            
             if (btnEdit != undefined && btnEdit != null) {
                 var id = $(btnEdit).attr("data-id");
                 var rowData = getRowDataById(id);

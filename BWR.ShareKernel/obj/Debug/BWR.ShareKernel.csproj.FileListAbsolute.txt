@@ -65,8 +65,8 @@ F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.dll
 F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.SqlServer.dll
 F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.xml
 F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.SqlServer.xml
-F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csprojAssemblyReference.cache
 F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CoreCompileInputs.cache
 F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CopyComplete
 F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.dll
 F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.pdb
+F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csprojAssemblyReference.cache

@@ -340,7 +340,7 @@ namespace BWR.Application.AppServices.Transactions
                 CoinId = dto.CoinId,
                 CompanyId = mainCompanyId,
                 Total = companyCash.Total,
-                Amount = dto.Amount,
+                Amount = -dto.Amount,
                 Matched = false,
                 MoenyAction = moneyAction
             };

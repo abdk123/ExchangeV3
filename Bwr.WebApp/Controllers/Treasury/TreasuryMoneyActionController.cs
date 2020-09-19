@@ -1,5 +1,7 @@
-﻿using BWR.Application.Common;
+﻿using Bwr.WebApp.Models.Security;
+using BWR.Application.Common;
 using BWR.Application.Dtos.Treasury.TreasuryMoneyAction;
+using BWR.Application.Interfaces.Shared;
 using BWR.Application.Interfaces.TreasuryMoneyAction;
 using System.Linq;
 using System.Web.Mvc;
@@ -9,16 +11,26 @@ namespace Bwr.WebApp.Controllers.Treasury
     public class TreasuryMoneyActionController : Controller
     {
         private readonly ITreasuryMoneyActionAppService _treasuryMoneyActionAppService;
+        private readonly IAppSession _appSession;
         private string _message;
         private bool _success;
 
-        public TreasuryMoneyActionController(ITreasuryMoneyActionAppService treasuryMoneyActionAppService)
+        public TreasuryMoneyActionController(ITreasuryMoneyActionAppService treasuryMoneyActionAppService, IAppSession appSession)
         {
             _treasuryMoneyActionAppService = treasuryMoneyActionAppService;
             _message = "";
             _success = false;
+            _appSession = appSession;
         }
 
+        public ActionResult Index()
+        {
+            var entityDto = new EntityDto()
+            {
+                Id = new AppSession().GetCurrentTreasuryId()
+            };
+            return View(entityDto);
+        }
 
         public ActionResult TreasuryBalance(int treasuryId)
         {

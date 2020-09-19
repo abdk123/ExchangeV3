@@ -1,5 +1,6 @@
 ﻿@using Bwr.WebApp.Models.Security
 @using BWR.ShareKernel.Permisions
+
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
@@ -218,7 +219,7 @@
                         @if (PermissionHelper.CheckPermission(AppPermision.Page_BranchCashFlow))
                         {
                             <li class="nav-item start ">
-                                <a data-toggle="modal" href="#ChooseBlance" class="nav-link nav-toggle">
+                                <a data-toggle="modal"  href="#ChooseBlance" class="nav-link nav-toggle">
                                     <i class="fa fa-arrows-v"></i>
                                     <span class="title">كشف حساب الصندوق</span>
                                 </a>
@@ -236,7 +237,7 @@
                         @if (PermissionHelper.CheckPermission(AppPermision.Page_BoxAction))
                         {
                             <li class="nav-item start ">
-                                <a data-toggle="modal" href="/BoxAction/index" class="nav-link nav-toggle">
+                                <a data-toggle="modal" href="@Url.Action("Index", "BoxAction")" class="nav-link nav-toggle">
                                     <i class="fa fa-dropbox"></i>
                                     <span class="title">الصندوق</span>
                                 </a>
@@ -677,6 +678,8 @@
         $('#layoutModalCompanyCashViewBtn').click(function () {
             window.location.href = '@Url.Action("Detail", "Company")?id=' + $('#layoutModalCompanyCashSelect').val() +"#cashFlowbtn";
         });
+
+       
     </script>
     @RenderSection("ScriptPath", required: false)
 </body>
