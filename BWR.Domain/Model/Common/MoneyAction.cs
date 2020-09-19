@@ -3,6 +3,7 @@ using BWR.Domain.Model.Clients;
 using BWR.Domain.Model.Companies;
 using BWR.Domain.Model.Transactions;
 using BWR.ShareKernel.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,6 +17,8 @@ namespace BWR.Domain.Model.Common
             ClientCashFlows = new List<ClientCashFlow>();
             BranchCashFlows = new List<BranchCashFlow>();
         }
+
+        public DateTime Date { get; set; }
 
         public int? BoxActionsId { get; set; }
         [ForeignKey("BoxActionsId")]
