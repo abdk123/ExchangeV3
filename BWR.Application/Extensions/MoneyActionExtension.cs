@@ -54,9 +54,9 @@ namespace BWR.Application.Extensions
                 else
                     return moneyAction.BoxAction.Note + "/" + moneyAction.PublicMoney.GetActionName();
             if (moneyAction.ClearingId != null)
-                {
-                    return moneyAction.Clearing.GetNote(requester, (int)objectId);
-                }
+            {
+                return moneyAction.Clearing.GetNote(requester, (int)objectId);
+            }
             return "GetNoteMoenyAction";
         }
 
@@ -110,6 +110,10 @@ namespace BWR.Application.Extensions
             {
                 return moneyAction.Clearing.GetSenderName(requester, (int)requeserId);
             }
+            if (moneyAction.PubLicMoneyId != null)
+            {
+                return moneyAction.PublicMoney.GetActionName();
+            }
             return "";
         }
 
@@ -149,20 +153,27 @@ namespace BWR.Application.Extensions
         {
             if (moneyAction.BoxAction != null)
             {
-                if (moneyAction.Clearing == null&&moneyAction.PubLicMoneyId==null&&requester!=Requester.Branch)
+                if (requester == Requester.Branch && moneyAction.PubLicMoneyId != null)
                 {
                     if (moneyAction.BoxAction.IsIncmoe)
                         return "قبض";
                     return "صرف";
                 }
-                else if(moneyAction.ClearingId!=null)
+                if (moneyAction.Clearing == null && moneyAction.PubLicMoneyId == null && requester != Requester.Branch)
+                {
+                    if (moneyAction.BoxAction.IsIncmoe)
+                        return "قبض";
+                    return "صرف";
+                }
+                else if (moneyAction.ClearingId != null)
                 {
                     return moneyAction.Clearing.GetTypeName(requester, (int)objectId);
                 }
-                else if(moneyAction.PubLicMoneyId!=null)
+                else if (moneyAction.PubLicMoneyId != null)
                 {
                     return moneyAction.BoxAction.IsIncmoe ? "صرف له" : "قبض منه";
                 }
+                return moneyAction.BoxAction.IsIncmoe ? "قبض" : "صرف";
             }
             if (moneyAction.TransactionId != null)
                 return moneyAction.Transaction.GetTypeName(requester, objectId);
