@@ -128,3 +128,4 @@ F:\Projects\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.csproj.Co
 F:\Projects\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.csproj.CopyComplete
 F:\Projects\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.dll
 F:\Projects\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.pdb
+F:\Projects\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.Migrations.Add_Date_To_MoneyAction.resources
