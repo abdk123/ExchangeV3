@@ -29,5 +29,14 @@ namespace Bwr.WebApp.Controllers
 
             return Json(new { data = companyCashFlows }, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpPost]
+        public ActionResult ConvertMatchingStatus(CompanyMatchDto dto)
+        {
+            if (_companyCashFlowAppService.ConvertMatchingStatus(dto) != null)
+                _success = true;
+
+            return Json(new { Success = _success }, JsonRequestBehavior.AllowGet);
+        }
     }
 }

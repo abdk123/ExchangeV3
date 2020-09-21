@@ -44,27 +44,8 @@ function validationPhonNumber(element, evt, enablemunis) {
     isNumber(evt);
 }
 
-//function numberWithCommas(number, bool) {
-    
-//    if (number == null || number ==="" || number == "لايوجد" || number == "null" || number == undefined) {
-//        if (bool == true)
-//            return "لايوجد";
-//        return "";
-        
-//    }
-//    if (number == 0)
-//        return 0;
-//    var parts = number.toString().split(".");
-//    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-//    return parts.join(".");
-//}
-
 function FormaittingNumber(element,bool) {
-    //var text = element.value;
-    //console.log(element);
-    //console.log(bool);
-    //console.log("---------------------");
-    //should repete function :(
+    
     element.value = deleteCommaFromNumber(element.value);
 
     element.value = numberWithCommas(element.value, bool);

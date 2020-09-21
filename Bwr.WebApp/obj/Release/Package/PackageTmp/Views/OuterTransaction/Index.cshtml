@@ -91,7 +91,7 @@
                     @Html.DisplayFor(modelItem => item.SenderCompany.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.TypeOfPay.ToString())
+                    @*@Html.DisplayFor(modelItem => item.TypeOfPay.ToString())*@
                 </td>
                 <td>
                     <a href="@Url.Action("OuterTransactionDetails","OuterTransaction")?transactionId=@item.Id" class="btn btn-primary">عرض </a>

@@ -59,6 +59,7 @@
     <Compile Include="Model\Clients\ClientPhone.cs" />
     <Compile Include="Model\Clients\ClientType.cs" />
     <Compile Include="Model\Common\BoxAction.cs" />
+    <Compile Include="Model\Common\CashFlow.cs" />
     <Compile Include="Model\Common\Clearing.cs" />
     <Compile Include="Model\Common\Exchange.cs" />
     <Compile Include="Model\Common\MoneyAction.cs" />

@@ -46,7 +46,7 @@
                                     <a href="#comission" data-url="@Url.Action("Index","CompanyCommission")?companyId=@Model.Id" data-toggle="tab">تهيئة العمولة</a>
                                 </li>
                                 <li>
-                                    <a href="#cashFlow" data-url="@Url.Action("Index","CompanyCashFlow")?companyId=@Model.Id" data-toggle="tab">كشف حساب الصندوق </a>
+                                    <a href="#cashFlow" id="cashFlowbtn" data-url="@Url.Action("Index","CompanyCashFlow")?companyId=@Model.Id" data-toggle="tab">كشف حساب الصندوق </a>
                                 </li>
                             </ul>
                         </div>
@@ -137,11 +137,21 @@
                         'columns': [
                             { 'title': 'معرف العملة', 'data': 'CoinId', "visible": false},
                             { 'title': 'العملة', 'data': 'CoinName', "width": "20%", 'searchable': true },
-                            { 'title': 'له', 'data': 'ForHim', "width": "20%", 'searchable': true },
-                            { 'title': 'عليه', 'data': 'OnHim', "width": "20%", 'searchable': true },
+                            {
+                                'title': 'له', 'data': 'ForHim', "width": "20%", 'searchable': true,
+                                render: function (data, type, row) {
+                                    return numberWithCommas( Math.abs(data));
+                                },
+                            },
+                            {
+                                'title': 'عليه', 'data': 'OnHim', "width": "20%", 'searchable': true
+                                ,
+                                render: function (data, type, row) {
+                                    return numberWithCommas( Math.abs(data));
+                                }
+                            },
                             { 'title': 'أكبر قيمة دائن', 'data': 'MaxCreditor', "width": "20%", 'searchable': true },
                             { 'title': 'أكبر قيمة مدين', 'data': 'MaxDebit', "width": "20%",'searchable': true },
-
                         ],
                         'lengthMenu': [10, 25, 50, 100],
                     });
@@ -152,7 +162,6 @@
                 dt.ajax.reload();
                 }
             }
-
         $companyBalanceDT.init();
     }
 
@@ -171,4 +180,9 @@
         ele += '</div >';
         return ele;
     }
+    $(document).ready(function () {
+        if (location.hash == "#cashFlowbtn") {
+            $('#cashFlowbtn').click();
+        }
+    });
 </script>

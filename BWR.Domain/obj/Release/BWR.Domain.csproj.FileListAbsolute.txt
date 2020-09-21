@@ -11,3 +11,16 @@ F:\Projects\bw101600-master\BWR.Domain\obj\Release\BWR.Domain.csproj.CoreCompile
 F:\Projects\bw101600-master\BWR.Domain\obj\Release\BWR.Domain.csproj.CopyComplete
 F:\Projects\bw101600-master\BWR.Domain\obj\Release\BWR.Domain.dll
 F:\Projects\bw101600-master\BWR.Domain\obj\Release\BWR.Domain.pdb
+F:\Projects\ExchangeV3\BWR.Domain\bin\Release\BWR.Domain.dll
+F:\Projects\ExchangeV3\BWR.Domain\bin\Release\BWR.Domain.pdb
+F:\Projects\ExchangeV3\BWR.Domain\bin\Release\BWR.ShareKernel.dll
+F:\Projects\ExchangeV3\BWR.Domain\bin\Release\EntityFramework.dll
+F:\Projects\ExchangeV3\BWR.Domain\bin\Release\EntityFramework.SqlServer.dll
+F:\Projects\ExchangeV3\BWR.Domain\bin\Release\BWR.ShareKernel.pdb
+F:\Projects\ExchangeV3\BWR.Domain\bin\Release\EntityFramework.xml
+F:\Projects\ExchangeV3\BWR.Domain\bin\Release\EntityFramework.SqlServer.xml
+F:\Projects\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.csprojAssemblyReference.cache
+F:\Projects\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.csproj.CoreCompileInputs.cache
+F:\Projects\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.csproj.CopyComplete
+F:\Projects\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.dll
+F:\Projects\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.pdb

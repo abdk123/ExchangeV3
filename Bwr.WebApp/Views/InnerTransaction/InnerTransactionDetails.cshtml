@@ -47,7 +47,11 @@
             </td>
             <td>
                 @{
-                    Write(Model.DeliverdDate.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")));
+                    if (Model.DeliverdDate != null)
+                    {
+                        Write(Model.DeliverdDate.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")));
+                    }
+
                 }
             </td>
             <td>

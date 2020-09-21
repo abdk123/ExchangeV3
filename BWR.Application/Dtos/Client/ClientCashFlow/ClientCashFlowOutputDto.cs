@@ -14,7 +14,7 @@ namespace BWR.Application.Dtos.Client.ClientCashFlow
         public decimal? Commission { get; set; }
         public decimal? SecondCommission { get; set; }
         public string Type { get; set; }
-        //public string Name { get; set; }
+        public bool Matched { get; set; }
         public int? Number { get; set; }
         public string Date { get; set; }
         public string Note { get; set; }

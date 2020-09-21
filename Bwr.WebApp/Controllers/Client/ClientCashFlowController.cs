@@ -31,5 +31,14 @@ namespace Bwr.WebApp.Controllers
 
             return Json(new { data = clientCashFlows }, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpPost]
+        public ActionResult ConvertMatchingStatus(ClientMatchDto dto)
+        {
+            if (_clientCashFlowAppService.ConvertMatchingStatus(dto) != null)
+                _success = true;
+
+            return Json(new { Success = _success }, JsonRequestBehavior.AllowGet);
+        }
     }
 }

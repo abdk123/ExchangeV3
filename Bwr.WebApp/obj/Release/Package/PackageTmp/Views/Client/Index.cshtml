@@ -68,11 +68,20 @@
                         },
                         'columns': [
                             { 'title': 'اسم العميل', 'data': 'FullName', "width": "15%", 'searchable': true },
-                            { 'title': ' البلد', 'data': 'Country.Name', "width": "15%", 'searchable': true },
+                            {
+                                'title': ' البلد', 'data': 'Country.Name', "width": "15%", 'searchable': true,
+                                render: function (data, type, row) {
+                                    if (data == undefined) {
+                                        return "";
+                                    } else {
+                                        return data;
+                                    }
+                                }
+                            },
                             { 'title': 'التفصيلي العنوان', 'data': 'Address', "width": "20%", 'searchable': true },
                             {
                                 'title': 'اول رقم هاتف', render: function (data, type, row) {
-                                    debugger;
+                                    
                                     if (row.ClientPhones.length > 0)
                                         return row.ClientPhones[0].Phone;
                                     else
@@ -195,9 +204,6 @@
         ele += '</div >';
         return ele;
     }
-
-
-
 </script>
 
 

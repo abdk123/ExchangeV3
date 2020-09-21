@@ -105,7 +105,8 @@ namespace BWR.Application.AppServices.Companies
                                 Number = clientCashFlow.MoenyAction.GetActionId(),
                                 Date = clientCashFlow.Created != null ? clientCashFlow.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
                                 Note = clientCashFlow.MoenyAction.GetNote(Requester.Agent, clientCashFlow.ClientId),
-                                MoneyActionId = clientCashFlow.MoenyActionId
+                                MoneyActionId = clientCashFlow.MoenyActionId,
+                                Matched = clientCashFlow.Matched
                             });
                     }
                 }
@@ -139,7 +140,6 @@ namespace BWR.Application.AppServices.Companies
 
             return clientCashFlowDto;
         }
-
 
         public void Delete(int id)
         {
@@ -186,6 +186,32 @@ namespace BWR.Application.AppServices.Companies
             }
 
             return clientCashFlowsDtos;
+        }
+
+        public ClientMatchDto ConvertMatchingStatus(ClientMatchDto dto)
+        {
+            ClientMatchDto output = null;
+            try
+            {
+                _unitOfWork.CreateTransaction();
+
+                var clientCashFlow = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(x => x.Id == dto.ClientCashFlowId).FirstOrDefault();
+                if (clientCashFlow != null)
+                {
+                    clientCashFlow.Matched = dto.Matched;
+                }
+
+                _unitOfWork.Save();
+                _unitOfWork.Commit();
+
+                output = dto;
+            }
+            catch(Exception ex)
+            {
+                _unitOfWork.Rollback();
+            }
+
+            return output;
         }
     }
 }

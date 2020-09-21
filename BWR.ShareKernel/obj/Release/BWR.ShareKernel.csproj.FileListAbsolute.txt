@@ -9,3 +9,14 @@ F:\Projects\bw101600-master\BWR.ShareKernel\obj\Release\BWR.ShareKernel.csproj.C
 F:\Projects\bw101600-master\BWR.ShareKernel\obj\Release\BWR.ShareKernel.csproj.CopyComplete
 F:\Projects\bw101600-master\BWR.ShareKernel\obj\Release\BWR.ShareKernel.dll
 F:\Projects\bw101600-master\BWR.ShareKernel\obj\Release\BWR.ShareKernel.pdb
+F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Release\BWR.ShareKernel.dll
+F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Release\BWR.ShareKernel.pdb
+F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Release\EntityFramework.dll
+F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Release\EntityFramework.SqlServer.dll
+F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Release\EntityFramework.xml
+F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Release\EntityFramework.SqlServer.xml
+F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Release\BWR.ShareKernel.csprojAssemblyReference.cache
+F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Release\BWR.ShareKernel.csproj.CoreCompileInputs.cache
+F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Release\BWR.ShareKernel.csproj.CopyComplete
+F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Release\BWR.ShareKernel.dll
+F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Release\BWR.ShareKernel.pdb

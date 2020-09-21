@@ -18,6 +18,8 @@ using System.Linq;
 using BWR.Application.Interfaces.Company;
 using System;
 using BWR.Application.Dtos.Statement;
+using BWR.Domain.Model.Security;
+
 namespace BWR.Application.AppServices.Companies
 {
     public class CompanyCashFlowAppService : ICompanyCashFlowAppService
@@ -111,7 +113,8 @@ namespace BWR.Application.AppServices.Companies
                                 Number = companyCashFlow.MoenyAction.GetActionId(),
                                 Date = companyCashFlow.Created != null ? companyCashFlow.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
                                 Note = companyCashFlow.MoenyAction.GetNote(Requester.Company, companyCashFlow.CompanyId),
-                                MoneyActionId= companyCashFlow.MoneyActionId
+                                MoneyActionId= companyCashFlow.MoneyActionId,
+                                Matched=companyCashFlow.Matched
                             });
                     }
                 }
@@ -262,6 +265,41 @@ namespace BWR.Application.AppServices.Companies
             }
         }
 
-        
+        public CompanyMatchDto ConvertMatchingStatus(CompanyMatchDto dto)
+        {
+            CompanyMatchDto output = null;
+            try
+            {
+                _unitOfWork.CreateTransaction();
+
+                var companyCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(x => x.Id == dto.CompanyCashFlowId).FirstOrDefault();
+                if (companyCashFlow != null)
+                {
+                    companyCashFlow.Matched = dto.Matched;
+                    var userName = _appSession.GetUserName();
+                    if (!string.IsNullOrEmpty(userName))
+                    {
+                        
+                        var currentUser = _unitOfWork.GenericRepository<User>().FindBy(x => x.UserName == userName).FirstOrDefault();
+                        if (currentUser != null)
+                        {
+                            companyCashFlow.UserMatched = currentUser.UserId;
+                        }
+                    }
+                    
+                }
+
+                _unitOfWork.Save();
+                _unitOfWork.Commit();
+
+                output = dto;
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+            }
+
+            return output;
+        }
     }
 }

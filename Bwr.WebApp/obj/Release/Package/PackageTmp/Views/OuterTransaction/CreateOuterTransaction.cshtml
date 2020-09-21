@@ -11,7 +11,6 @@
     @*<link href="~/Content/Select2/Select2Css.css" rel="stylesheet" />*@
 }
 <h2 style="display:inline;margin-left:10px">حوالة صادرة</h2>
-
 <div class="row">
     <div class="col-lg-6">
         <div class="portlet light bordered">
@@ -62,7 +61,6 @@
             <div class="portlet-body form">
                 <div class="row" style="margin-bottom:10px">
                     <div class="col-lg-12">
-
                         <select id="TypeOfPay" class="form-control">
                             <option value="0" index="0"></option>
                             <option value="1">نقدي</option>
@@ -208,7 +206,6 @@
                         <input type="text" class="form-control" placeholder="العمولة" onkeypress="validation(this,event);" onkeyup="FormaittingNumber(this);" id="comission" autocomplete="off" onkeydown="CallcRequierdMoney();" onchange="CallcRequierdMoney();" style="margin-bottom:10px" />
                         @*<input type="text" class="form-control" placeholder="العمولة" onkeypress="validation(this,event);" onkeyup="FormaittingNumber(this);" id="comission" onkeydown="CallcRequierdMoney();" onchange="CallcRequierdMoney();" style="margin-bottom:10px" readonly />*@
                     </div>
-
                     <div class="col-lg-4">
                         <input type="text" class="form-control" placeholder="عمولة الشركة" onkeypress="validation(this, event, true);" onkeyup="FormaittingNumber(this);" autocomplete="off" id="companycomission" style="margin-bottom:10px" />
                         @* <input type="text" class="form-control" placeholder="عمولة الشركة" onkeypress="validation(this, event, true);" onkeyup="FormaittingNumber(this);" id="companycomission" style="margin-bottom:10px" readonly />*@
@@ -336,7 +333,7 @@
 
         $('#reciverClientSelect').select2({
             tags: true,
-            
+
         });
         $('#clientSenderByCompant').select2({ tags: true, });
 
@@ -363,7 +360,7 @@
         $('#reciverCompanyCurrentBalance').text('');
         $('#reciverCompanyCurrentBalanceStatus').text('');
         var companyId = $(this).val();
-        
+
         if (companyId != null && companyId != "") {
             $.post(
             '@Url.Action("GetCompanyMaxAndDeptByCoin","CompanyCash")', {
@@ -408,28 +405,6 @@
             reciverAddress.value = "";
         }
     });
-
-
-    @*$('#reciverClientSelect').change(function () {
-        var reciverAddress = document.getElementById('reciverAddress');
-        var reciverPhone = document.getElementById('reciverPhone');
-        if (!isNaN($(this).val())) {
-            $.post(
-                '@Url.Action("GetClientById", "Client")', {
-                    clientId: $(this).val()
-                },
-                function (data) {
-                    reciverPhone.value = data.Phone;
-                    reciverAddress.value = data.Address;
-                }
-            )
-        } else {
-            reciverPhone.value = "";
-            reciverAddress.value = "";
-        }
-    });*@
-
-
 
     // form manipulate
     $('#transactionAmount').keyup(function () {
@@ -483,7 +458,7 @@
                 $('#senderCompanyCurrentBalanceStatuse').text(status);
             }
         )
-        
+
         if (this.value != "" && this.value != null) {
             $.post(
             '@Url.Action("GetCompanyMaxAndDeptByCoin","CompanyCash")', {
@@ -495,7 +470,7 @@
             }
         )
         }
-        
+
     });
 
     function FillSecoundCompany(companyId) {
@@ -575,6 +550,7 @@
         CallcBalanceForClient($('#agentSelect').val(), $(this).val());
     });
     $('#clientSelect').change(function () {
+        var id = $(this).val();
         if (!isNaN($(this).val())) {
             $.post(
                 '@Url.Action("GetClientImage", "Client")', {
@@ -588,7 +564,7 @@
                         var Attachment = document.getElementById('Attachment');
                         Attachment.value = data.AttachmentId;
                         var sendrPhone = document.getElementById('sendrPhone');
-                        sendrPhone.value = data.phone;
+                        sendrPhone.value = data.phone.Phone;
                     } else {
                         var senderNormalClientImg = document.getElementById('senderNormalClientImg');
                         senderNormalClientImg.src = "";
@@ -844,25 +820,24 @@
             toastr["error"]("يجب تحديد العميل");
             return false;
         }
-        var allAmount = parseFloat(deleteCommaFromNumber($('#transactionAmount').val())) + parseFloat(deleteCommaFromNumber($('#comission').val()));
-        allAmount -= parseFloat(deleteCommaFromNumber($('#RecivingAmount').val()));
-        allAmount -= parseFloat(deleteCommaFromNumber($('#AgetComission').val()));
-        if ((agentTotal * -1) + allAmount > agentMaxCreditor) {
-            if (HavePrivlege(priveleges.breakTheWall)) {
-                var ans = confirm("سوف يتم تجاوز الحد المسوح به للعميل");
-
-                return ans;
-            } else {
-                alert('لا يمكنك تخطي الحد المسموح به للعميل');
-                return false;
-            }
-        }
+        //var allAmount = parseFloat(deleteCommaFromNumber($('#transactionAmount').val())) + parseFloat(deleteCommaFromNumber($('#comission').val()));
+        //allAmount -= parseFloat(deleteCommaFromNumber($('#RecivingAmount').val()));
+        //allAmount -= parseFloat(deleteCommaFromNumber($('#AgetComission').val()));
+        //if ((agentTotal * -1) + allAmount > agentMaxCreditor) {
+        //    if (HavePrivlege(priveleges.breakTheWall)) {
+        //        var ans = confirm("سوف يتم تجاوز الحد المسوح به للعميل");
+        //        return ans;
+        //    } else {
+        //        alert('لا يمكنك تخطي الحد المسموح به للعميل');
+        //        return false;
+        //    }
+        //}
 
         return true;
     }
 
-    $('#submit').click(function () {
-        
+    $('#submit').click(async function () {
+
         var CountryId = document.getElementById('countryId');
         if (CountryId.value == "") {
             toastr["error"]("يجب ان تحدد الوجهة", "خطاْ");
@@ -902,13 +877,11 @@
 
         if (TypeOfPayId.value == 1) {
             var senderNameSelect = document.getElementById('clientSelect');
-            var reciverName = document.getElementById('reciverName');
+            //var reciverName = document.getElementById('reciverName');
             var reciverAddress = document.getElementById('reciverAddress');
             var reciverPhone = document.getElementById('reciverPhone');
             var senderPhone = document.getElementById('sendrPhone');
             var senderClientId;
-
-            //for add image and client
             if (isNaN(senderNameSelect.value)) {
                 var Attachment = document.getElementById('Attachment');
                 //if (Attachment.value == "") {
@@ -934,15 +907,16 @@
                         formData.append("imageType", Attachment.value);
                     }
                 }
-                $.ajax({
+                await $.ajax({
                     url: '@Url.Action("AddNewClientFroTransaction", "Client")',
                     type: "post",
                     data: formData,
+                    async: false,
                     processData: false,
                     contentType: false,
                     success: function (data) {
                         if (data == "null") {
-                            alert('tttحدث حطاء ما الرجاء إعادة تحميل الصفحة ');
+                            alert('حدث حطاء ما الرجاء إعادة تحميل الصفحة ');
                             return;
                         }
                         senderClientId = data;
@@ -953,8 +927,8 @@
                     }
                 });
             }
-                // for update image
-            else {
+            else
+            {
                 senderClientId = senderNameSelect.value;
                 var imgeFile = document.getElementById('senderNormalClientImg');
                 if (imgeFile.dataset.target == 'undefined') {
@@ -995,19 +969,17 @@
                     }
                 );
             }
-
-
-
             var reciverClientSelect = document.getElementById('reciverClientSelect');
             if (isNaN(reciverClientSelect.value)) {
                 var formData = new FormData();
                 formData.append('fullName', reciverClientSelect.value);
                 formData.append('Phone', reciverPhone.value);
                 formData.append('address', reciverAddress.value);
-                $.ajax({
+                await $.ajax({
                     url: '@Url.Action("AddNewClientFroTransaction", "Client")',
                     method: "post",
                     data: formData,
+                    async: false,
                     processData: false,
                     contentType: false,
                     success: function (data) {
@@ -1029,7 +1001,6 @@
                         address: reciverAddress.value
                     });
             }
-
 
             $.post(
                 '@Url.Action("OuterClientTransaction", "OuterTransaction")', {
@@ -1061,12 +1032,9 @@
             var seldnerId = document.getElementById('agentSelect').value;
             if (seldnerId == undefined || seldnerId == "")
                 return;
-            var reciveingAmount = document.getElementById('RecivingAmount').value;
+
+            var reciveingAmount = deleteCommaFromNumber( document.getElementById('RecivingAmount').value);
             var AgetComission = document.getElementById('AgetComission').value;
-
-
-
-
 
             var reciverClientSelect = document.getElementById('reciverClientSelect');
             if (isNaN(reciverClientSelect.value)) {
@@ -1074,10 +1042,11 @@
                 formData.append('fullName', reciverClientSelect.value);
                 formData.append('Phone', reciverPhone.value);
                 formData.append('address', reciverAddress.value);
-                $.ajax({
+                await $.ajax({
                     url: '@Url.Action("AddNewClientFroTransaction", "Client")',
                     method: "post",
                     data: formData,
+                    async: false,
                     processData: false,
                     contentType: false,
                     success: function (data) {
@@ -1128,16 +1097,17 @@
 
             /////////////////////////////////////////////////////////////////////////////////////////
         else if (TypeOfPayId.value == 3) {
-            debugger;
+
             var senderId;
             if (isNaN($('#clientSenderByCompant').val())) {
                 var formData = new FormData();
                 formData.append("fullName", $('#clientSenderByCompant').val());
                 formData.append("Phone", $('#senderPhoneByCompany').val());
-                $.ajax({
+                await $.ajax({
                     url: '@Url.Action("AddNewClientFroTransaction", "Client")',
                     method: "post",
                     data: formData,
+                    async: false,
                     processData: false,
                     contentType: false,
                     success: function (data) {
@@ -1160,10 +1130,11 @@
                 formData.append('fullName', reciverClientSelect.value);
                 formData.append('Phone', reciverPhone.value);
                 formData.append('address', reciverAddress.value);
-                $.ajax({
+                await $.ajax({
                     url: '@Url.Action("AddNewClientFroTransaction", "Client")',
                     method: "post",
                     data: formData,
+                    async: true,
                     processData: false,
                     contentType: false,
                     success: function (data) {
@@ -1173,7 +1144,6 @@
                         var err = eval("(" + xhr.responseText + ")");
                         //alert(err.Message);
                         alert('حدث خطاء ما الرجاء إعادة تحميل الصفحة');
-                        alert('530');
                         return;
                     }
                 });
@@ -1188,11 +1158,11 @@
                     });
             }
             var secounCompanyCommission = $('#secoundCompanyCommission').val();
-            
+
             if (secounCompanyCommission == "") {
                 secounCompanyCommission = "0";
             }
-            
+
             $.post(
                 '@Url.Action("OuterCompanyTransaction", "OuterTransaction")',
                 {
@@ -1261,7 +1231,6 @@
             function (data) {
                 agentTotal = data.Total;
                 agentMaxCreditor = data.MaxCreditor;
-
             }
         )
         }
@@ -1358,7 +1327,7 @@
             commission = 0;
         }
         var companyCommission = $('#secoundCompanyCommission').val();
-        
+
         if (companyCommission == "") {
             companyCommission = 0;
         } else {

@@ -1,5 +1,4 @@
 ﻿@model BWR.Application.Dtos.BoxAction.BoxActionInitialDto
-
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
@@ -62,7 +61,6 @@
         </div>
         <div id="companyDiv" name="acountDiv" hidden="hidden">
             <div class="col-lg-6">
-
                 <label>الشركات</label>
                 @Html.DropDownList("Companies", new SelectList(Model.Companies, "Id", "Name"), "", htmlAttributes: new { @class = "form-control", id = "companies" })
             </div>
@@ -102,7 +100,6 @@
             </select>
         </div>
         <div class="col-lg-8" style="display:none" id="secounAcountDetials">
-
             <div id="secoundCompanyDiv" style="display:none">
                 <div class="col-lg-8">
                     <label> اختر الشركة</label>
@@ -115,17 +112,14 @@
                     <select id="secoundAgentSelect"></select>
                 </div>
             </div>
-
         </div>
     </div>
     <button class="btn btn-primary" style="margin-top:10px" id="submit">حفظ</button>
 </div>
-
 @section ScriptPath{
     <script src="~/Scripts/GlopalScript.js"></script>
     @*<script src="~/Scripts/BoxAction/Index.js"></script>*@
 }
-
 <script>
     var clientBalnae;
     var companyBalnce;
@@ -133,7 +127,7 @@
     $(function () {
         $('#secoundAcount').change(function () {
             hideAllSecoundDiv();
-            debugger;
+
             var secoundAcount = $(this).val();
             if (secoundAcount == 1) {
                 return;
@@ -157,7 +151,7 @@
     }
 
     function fillSecoundSelect() {
-        
+
         $('#secoundAgentSelect').html('');
         $('#secoundCompanySelect').html('');
         $('#secoundAgentSelect').select2({ allowClear: !0, placeholder: "العملاء", width: null });
@@ -282,6 +276,7 @@
         )
     }
     $('#coins').change(function () {
+
         if ($('#agents').val() == "") {
             resetAgentBlance();
         } else {
@@ -309,7 +304,7 @@
             return;
         }
         getClientBalanceByCoin($(this).val(), $('#coins').val());
-        setTimeout(function () { clacAgentCurrentBalcne(); }, 500); 
+        setTimeout(function () { clacAgentCurrentBalcne(); }, 500);
     });
 
     function resetAgentBlance() {
@@ -321,7 +316,6 @@
         $('#copanynewBalnce').empty();
     }
     $('#submit').click(function () {
-        
 
         if (!validate()) {
             return;
@@ -334,252 +328,133 @@
         amount = deleteCommaFromNumber(amount);
         var actionType = parseInt($('#typeOfAction').val());
         var firstAcountType = $('#firstAcountSelect').val();
+        if (secoundAcount == 1 && firstAcountType == 1 && actionType == -1) {
 
-        if (secoundAcount == 1) {
-            
-            var firstAcountType = $('#firstAcountSelect').val();
-            //general
-            if (firstAcountType == 1) {
-                if (actionType == -1) {
-                    $.post(
-                        '@Url.Action("PayExpenciveFromMainBox", "BoxAction")', {
-                            ExpensiveId: parseInt($('#publicExpenses').val()),
-                            CoinId: coinId,
-                            Amount: amount,
-                            Note: note
-                        }, function (data) {
-                            if (data.Success) {
-                                toastr["success"]("تم");
-                                emptyForm();
-                            } else {
-                                toastr["error"]("حدثت مشكلة اثناء الحفظ");
-                            }
+            payExpenciveFromMainBox(parseInt($('#publicExpenses').val()), coinId, amount, note);
 
-                        }
-                    )
-                }
-                else {
-                    $.post(
-                        '@Url.Action("ReciverIncomeToMainBox", "BoxAction")', {
-                            IncomeId: $('#publicIncomes').val(),
-                            CoinId: coinId,
-                            Amount: amount,
-                            Note: note
-                        }, function (data) {
-                            if (data.Success) {
-                                toastr["success"]("تم");
-                                emptyForm();
-                            } else {
-                                toastr["error"]("حدثت مشكلة اثناء الحفظ");
-                            }
+        } else if (secoundAcount == 1 && firstAcountType == 1 && actionType == 1) {
 
-                        }
-                    );
-                }
+            reciverIncomeToMainBox($('#publicIncomes').val(), coinId, amount, note);
+
+        } else if (secoundAcount == 1 && firstAcountType == 3 && actionType == -1) {
+
+            var client = $('#agents').val();
+            if (client == "") {
+                toastr["error"]("يجب عليك اختيار عميل", "");
+                return;
             }
-            // client
-            else if (firstAcountType == 3) {
-                var client = $('#agents').val();
-                if (client == "") {
-                    toastr["error"]("يجب عليك ان تحدد العميل", "خطاْ");
-                    return;
-                }
-                if (actionType == -1) {
-                    $.post(
-                        '@Url.Action("PayForClientFromMainBox", "BoxAction")', {
-                            ClientId: $('#agents').val(),
-                            CoinId: $('#coins').val(),
-                            Amount: amount,
-                            Note: note
-                        }, function (data) {
-                            if (data.Success) {
-                                toastr["success"]("تم");
-                                emptyForm();
-                            } else {
-                                toastr["error"]("حدثت مشكلة اثناء الحفظ");
-                            }
-                        });
-                }
-                else if (actionType == 1) {
+            payForClientFromMainBox($('#agents').val(), $('#coins').val(), amount, note);
 
-                    $.post(
-                        '@Url.Action("ReciveFromClientToMainBox", "BoxAction")', {
-                            ClientId: $('#agents').val(),
-                            CoinId: $('#coins').val(),
-                            Amount: amount,
-                            Note: note
-                        }, function (data) {
-                            if (data.Success) {
-                                toastr["success"]("تم");
-                                emptyForm();
-                            } else {
-                                toastr["error"]("حدثت مشكلة اثناء الحفظ");
-                            }
-                        });
-                }
+        } else if (secoundAcount == 1 && firstAcountType == 3 && actionType == 1) {
+            var client = $('#agents').val();
+            if (client == "") {
+                toastr["error"]("يجب عليك اختيار عميل", "");
+                return;
             }
-            else if (firstAcountType == 4) {
-                var company = $('#companies').val();
-                if (company == "") {
-                    toastr["error"]("يجب عليك ان تحدد الشركة", "خطاْ");
-                    return;
-                }
-                if (actionType == -1) {
-                    $.post(
-                        '@Url.Action("PayForCompanyFromMainBox", "BoxAction")'
-                        , {
-                            CompanyId: $('#companies').val(),
-                            CoinId: $('#coins').val(),
-                            Amount: amount,
-                            Note: note
-                        }
-                    ), function (data) {
-                        if (data.Success) {
-                            toastr["success"]("تم");
-                            emptyForm();
-                        } else {
-                            toastr["error"]("حدثت مشكلة اثناء الحفظ");
-                        }
-                    }
-                }
-                else if (actionType == 1) {
+            reciveFromClientToMainBox($('#agents').val(), $('#coins').val(), amount, note);
 
-                    $.post(
-                        '@Url.Action("ReciveFromCompanyToMainBox", "BoxAction")', {
-                            CompanyId: $('#companies').val(),
-                            CoinId: $('#coins').val(),
-                            Amount: amount,
-                            Note: note
-                        }, function (data) {
-                            if (data.Success) {
-                                toastr["success"]("تم");
-                                emptyForm();
-                            } else {
-                                toastr["error"]("حدثت مشكلة اثناء الحفظ");
-                            }
-                        }
-                    );
-                }
+        } else if (secoundAcount == 1 && firstAcountType == 4 && actionType == -1) {
+
+            var company = $('#companies').val();
+            if (company == "") {
+                toastr["error"]("يجب عليك ان تحدد الشركة", "خطاْ");
+                return;
             }
 
-        } else if (secoundAcount == 2) {
-            var clientSecounAcount = $('#secoundAgentSelect').val();
+            payForCompanyFromMainBox($('#companies').val(), $('#coins').val(), amount, note);
 
-            if (firstAcountType == 3) {
-                amount = parseFloat(amount);
-                if (actionType == -1) {
-                    amount = amount * -1;
-                }
-                $.post(
-                    '@Url.Action("FromClientToClient", "BoxAction")', {
-                        FirstClientId: $('#agents').val(),
-                        SecoundClientId: clientSecounAcount,
-                        CoinId: $('#coins').val(),
-                        Amount: amount,
-                        Note: note
-                    },
-                    function (data) {
-                        if (data.Success) {
-                            toastr["success"]("تم");
-                            emptyForm();
-                        } else {
-                            toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحاولة ", "خطاْ");
-                            emptyForm();
-                        }
-                    }
-                )
-            }
-            else if (firstAcountType == 4) {
+        } else if (secoundAcount == 1 && firstAcountType == 4 && actionType == 1) {
 
-                amount = parseFloat(amount);
-                if (actionType == -1) {
-                    amount = amount * -1;
-                }
-                $.post(
-                    '@Url.Action("FromCompanyToClient", "BoxAction")', {
-                        CompanyId: $('#companies').val(),
-                        ClientId: $('#secoundAgentSelect').val(),
-                        CoinId: $('#coins').val(),
-                        Amount: amount,
-                        Note: note
-                    }, function (data) {
-                        if (data.Success) {
-                            toastr["success"]("تم");
-                            emptyForm();
-                        } else {
-                            toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
-                        }
-                    }
-                )
+            var company = $('#companies').val();
+            if (company == "") {
+                toastr["error"]("يجب عليك ان تحدد الشركة", "خطاْ");
+                return;
             }
-        } else if (secoundAcount == 3) {
 
-            if (firstAcountType == 3) {
-                amount = parseFloat(amount);
-                if (actionType == -1) {
-                    amount = amount * -1;
-                }
-                $.post(
-                    '@Url.Action("FromClientToCompany", "BoxAction")', {
-                        ClientId: $('#agents').val(),
-                        CompanyId: $('#secoundCompanySelect').val(),
-                        CoinId: $('#coins').val(),
-                        Amount: amount,
-                        Note: note
-                    },
-                    function (data) {
-                        console.log(data);
-                        if (data.Success) {
-                            toastr["success"]("تم");
-                            emptyForm();
-                        } else {
-                            toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
-                        }
-                    }
-                )
-            }
-            else if (firstAcountType == 4) {
-                amount = parseFloat(amount);
-                if (actionType == -1) {
-                    amount = amount * -1;
-                }
-                $.post(
-                    '@Url.Action("FromCompanyToCompany", "BoxAction")', {
-                        FirstCompanyId: $('#companies').val(),
-                        SecounCompanyId: $('#secoundCompanySelect').val(),
-                        CoinId: $('#coins').val(),
-                        Amount: amount,
-                        Note: note
-                    },
-                    function (data) {
-                        if (data.Success) {
-                            toastr["success"]("تم");
-                            emptyForm();
-                        } else {
-                            toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
-                        }
-                    }
-                )
-            }
+            reciveFromCompanyToMainBox($('#companies').val(), $('#coins').val(), amount, note);
+
+        } else if (secoundAcount == 2 && firstAcountType == 3 && actionType == -1) {
+
+            amount = parseFloat(amount);
+            amount = amount * -1;
+
+            fromClientToClient($('#agents').val(), $('#secoundAgentSelect').val(), $('#coins').val(), amount, note);
+
+        } else if (secoundAcount == 2 && firstAcountType == 3 && actionType == 1) {
+
+            amount = parseFloat(amount);
+            fromClientToClient($('#agents').val(), $('#secoundAgentSelect').val(), $('#coins').val(), amount, note);
+        } else if (secoundAcount == 2 && firstAcountType == 4 && actionType == -1) {
+
+            amount = parseFloat(amount);
+            amount = amount * -1;
+
+            fromCompanyToClient($('#companies').val(), $('#secoundAgentSelect').val(), $('#coins').val(), amount, note);
+        } else if (secoundAcount == 2 && firstAcountType == 4 && actionType == 1) {
+
+            amount = parseFloat(amount);
+
+            fromCompanyToClient($('#companies').val(), $('#secoundAgentSelect').val(), $('#coins').val(), amount, note);
+
+        } else if (secoundAcount == 3 && firstAcountType == 3 && actionType == -1) {
+
+            amount = parseFloat(amount);
+            amount = amount * -1;
+
+            fromClientToCompany($('#agents').val(), $('#secoundCompanySelect').val(), $('#coins').val(), amount, note);
+        } else if (secoundAcount == 3 && firstAcountType == 3 && actionType == 1) {
+            amount = parseFloat(amount);
+
+            fromClientToCompany($('#agents').val(), $('#secoundCompanySelect').val(), $('#coins').val(), amount, note);
+
+        } else if (secoundAcount == 3 && firstAcountType == 4 && actionType == -1) {
+
+            amount = parseFloat(amount);
+            amount = amount * -1;
+            fromCompanyToCompany($('#companies').val(), $('#secoundCompanySelect').val(), $('#coins').val(), amount, note);
+
+        } else if (secoundAcount == 3 && firstAcountType == 4 && actionType == 1) {
+
+            amount = parseFloat(amount);
+            fromCompanyToCompany($('#companies').val(), $('#secoundCompanySelect').val(), $('#coins').val(), amount, note);
         }
+        else if (secoundAcount == 3 && firstAcountType == 1 && actionType == -1) {
+            amount = parseFloat(amount);
+            fromCompanyToPublicExpenes(coinId, $('#secoundCompanySelect').val(), $('#publicExpenses').val(), amount, note);
+        }
+        else if (secoundAcount == 3 && firstAcountType == 1 && actionType == 1) {
+            amount = parseFloat(amount);
+            fromCompanyToPublicIncome(coinId, $('#secoundCompanySelect').val(), $('#publicIncomes').val(), amount, note);
+        }
+        else if (secoundAcount == 2 && firstAcountType == 1 && actionType == -1) {
+            amount = parseFloat(amount);
+            fromClientToPublicExpenes(coinId, $('#secoundAgentSelect').val(), $('#publicExpenses').val(), amount, note);
+        }
+        else if (secoundAcount == 2 && firstAcountType == 1 && actionType == 1) {
+            amount = parseFloat(amount);
+            fromClientToPublicIncome(coinId, $('#secoundAgentSelect').val(), $('#publicIncomes').val(), amount, note);
+        }
+
     });
     $('#amout').keyup(() => {
 
         clacAgentCurrentBalcne();
     });
     function clacAgentCurrentBalcne() {
+
         var amount = parseFloat(deleteCommaFromNumber($('#amout').val()));
         if (isNaN(amount)) {
             amount = 0;
         }
-        
+
         var typeOfAtionVal = $('#typeOfAction').val();
+        if (clientBalnae != null) {
+            if (typeOfAtionVal == 1) {
 
-        if (typeOfAtionVal == 1) {
-
-            $('#agentnewBalnce').text(numberWithCommas(clientBalnae.Total + amount));
-        } else {
-            $('#agentnewBalnce').text(numberWithCommas(clientBalnae.Total - amount));
+                $('#agentnewBalnce').text(numberWithCommas(clientBalnae.Total + amount));
+            } else {
+                $('#agentnewBalnce').text(numberWithCommas(clientBalnae.Total - amount));
+            }
         }
 
     }
@@ -629,6 +504,279 @@
             }
         }
         return true;
+    }
+
+    function payExpenciveFromMainBox(publicExpenses, coinId, amount, note){
+        $.post(
+            '@Url.Action("PayExpenciveFromMainBox", "BoxAction")', {
+                ExpensiveId: publicExpenses,
+                CoinId: coinId,
+                Amount: amount,
+                Note: note
+            }, function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدثت مشكلة اثناء الحفظ");
+                }
+
+            }
+        );
+    }
+
+    function reciverIncomeToMainBox(publicIncomeId, coinId, amount, note) {
+        $.post(
+            '@Url.Action("ReciverIncomeToMainBox", "BoxAction")', {
+                IncomeId: publicIncomeId,
+                CoinId: coinId,
+                Amount: amount,
+                Note: note
+            }, function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدثت مشكلة اثناء الحفظ");
+                }
+
+            }
+        );
+    }
+
+    function payForClientFromMainBox(clientId, coinId, amount, note) {
+        $.post(
+            '@Url.Action("PayForClientFromMainBox", "BoxAction")', {
+                ClientId: clientId,
+                CoinId: coinId,
+                Amount: amount,
+                Note: note
+            }, function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدثت مشكلة اثناء الحفظ");
+                }
+            });
+    }
+
+    function reciveFromClientToMainBox(clientId, coinId, amount, note) {
+        $.post(
+            '@Url.Action("ReciveFromClientToMainBox", "BoxAction")', {
+                ClientId: clientId,
+                CoinId: coinId,
+                Amount: amount,
+                Note: note
+            }, function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدثت مشكلة اثناء الحفظ");
+                }
+            });
+    }
+
+    function payForCompanyFromMainBox(companyId, coinId, amount, not) {
+
+        $.post(
+            '@Url.Action("PayForCompanyFromMainBox", "BoxAction")'
+            , {
+                CompanyId: companyId,
+                CoinId: coinId,
+                Amount: amount,
+                Note: not
+            }
+            , function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدثت مشكلة اثناء الحفظ");
+                }
+            });
+    }
+
+    function reciveFromCompanyToMainBox(companyId, coinId, amount, note) {
+        $.post(
+            '@Url.Action("ReciveFromCompanyToMainBox", "BoxAction")', {
+                CompanyId: companyId,
+                CoinId: coinId,
+                Amount: amount,
+                Note: note
+            }, function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدثت مشكلة اثناء الحفظ");
+                }
+            }
+        );
+    }
+
+    function fromClientToClient(agentId, clientSecondAcount, coinId, amount, note) {
+
+        $.post(
+            '@Url.Action("FromClientToClient", "BoxAction")', {
+                FirstClientId: agentId,
+                SecondClientId: clientSecondAcount,
+                CoinId: coinId,
+                Amount: amount,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحاولة ", "");
+                    emptyForm();
+                }
+            }
+        );
+    }
+
+    function fromCompanyToClient(companyId, clientSecondAcount, coinId, amount, note) {
+        $.post(
+            '@Url.Action("FromCompanyToClient", "BoxAction")', {
+                CompanyId: companyId,
+                ClientId: clientSecondAcount,
+                CoinId: coinId,
+                Amount: amount,
+                Note: note
+            }, function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+
+    function fromClientToCompany(agentId, secoundCompanyId, coinId, amount, note) {
+        $.post(
+            '@Url.Action("FromClientToCompany", "BoxAction")', {
+                ClientId: agentId,
+                CompanyId: secoundCompanyId,
+                CoinId: coinId,
+                Amount: amount,
+                Note: note
+            },
+            function (data) {
+                console.log(data);
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+
+    function fromCompanyToCompany(companyId, secondCompanyId, coinId, amount, note) {
+        if (secondCompanyId == undefined)
+            return;
+        if (secondCompanyId == "")
+            return;
+                $.post(
+                    '@Url.Action("FromCompanyToCompany", "BoxAction")', {
+                        FirstCompanyId: companyId,
+                        SecondCompanyId: secondCompanyId,
+                        CoinId: coinId,
+                        Amount: amount,
+                        Note: note
+                    },
+                    function (data) {
+                        if (data.Success) {
+                            toastr["success"]("تم");
+                            emptyForm();
+                        } else {
+                            toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                        }
+                    }
+                )
+    }
+    function fromClientToPublicExpenes(coinId, clientId, publicExpenseId, amount, note) {
+        $.post(
+            '@Url.Action("FromClientToPublicExpenes","BoxAction")', {
+                CoinId: coinId,
+                ClientId: clientId,
+                PublicExpenseId: publicExpenseId,
+                Amount: amount,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+    function fromClientToPublicIncome(coinId, clientId, publicIncomeId, amount, note) {
+        $.post(
+            '@Url.Action("FromClientToPublicIncome", "BoxAction")', {
+                CoinId: coinId,
+                ClientId: clientId,
+                PublicIncomeId: publicIncomeId,
+                Amount: amount,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+    function fromCompanyToPublicExpenes(coinId, companyId, publicExpenseId, amount, note) {
+        $.post(
+            '@Url.Action("FromCompanyToPublicExpenes", "BoxAction")', {
+                CoinId: coinId,
+                CompanyId: companyId,
+                PublicExpenseId: publicExpenseId,
+                Amount: amount,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+    function fromCompanyToPublicIncome(coinId, companyId, publicIncomeId, amount, note) {
+        console.log(publicIncomeId);
+        $.post(
+            '@Url.Action("FromCompanyToPublicIncome", "BoxAction")', {
+                CoinId: coinId,
+                CompanyId:companyId,
+                PublicIncomeId: publicIncomeId,
+                Amount: amount,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
     }
 
 </script>

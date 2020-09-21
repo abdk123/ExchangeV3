@@ -65,14 +65,14 @@
                         { 'title': 'مطابقة', 'data': 'Id', 'searchable': true },
                         {
                             'title': 'الرصيد', 'data': "Balance", 'searchable': true,
-                            render: function (data, type, row) {
+                            render: function (data, type, row) {        
                                 if (data > 0) {
 
-                                    return 'له/' + data;
+                                    return 'له/' + numberWithCommas(data);
 
                                 } else if(data < 0) {
 
-                                    return 'عليه/' + data;
+                                    return 'عليه/' + numberWithCommas(Math.abs(data));
 
                                 }else{
                                 return "";
@@ -83,7 +83,7 @@
                             'title': 'له', 'data': "Amount", 'searchable': true,
                             render: function (data, type, row) {
                                 if (data > 0) {
-                                    return data;
+                                    return numberWithCommas(data);
                                 } else {
                                     return "";
                                 }
@@ -94,7 +94,7 @@
                             'title': 'عليه', 'data': "Amount", 'searchable': true,
                             render: function (data, type, row) {
                                 if (data < 0) {
-                                    return data;
+                                    return numberWithCommas(Math.abs(data));
                                 } else {
                                     return "";
                                 }
@@ -127,11 +127,11 @@
                         { 'title': 'ملاحظات', 'data': 'Note', 'searchable': true },
                         {
                             'title': 'تفاصيل',
-                            'data': 'Id',
+                            'data': 'MoneyActionId',
                             'searchable': false,
                             'sortable': false,
                             'render': function (data, type, full, meta) {
-                                return '<a href="@Url.Action("Detail","CompanyCashFlow")?id=' + data + '" class="btn btn-defult editCompanyCommission"><span class="glyphicon glyphicon-eye"></span>  تفاصيل</a>';
+                                return '<a href="@Url.Action("Index", "MoneyAction")?id=' + data + '" class="btn btn-defult editCompanyCommission"><span class="glyphicon glyphicon-eye"></span>  تفاصيل</a>';
 
                             }
                         }
@@ -151,7 +151,6 @@
 
 
         $('#a-flow-coinId').on("change", function (e) {
-            debugger;
             $inputDto = getData();
             $companyCashFlowDataTable.refresh();
         });

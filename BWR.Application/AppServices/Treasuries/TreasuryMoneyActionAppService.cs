@@ -99,7 +99,7 @@ namespace BWR.Application.AppServices.Treasuries
                     treasuryMoneyActions = treasuryMoneyActions.Where(x => x.Created > input.From && x.Created < input.To);
                 }
 
-                foreach (var treasuryMoneyAction in treasuryMoneyActions)
+                foreach (var treasuryMoneyAction in treasuryMoneyActions.ToList())
                 {
                     if (treasuryMoneyAction.BranchCashFlowId != null)
                     {

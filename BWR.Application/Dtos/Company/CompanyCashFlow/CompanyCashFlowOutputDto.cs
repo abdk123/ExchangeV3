@@ -17,6 +17,7 @@ namespace BWR.Application.Dtos.Company.CompanyCashFlow
         public int? Number { get; set; }
         public string Date { get; set; }
         public string Note { get; set; }
+        public bool Matched { get; set; }
 
 
 
