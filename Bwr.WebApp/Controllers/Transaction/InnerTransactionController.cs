@@ -1,11 +1,14 @@
-﻿using BWR.Application.Dtos.Transaction.InnerTransaction;
+﻿using Bwr.WebApp.Models.Security;
+using BWR.Application.Dtos.Transaction.InnerTransaction;
 using BWR.Application.Interfaces.Transaction;
 using BWR.Application.Interfaces.Treasury;
+using BWR.ShareKernel.Permisions;
 using System;
 using System.Web.Mvc;
 
 namespace Bwr.WebApp.Controllers.Transaction
 {
+    [Authorize]
     public class InnerTransactionController : Controller
     {
         private readonly IInnerTransactionAppService _innerTransactionAppService;
@@ -31,11 +34,31 @@ namespace Bwr.WebApp.Controllers.Transaction
             return View();
         }
 
+        public ActionResult EditInnerTransaction(int id)
+        {
+            var innerTransactionInitialDto = _innerTransactionAppService.InitialInputData();
+            ViewBag.Companies = new SelectList(innerTransactionInitialDto.Companies, "Id", "Name");
+            ViewBag.Coin = new SelectList(innerTransactionInitialDto.Coins, "Id", "Name");
+            ViewBag.Clients = new SelectList(innerTransactionInitialDto.Clients, "Id", "FullName");
+            ViewData["NormalClient"] = innerTransactionInitialDto.NormalClients;
+            var innerTransaction = _innerTransactionAppService.GetForEdit(id);
+
+            return View(innerTransaction);
+        }
+
         public ActionResult InnerTransactionDetails(int transactionId)
         {
-            var transaction = _innerTransactionAppService.GetById(transactionId);
+            if(PermissionHelper.CheckPermission(AppPermision.Action_OuterTransaction_EditInnerTransaction))
+                return RedirectToAction("EditInnerTransaction", "InnerTransaction", new { id = transactionId });
 
-            return View(transaction);
+            var innerTransactionInitialDto = _innerTransactionAppService.InitialInputData();
+            ViewBag.Companies = new SelectList(innerTransactionInitialDto.Companies, "Id", "Name");
+            ViewBag.Coin = new SelectList(innerTransactionInitialDto.Coins, "Id", "Name");
+            ViewBag.Clients = new SelectList(innerTransactionInitialDto.Clients, "Id", "FullName");
+            ViewData["NormalClient"] = innerTransactionInitialDto.NormalClients;
+            var innerTransaction = _innerTransactionAppService.GetForEdit(transactionId);
+
+            return View(innerTransaction);
         }
 
         
@@ -47,6 +70,21 @@ namespace Bwr.WebApp.Controllers.Transaction
                 bool transactionsSaved = _innerTransactionAppService.SaveInnerTransactions(input);
 
                 return Json(transactionsSaved);
+            }
+            catch (Exception ex)
+            {
+                return Json("error");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveInnerTransactionForEdit(InnerTransactionUpdateDto input)
+        {
+            try
+            {
+                bool transactionsSaved = _innerTransactionAppService.EditInnerTransaction(input);
+
+                return Json(true);
             }
             catch (Exception ex)
             {

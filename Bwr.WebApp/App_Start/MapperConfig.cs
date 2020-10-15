@@ -205,9 +205,9 @@ namespace Bwr.WebApp
             Mapper.CreateMap<Transaction, TransactionDto>();
             Mapper.CreateMap<OuterTransactionInsertDto, Transaction>();
             Mapper.CreateMap<Transaction, OuterTransactionDto>();
-
-
-
+            Mapper.CreateMap<Transaction, OuterTransactionUpdateDto>();
+            Mapper.CreateMap<OuterTransactionUpdateDto, Transaction>()
+                .ForMember(x => x.MoenyActions, x => x.Ignore());
 
             //select2 
             Mapper.CreateMap<Client, Select2Dto<int>>()

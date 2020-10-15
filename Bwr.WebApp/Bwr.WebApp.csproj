@@ -6454,12 +6454,13 @@
     <Content Include="Views\Statement\_Conclusion.cshtml" />
     <Content Include="Views\Exchange\ExchangeTemplate.cshtml" />
     <Content Include="Views\TreasuryMoneyAction\Index.cshtml" />
+    <Content Include="Views\OuterTransaction\EditOuterTransaction.cshtml" />
+    <Content Include="Views\InnerTransaction\EditInnerTransaction.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\assets\apps\img\" />
     <Folder Include="Content\assets\global\plugins\angularjs\plugins\angular-file-upload\uploads\" />
-    <Folder Include="Views\MoneyAction\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

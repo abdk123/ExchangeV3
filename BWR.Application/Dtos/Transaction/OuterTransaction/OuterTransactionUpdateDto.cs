@@ -1,7 +1,6 @@
 ﻿using BWR.Application.Common;
 using BWR.Application.Dtos.Branch;
 using BWR.Application.Dtos.Client;
-using BWR.Application.Dtos.Common;
 using BWR.Application.Dtos.Company;
 using BWR.Application.Dtos.MoneyAction;
 using BWR.Application.Dtos.Setting.Coin;
@@ -14,9 +13,9 @@ using System.Collections.Generic;
 
 namespace BWR.Application.Dtos.Transaction.OuterTransaction
 {
-    public class OuterTransactionInsertDto: EntityDto
+    public class OuterTransactionUpdateDto: EntityDto
     {
-        public OuterTransactionInsertDto()
+        public OuterTransactionUpdateDto()
         {
             MoenyActions = new List<MoneyActionDetailDto>();
         }
@@ -28,7 +27,6 @@ namespace BWR.Application.Dtos.Transaction.OuterTransaction
         public decimal? RecivingAmount { get; set; }
         public DateTime? DeliverdDate { get; set; }
         public DateTime? Created { get; set; }
-        public DateTime Date { get; set; }
 
         #region Sender Info
         public int? SenderBranchId { get; set; }

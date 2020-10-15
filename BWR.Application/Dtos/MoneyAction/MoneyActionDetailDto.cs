@@ -1,6 +1,7 @@
 ﻿using BWR.Application.Common;
 using BWR.Application.Dtos.Client.ClientCashFlow;
 using BWR.Application.Dtos.Company.CompanyCashFlow;
+using System;
 using System.Collections.Generic;
 
 namespace BWR.Application.Dtos.MoneyAction
@@ -14,6 +15,8 @@ namespace BWR.Application.Dtos.MoneyAction
         }
         public int? ExpenseId { get; set; }
         public int? IncomeId { get; set; }
+        public DateTime? Date { get; set; }
+        public int? BoxActionsId { get; set; }
 
         public virtual IList<CompanyCashFlowDto> CompanyCashFlows { get; set; }
         public virtual IList<ClientCashFlowDto> ClientCashFlows { get; set; }

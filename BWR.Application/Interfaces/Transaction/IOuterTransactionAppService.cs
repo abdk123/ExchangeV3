@@ -7,9 +7,13 @@ namespace BWR.Application.Interfaces.Transaction
     {
         IList<OuterTransactionDto> GetTransactions(OuterTransactionInputDto input);
         OuterTransactionDto GetTransactionById(int id);
+        OuterTransactionUpdateDto GetOuterTransactionForEdit(int id);
         OuterTransactionInsertInitialDto InitialInputData();
         bool OuterClientTransaction(OuterTransactionInsertDto input);
         bool OuterAgentTransaction(OuterTransactionInsertDto input);
         bool OuterCompanyTranasction(OuterTransactionInsertDto input);
+        bool EditOuterTransactionForClient(OuterTransactionUpdateDto input);
+        bool EditOuterTransactionForAgent(OuterTransactionUpdateDto input);
+        bool EditOuterTranasctionForCompany(OuterTransactionUpdateDto input);
     }
 }

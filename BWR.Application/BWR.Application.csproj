@@ -129,6 +129,7 @@
     <Compile Include="Dtos\Common\ExchangeDto.cs" />
     <Compile Include="Dtos\Common\Select2Dto.cs" />
     <Compile Include="Dtos\Company\CompanyCashFlow\CompanyMatchDto.cs" />
+    <Compile Include="Dtos\Company\CompanySenderDto.cs" />
     <Compile Include="Dtos\MoneyAction\MoneyActionDetailDto.cs" />
     <Compile Include="Dtos\MoneyAction\MoneyActionDto.cs" />
     <Compile Include="Dtos\Common\PhoneBaseDto.cs" />
@@ -172,11 +173,13 @@
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertInitialDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertListDto.cs" />
+    <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionUpdateDto.cs" />
     <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionInsertDto.cs" />
     <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionInputDto.cs" />
     <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionDto.cs" />
     <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionInsertInitialDto.cs" />
     <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionInsertInputDto.cs" />
+    <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionUpdateDto.cs" />
     <Compile Include="Dtos\Transaction\TransactionDto.cs" />
     <Compile Include="Dtos\Company\CompanyCash\CompanyCashDto.cs" />
     <Compile Include="Dtos\Company\CompanyCash\CompanyCashUpdateDto.cs" />

@@ -9,9 +9,11 @@
 
         /*=====OuterTransaction=====*/
         public const string Action_OuterTransaction_CreateOuterTransaction = "Action.OuterTransaction.CreateOuterTransaction";
-        
+        public const string Action_OuterTransaction_EditOuterTransaction = "Action.OuterTransaction.EditOuterTransaction";
+
         /*=====InnerTransaction=====*/
         public const string Action_InnerTransaction_Index = "Action.InnerTransaction.Index";
+        public const string Action_OuterTransaction_EditInnerTransaction = "Action.OuterTransaction.EditInnerTransaction";
 
         /*=====Transaction=====*/
         public const string Action_Transaction_TransactionDontDileverd = "Action.Transaction.TransactionDontDileverd";

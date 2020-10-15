@@ -56,7 +56,7 @@ namespace BWR.Application.AppServices.Companies
                         , c => c.MoenyAction.Clearing.FromCompany
                         , c => c.MoenyAction.Clearing.ToCompany
                         , c => c.MoenyAction.PublicMoney.PublicExpense
-                        , c => c.MoenyAction.PublicMoney.PublicIncome);
+                        , c => c.MoenyAction.PublicMoney.PublicIncome).OrderBy(x => x.MoenyAction.Date);
                     var clientCashFlowsBeforeFromDate = clientCashFlows.Where(x => x.Created.Value.Date < input.From);
                     if (clientCashFlowsBeforeFromDate.Any())
                     {
