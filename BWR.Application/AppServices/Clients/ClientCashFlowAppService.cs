@@ -57,7 +57,7 @@ namespace BWR.Application.AppServices.Companies
                         , c => c.MoenyAction.Clearing.ToCompany
                         , c => c.MoenyAction.PublicMoney.PublicExpense
                         , c => c.MoenyAction.PublicMoney.PublicIncome).OrderBy(x => x.MoenyAction.Date);
-                    var clientCashFlowsBeforeFromDate = clientCashFlows.Where(x => x.Created.Value.Date < input.From);
+                    var clientCashFlowsBeforeFromDate = clientCashFlows.Where(x => x.MoenyAction.Date < input.From);
                     if (clientCashFlowsBeforeFromDate.Any())
                     {
                         var lastClientCashFlowBeforeFromDate = clientCashFlowsBeforeFromDate.LastOrDefault();
@@ -76,15 +76,15 @@ namespace BWR.Application.AppServices.Companies
 
                     if (input.From != null && input.To != null)
                     {
-                        dataCashFlows = clientCashFlows.Where(x => x.Created.Value.Date >= input.From && x.Created.Value.Date <= input.To).ToList();
+                        dataCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date >= input.From && x.MoenyAction.Date <= input.To).ToList();
                     }
                     else if (input.From == null && input.To != null)
                     {
-                        dataCashFlows = clientCashFlows.Where(x => x.Created.Value.Date <= input.To).ToList();
+                        dataCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date <= input.To).ToList();
                     }
                     else if (input.From != null && input.To == null)
                     {
-                        dataCashFlows = clientCashFlows.Where(x => x.Created.Value.Date >= input.From).ToList();
+                        dataCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date >= input.From).ToList();
                     }
                     else
                     {
@@ -97,7 +97,7 @@ namespace BWR.Application.AppServices.Companies
                             new ClientCashFlowOutputDto()
                             {
                                 Id = clientCashFlow.Id,
-                                Balance = clientCashFlow.Total,
+                                Balance = clientCashFlowsDtos.Last().Balance+clientCashFlow.Total,
                                 Amount = clientCashFlow.Amount,
                                 SecondCommission = clientCashFlow.MoenyAction.ClientComission(input.ClientId),
                                 Commission = clientCashFlow.MoenyAction.OurCommission(),
