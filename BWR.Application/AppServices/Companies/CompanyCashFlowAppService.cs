@@ -63,7 +63,7 @@ namespace BWR.Application.AppServices.Companies
                         , c => c.MoenyAction.PublicMoney.PublicIncome
                         ).OrderBy(x => x.MoenyAction.Date);
 
-                    var companyCashFlowsBeforeFromDate = companyCashFlows.Where(x => x.Created < input.From);
+                    var companyCashFlowsBeforeFromDate = companyCashFlows.Where(x => x.MoenyAction.Date < input.From);
                     if (companyCashFlowsBeforeFromDate.Any())
                     {
                         var lastCompanyCashFlowBeforeFromDate = companyCashFlowsBeforeFromDate.LastOrDefault();
@@ -82,15 +82,15 @@ namespace BWR.Application.AppServices.Companies
 
                     if (input.From != null && input.To != null)
                     {
-                        dataCashFlows = companyCashFlows.Where(x => x.Created >= input.From && x.Created <= input.To).ToList();
+                        dataCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date >= input.From && x.MoenyAction.Date <= input.To).ToList();
                     }
                     else if (input.From == null && input.To != null)
                     {
-                        dataCashFlows = companyCashFlows.Where(x => x.Created <= input.To).ToList();
+                        dataCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date <= input.To).ToList();
                     }
                     else if (input.From != null && input.To == null)
                     {
-                        dataCashFlows = companyCashFlows.Where(x => x.Created >= input.From).ToList();
+                        dataCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date >= input.From).ToList();
                     }
                     else
                     {
@@ -103,7 +103,7 @@ namespace BWR.Application.AppServices.Companies
                             new CompanyCashFlowOutputDto()
                             {
                                 Id = companyCashFlow.Id,
-                                Balance = companyCashFlow.Total,
+                                Balance = companyCashFlowsDtos.Last().Balance+companyCashFlow.Amount,
                                 Amount = companyCashFlow.Amount,
                                 Commission = companyCashFlow.Commission(),
                                 SecondCommission = companyCashFlow.SecounCommission(),
@@ -113,7 +113,7 @@ namespace BWR.Application.AppServices.Companies
                                 Type = companyCashFlow.MoenyAction.GetTypeName(Requester.Company, companyCashFlow.CompanyId),
                                 Name = _moneyActionAppService.GetActionName(companyCashFlow.MoenyAction),
                                 Number = companyCashFlow.MoenyAction.GetActionId(),
-                                Date = companyCashFlow.Created != null ? companyCashFlow.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
+                                Date = companyCashFlow.MoenyAction.Date != null ? companyCashFlow.MoenyAction.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
                                 Note = companyCashFlow.MoenyAction.GetNote(Requester.Company, companyCashFlow.CompanyId),
                                 MoneyActionId= companyCashFlow.MoneyActionId,
                                 Matched=companyCashFlow.Matched
