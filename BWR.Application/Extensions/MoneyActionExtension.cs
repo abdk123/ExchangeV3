@@ -25,6 +25,7 @@ namespace BWR.Application.Extensions
             return null;
         }
 
+
         public static int? GetActionId(this MoneyAction moneyAction)
         {
             if (moneyAction.TransactionId != null)

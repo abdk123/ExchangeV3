@@ -93,21 +93,24 @@ namespace BWR.Application.AppServices.Companies
 
                     foreach (var clientCashFlow in dataCashFlows)
                     {
-                        clientCashFlowsDtos.Add(
-                            new ClientCashFlowOutputDto()
-                            {
-                                Id = clientCashFlow.Id,
-                                Balance = clientCashFlowsDtos.Last().Balance+clientCashFlow.Total,
-                                Amount = clientCashFlow.Amount,
-                                SecondCommission = clientCashFlow.MoenyAction.ClientComission(input.ClientId),
-                                Commission = clientCashFlow.MoenyAction.OurCommission(),
-                                Type = clientCashFlow.MoenyAction.GetTypeName(Requester.Agent, clientCashFlow.ClientId),
-                                Number = clientCashFlow.MoenyAction.GetActionId(),
-                                Date = clientCashFlow.Created != null ? clientCashFlow.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
-                                Note = clientCashFlow.MoenyAction.GetNote(Requester.Agent, clientCashFlow.ClientId),
-                                MoneyActionId = clientCashFlow.MoenyActionId,
-                                Matched = clientCashFlow.Matched
-                            });
+                        var temp = new ClientCashFlowOutputDto()
+                        {
+                            Id = clientCashFlow.Id,
+                            Balance = clientCashFlowsDtos.Last().Balance + clientCashFlow.Amount,
+                            Amount = clientCashFlow.Amount,
+                            SecondCommission = clientCashFlow.MoenyAction.ClientComission(input.ClientId),
+                            Commission = clientCashFlow.MoenyAction.OurCommission(),
+                            Type = clientCashFlow.MoenyAction.GetTypeName(Requester.Agent, clientCashFlow.ClientId),
+                            Number = clientCashFlow.MoenyAction.GetActionId(),
+                            Date = clientCashFlow.Created != null ? clientCashFlow.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
+                            Note = clientCashFlow.MoenyAction.GetNote(Requester.Agent, clientCashFlow.ClientId),
+                            MoneyActionId = clientCashFlow.MoenyActionId,
+                            Matched = clientCashFlow.Matched
+                        };
+                        temp.Balance += temp.SecondCommission;
+                        temp.Balance -= temp.Commission;
+                        
+                        clientCashFlowsDtos.Add(temp);
                     }
                 }
 

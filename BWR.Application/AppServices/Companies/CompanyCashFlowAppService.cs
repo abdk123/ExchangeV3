@@ -47,7 +47,7 @@ namespace BWR.Application.AppServices.Companies
                 {
                     decimal? lastBalance = 0;
                     var companyCash = _unitOfWork.GenericRepository<CompanyCash>()
-                        .FindBy(x=>x.CoinId == input.CoinId && x.CompanyId == input.CompanyId).FirstOrDefault();
+                        .FindBy(x => x.CoinId == input.CoinId && x.CompanyId == input.CompanyId).FirstOrDefault();
                     if (companyCash != null)
                     {
                         lastBalance = companyCash.InitialBalance;
@@ -62,12 +62,11 @@ namespace BWR.Application.AppServices.Companies
                         , c => c.MoenyAction.PublicMoney.PublicExpense
                         , c => c.MoenyAction.PublicMoney.PublicIncome
                         ).OrderBy(x => x.MoenyAction.Date);
-
-                    var companyCashFlowsBeforeFromDate = companyCashFlows.Where(x => x.Created < input.From);
+                    var companyCashFlowsBeforeFromDate = companyCashFlows.Where(x => x.MoenyAction.Date < input.From);
                     if (companyCashFlowsBeforeFromDate.Any())
                     {
-                        var lastCompanyCashFlowBeforeFromDate = companyCashFlowsBeforeFromDate.LastOrDefault();
-                        lastBalance = lastCompanyCashFlowBeforeFromDate.Total;
+                        var lastCompanyCashFlowBeforeFromDate = companyCashFlowsBeforeFromDate.Sum(c => c.Amount);
+                        lastBalance = lastCompanyCashFlowBeforeFromDate;
                     }
 
                     companyCashFlowsDtos.Add(
@@ -82,45 +81,47 @@ namespace BWR.Application.AppServices.Companies
 
                     if (input.From != null && input.To != null)
                     {
-                        dataCashFlows = companyCashFlows.Where(x => x.Created >= input.From && x.Created <= input.To).ToList();
+                        dataCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date >= input.From && x.MoenyAction.Date <= input.To).ToList();
                     }
                     else if (input.From == null && input.To != null)
                     {
-                        dataCashFlows = companyCashFlows.Where(x => x.Created <= input.To).ToList();
+                        dataCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date <= input.To).ToList();
                     }
                     else if (input.From != null && input.To == null)
                     {
-                        dataCashFlows = companyCashFlows.Where(x => x.Created >= input.From).ToList();
+                        dataCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date >= input.From).ToList();
                     }
                     else
                     {
                         dataCashFlows = companyCashFlows.ToList();
                     }
-
                     foreach (var companyCashFlow in dataCashFlows)
                     {
-                        companyCashFlowsDtos.Add(
-                            new CompanyCashFlowOutputDto()
-                            {
-                                Id = companyCashFlow.Id,
-                                Balance = companyCashFlow.Total,
-                                Amount = companyCashFlow.Amount,
-                                Commission = companyCashFlow.Commission(),
-                                SecondCommission = companyCashFlow.SecounCommission(),
-                                ReceiverName = companyCashFlow.ReceiverName(Requester.Company, input.CompanyId),
-                                SenderName = companyCashFlow.SenderName(Requester.Company,input.CompanyId),
-                                CountryName = companyCashFlow.CountryName(),
-                                Type = companyCashFlow.MoenyAction.GetTypeName(Requester.Company, companyCashFlow.CompanyId),
-                                Name = _moneyActionAppService.GetActionName(companyCashFlow.MoenyAction),
-                                Number = companyCashFlow.MoenyAction.GetActionId(),
-                                Date = companyCashFlow.Created != null ? companyCashFlow.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
-                                Note = companyCashFlow.MoenyAction.GetNote(Requester.Company, companyCashFlow.CompanyId),
-                                MoneyActionId= companyCashFlow.MoneyActionId,
-                                Matched=companyCashFlow.Matched
-                            });
+                        var temp =  new CompanyCashFlowOutputDto()
+                        {
+                            Id = companyCashFlow.Id,
+                            //Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.Amount,
+                            Amount = companyCashFlow.Amount,
+                            Commission = companyCashFlow.Commission(),
+                            SecondCommission = companyCashFlow.SecounCommission(),
+                            ReceiverName = companyCashFlow.ReceiverName(Requester.Company, input.CompanyId),
+                            SenderName = companyCashFlow.SenderName(Requester.Company, input.CompanyId),
+                            CountryName = companyCashFlow.CountryName(),
+                            Type = companyCashFlow.MoenyAction.GetTypeName(Requester.Company, companyCashFlow.CompanyId),
+                            Name = _moneyActionAppService.GetActionName(companyCashFlow.MoenyAction),
+                            Number = companyCashFlow.MoenyAction.GetActionId(),
+                            Date = companyCashFlow.MoenyAction.Date != null ? companyCashFlow.MoenyAction.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
+                            Note = companyCashFlow.MoenyAction.GetNote(Requester.Company, companyCashFlow.CompanyId),
+                            MoneyActionId = companyCashFlow.MoneyActionId,
+                            Matched = companyCashFlow.Matched
+                        };
+                        temp.Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.Amount;
+                        temp.Balance += temp.SecondCommission;
+                        companyCashFlowsDtos.Add(temp);
+
                     }
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -151,7 +152,7 @@ namespace BWR.Application.AppServices.Companies
             return companyCashFlowDto;
         }
 
-     
+
         public CompanyCashFlowUpdateDto GetForEdit(int id)
         {
             CompanyCashFlowUpdateDto companyCashFlowDto = null;
@@ -187,11 +188,11 @@ namespace BWR.Application.AppServices.Companies
 
                 companyCashFlowsDtos = (from c in companyCashFlows
                                         select new BalanceStatementDto()
-                                       {
-                                           Name = c.Company != null ? c.Company.Name : string.Empty,
-                                           Total = c.Total,
-                                           Type = "الشركة "
-                                       }).ToList();
+                                        {
+                                            Name = c.Company != null ? c.Company.Name : string.Empty,
+                                            Total = c.Total,
+                                            Type = "الشركة "
+                                        }).ToList();
 
             }
             catch (Exception ex)
@@ -281,14 +282,14 @@ namespace BWR.Application.AppServices.Companies
                     var userName = _appSession.GetUserName();
                     if (!string.IsNullOrEmpty(userName))
                     {
-                        
+
                         var currentUser = _unitOfWork.GenericRepository<User>().FindBy(x => x.UserName == userName).FirstOrDefault();
                         if (currentUser != null)
                         {
                             companyCashFlow.UserMatched = currentUser.UserId;
                         }
                     }
-                    
+
                 }
 
                 _unitOfWork.Save();
