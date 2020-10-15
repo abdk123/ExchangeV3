@@ -929,6 +929,7 @@ namespace BWR.Application.AppServices.BoxActions
                 return false;
             }
         }
+
         public BoxActionInitialDto InitialInputData()
         {
             var boxActionInitialDto = new BoxActionInitialDto();
