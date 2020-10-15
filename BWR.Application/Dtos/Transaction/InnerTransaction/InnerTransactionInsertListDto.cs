@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BWR.Application.Dtos.Transaction.InnerTransaction
 {
@@ -6,6 +7,7 @@ namespace BWR.Application.Dtos.Transaction.InnerTransaction
     {
         public int MainCompanyId { get; set; }
         public string Note { get; set; }
+        public DateTime Date { get; set; }
         public List<InnerTransactionInsertDto> Transactions { get; set; }
     }
 }

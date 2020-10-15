@@ -11,8 +11,12 @@ namespace BWR.Application.Interfaces.Transaction
     public interface IInnerTransactionAppService
     {
         IList<InnerTransactionDto> GetTransactions();
+        InnerTransactionDto GetById(int transactionId);
+        InnerTransactionUpdateDto GetForEdit(int transactionId);
         InnerTransactionInsertInitialDto InitialInputData();
         bool SaveInnerTransactions(InnerTransactionInsertListDto incometransacrions);
-        InnerTransactionDto GetById(int transactionId);
+        bool EditInnerTransaction(InnerTransactionUpdateDto dto);
+        
+        
     }
 }

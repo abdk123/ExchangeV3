@@ -29,7 +29,13 @@
                         @Html.DropDownListFor(model => model.Coins, new SelectList(Model.Coins, "Id", "Name"), " العملة", htmlAttributes: new { @class = "form-control", @id = "CoinId" })
                     </div>
                     <div class="col-lg-3">
-                        <select class="form-control" id="sendByCompanySelect"></select>
+
+                        <select class="form-control" id="sendByCompanySelect">
+                            @foreach (var company in Model.Companies)
+                            {
+                                <option value="@company.Id">@company.Name</option>
+                            }
+                        </select>
                     </div>
                     <div class="col-lg-3">
                         <input type="date" class="form-control" id="transactionDate" placeholder="التاريخ" />
@@ -103,7 +109,13 @@
                 <div id="companySenderDiv" style="display:none">
                     <div class="row" style="margin-bottom:10px">
                         <div class="col-lg-12">
-                            <select class="form-control" id="reciverCompany"></select>
+                            <select class="form-control" id="reciverCompany">
+                                <option >الشركة المرسلة</option>
+                                @foreach (var company in Model.Companies)
+                                {
+                                    <option value="@company.Id">@company.Name</option>
+                                }
+                            </select>
                         </div>
                     </div>
                     <div class="row">
@@ -328,7 +340,11 @@
     var currentStream;
     var senderNormalClientCanvas = document.getElementById('senderNormalClientCanvas');
     var senderNormalClientImg = document.getElementById('senderNormalClientImg');
+    
+
     $(document).ready(function () {
+
+        initialOuterTransactionValue();
 
         $('#clientSelect').select2({
             tags: true,
@@ -341,10 +357,6 @@
         $('#clientSenderByCompant').select2({ tags: true, });
 
         navigator.mediaDevices.enumerateDevices().then(gotDevices);
-
-        var date = new Date().toISOString().split('T')[0];
-        $('#transactionDate').val(date);
-
     });
 
     var senderCompanyTotal;
@@ -352,7 +364,7 @@
 
     var reciverCompanyMaxCreditor;
     var reciverCompanyTotal;
-
+    var $outerTransactionForEdit;
 
     var agentTotal;
     var agentMaxCreditor;
@@ -614,6 +626,7 @@
             $('#companySenderDiv').css('display', 'block');
             $('#clientSenderByCompant').select2({ tags: true, });
             $('#compayMoney').css('display', 'block');
+            FillSecoundCompany($('#sendByCompanySelect').val());
             return;
         }
         $('#AgentClient,#AgentMoney').css('display', 'block');
@@ -853,7 +866,7 @@
     }
 
     $('#submit').click(async function () {
-
+        
         var CountryId = document.getElementById('countryId');
         if (CountryId.value == "") {
             toastr["error"]("يجب ان تحدد الوجهة", "خطاْ");
@@ -870,8 +883,12 @@
         var transactionAmount = document.getElementById('transactionAmount');
         var comission = document.getElementById('comission');
         var companycomission = document.getElementById('companycomission');
-
-
+        
+        var date = $('#transactionDate').val();
+        var moneyActions = $outerTransactionForEdit.MoenyActions;
+        for (var i = 0; i < moneyActions.length; i++) {
+            moneyActions[i].Date = date;
+        }
 
         var TypeOfPayId = document.getElementById('TypeOfPay');
         var asnC2 = checkSender(TypeOfPayId.value);
@@ -889,8 +906,8 @@
         //var reciverName = document.getElementById('reciverName');
         var reciverAddress = document.getElementById('reciverAddress');
         var reciverPhone = document.getElementById('reciverPhone');
-        var transactionDate = $('#transactionDate').val();
 
+        
         if (TypeOfPayId.value == 1) {
             var senderNameSelect = document.getElementById('clientSelect');
             //var reciverName = document.getElementById('reciverName');
@@ -1019,7 +1036,7 @@
             }
 
             $.post(
-                '@Url.Action("OuterClientTransaction", "OuterTransaction")', {
+                '@Url.Action("EditOuterClientTransaction", "OuterTransaction")', {
                     'CountryId': CountryId.value,
                     'CoinId': CoinId.value,
                     'SenderCompanyId': sendByCompanySelect.value,
@@ -1030,11 +1047,12 @@
                     'Note': $('#note').val(),
                     'SenderClientId': senderClientId,
                     'ReciverClientId': ReciverID,
-                    'Date': transactionDate
+                    'Id': $outerTransactionForEdit.Id,
+                    'MoenyActions': moneyActions
                 },
                 function (data) {
                     if (data.Success == true) {
-                        ClearAllElement();
+                        //ClearAllElement();
                         toastr["success"]("تم الحفظ بنجاح");
                     } else {
                         toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة  و إعادة المحاولة");
@@ -1044,8 +1062,9 @@
             )
         }
 
-            //////////////////////////////////////////////////////////////////////////////
+       
         else if (TypeOfPayId.value == 2) {
+            debugger;
             var seldnerId = document.getElementById('agentSelect').value;
             if (seldnerId == undefined || seldnerId == "")
                 return;
@@ -1086,7 +1105,8 @@
 
             ////////////////heeer
             $.post(
-                '@Url.Action("OuterAgentTransaction", "OuterTransaction")', {
+                '@Url.Action("EditOuterAgentTransaction", "OuterTransaction")', {
+                    'Id': $outerTransactionForEdit.Id,
                     'CountryId': CountryId.value,
                     'CoinId': CoinId.value,
                     'SenderCompanyId': sendByCompanySelect.value,
@@ -1099,11 +1119,11 @@
                     'ReciverClientId': ReciverID,
                     'RecivingAmount': reciveingAmount,
                     'SenderCleirntCommission': AgetComission,
-                    'Date': transactionDate
+                    'MoenyActions': moneyActions
                 },
                 function (data) {
                     if (data.Success == true) {
-                        ClearAllElement();
+                        //ClearAllElement();
                         toastr["success"]("تم الحفظ بنجاح");
                     } else {
                         toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة  و إعادة المحاولة");
@@ -1182,8 +1202,9 @@
             }
 
             $.post(
-                '@Url.Action("OuterCompanyTransaction", "OuterTransaction")',
+                '@Url.Action("EditOuterCompanyTransaction", "OuterTransaction")',
                 {
+                    'Id': $outerTransactionForEdit.Id,
                     'CoinId': CoinId.value,
                     'CountryId': $('#countryId').val(),
                     'SenderCompanyId': sendByCompanySelect.value,
@@ -1196,12 +1217,14 @@
                     'ReceiverCompanyId': $('#reciverCompany').val(),
                     'ReciverClientId': ReciverID,
                     'SenderClientId': senderId,
-                    'Date': transactionDate
+                    'MoenyActions': moneyActions
                 },
                 function (data) {
                     if (data.Success == true) {
-                        ClearAllElement();
+                        //ClearAllElement();
                         toastr["success"]("تم الحفظ بنجاح");
+                    } else {
+                        alert('حدث خطاء ما الرجاء إعادة تحميل الصفحة');
                     }
                 }
             );
@@ -1239,8 +1262,7 @@
             agentMaxCreditor = null;
             return;
         }
-        console.log(agentId);
-        console.log(coinId);
+        
         if (agentId != "" && coinId != "") {
             $.post(
             '@Url.Action("GetClientCashByCoin", "ClientCash")', {
@@ -1307,8 +1329,7 @@
         )
     }
     function CallcBalanceForClient(clientId, coinId) {
-        console.log(clientId);
-        console.log(coinId);
+        
         if (clientId != "" && coinId != "") {
             $.post(
             '@Url.Action("GetClientCashByCoin", "ClientCash")', {
@@ -1466,4 +1487,98 @@
         $('#senderCompanyCurrentBalance').text(balance);
         $('#senderCompanyCurrentBalanceStatuse').text(status);
     }
+
+    function initialOuterTransactionValue() {
+        
+        getOuterTransactionForInit('@ViewBag.TransactionId');
+        setTimeout(function () {
+           
+            var date = $outerTransactionForEdit.MoenyActions[0].Date;
+            var transactionDate = convertJsonToDate(date);
+            $('#transactionDate').val(transactionDate)
+            //Main Info
+            $('#countryId').val($outerTransactionForEdit.CountryId);
+            $('#CoinId').val($outerTransactionForEdit.CoinId);
+            $('#sendByCompanySelect').val($outerTransactionForEdit.SenderCompanyId);
+
+            //Money Info
+            $('#transactionAmount').val($outerTransactionForEdit.Amount);
+            $('#comission').val($outerTransactionForEdit.OurComission);
+            $('#companycomission').val($outerTransactionForEdit.SenderCompanyComission);
+            
+            if ($outerTransactionForEdit.TypeOfPay == 3) {
+
+                //FillSecoundCompany($outerTransactionForEdit.SenderCompanyId);
+                $("#TypeOfPay").val('3').trigger("change");
+                $('#secoundCompanyCommission').val($outerTransactionForEdit.ReceiverCompanyComission);
+                setTimeout(function ()
+                {
+                    $('#reciverCompany').val($outerTransactionForEdit.ReceiverCompanyId).trigger('change');
+                }, 500);
+
+                //Sender Info
+                $('#clientSenderByCompant').val($outerTransactionForEdit.SenderClientId).trigger('change');
+                if ($outerTransactionForEdit.SenderClient != null
+                    && $outerTransactionForEdit.SenderClient.ClientPhones
+                    && $outerTransactionForEdit.SenderClient.ClientPhones.length > 0) {
+
+                    $('#senderPhoneByCompany').val($outerTransactionForEdit.SenderClient.ClientPhones[0].Phone);
+                }
+
+            } else if ($outerTransactionForEdit.TypeOfPay == 2) {
+                
+                $("#TypeOfPay").val('2').trigger("change");
+                $('#RecivingAmount').val($outerTransactionForEdit.RecivingAmount);
+                $('#AgetComission').val($outerTransactionForEdit.SenderCleirntCommission);
+
+                $('#agentSelect').val($outerTransactionForEdit.SenderClientId).trigger('change');
+
+            } else {
+                $("#TypeOfPay").val('1').trigger("change");
+
+                //Sender Info
+                $('#clientSelect').val($outerTransactionForEdit.SenderClientId).trigger('change');
+                if ($outerTransactionForEdit.SenderClient != null
+                    && $outerTransactionForEdit.SenderClient.ClientPhones
+                    && $outerTransactionForEdit.SenderClient.ClientPhones.length > 0) {
+
+                    $('#sendrPhone').val($outerTransactionForEdit.SenderClient.ClientPhones[0].Phone);
+                }
+
+            } 
+
+            //Receiver Info
+            $('#reciverClientSelect').val($outerTransactionForEdit.ReciverClientId).trigger("change");
+            if ($outerTransactionForEdit.ReciverClient != null) {
+                $('#reciverAddress').val($outerTransactionForEdit.ReciverClient.Address);
+
+                if ($outerTransactionForEdit.ReciverClient.ClientPhones != null && $outerTransactionForEdit.ReciverClient.ClientPhones.length > 0) {
+                    $('#reciverPhone').val($outerTransactionForEdit.ReciverClient.ClientPhones[0].Phone);
+                }
+            }
+
+            $('#reason').val($outerTransactionForEdit.Reason);
+            $('#note').val($outerTransactionForEdit.Note);
+
+        }, 500);
+        
+    }
+
+    function getOuterTransactionForInit(id) {
+        $.post(
+            '@Url.Action("GetOuterTransactionForEdit", "OuterTransaction")', {
+                'transactionId': id
+            },
+            function (data) {
+                initOuterTransactionData(data);
+                console.log(data);
+            }
+        );
+    }
+
+    function initOuterTransactionData(data) {
+        
+        $outerTransactionForEdit = data;
+    }
+
 </script>

@@ -74,8 +74,28 @@ namespace Bwr.WebApp.Controllers.Transaction
             return View(initialData);
         }
 
+        [HttpPost]
+        public ActionResult GetOuterTransactionForEdit(int transactionId)
+        {
+            return Json(_outerTransactionAppService.GetOuterTransactionForEdit(transactionId));
+        }
+
+        [HttpGet]
+        public ActionResult EditOuterTransaction(string id)
+        {
+            if (!CheckTreasury())
+                return RedirectToAction("NoTreasury", "Home");
+
+            var initialData = _outerTransactionAppService.InitialInputData();
+            ViewBag.TransactionId = id;
+            return View(initialData);
+        }
+        
         public ActionResult OuterTransactionDetails(int transactionId)
         {
+            if (PermissionHelper.CheckPermission(AppPermision.Action_OuterTransaction_EditOuterTransaction))
+                return RedirectToAction("EditOuterTransaction", "OuterTransaction", new { id = transactionId});
+
             var outerTransaction = _outerTransactionAppService.GetTransactionById(transactionId);
 
             var initialData = _outerTransactionAppService.InitialInputData();
@@ -155,6 +175,73 @@ namespace Bwr.WebApp.Controllers.Transaction
             try
             {
                 if (_outerTransactionAppService.OuterCompanyTranasction(input))
+                    _success = true;
+                else
+                {
+                    _success = false;
+                    _message = "حدثت مشكلة اثناء الحفظ";
+                }
+            }
+            catch (Exception ex)
+            {
+                _success = false;
+                _message = "حدثت مشكلة اثناء الحفظ";
+            }
+
+            return Json(new { Success = _success, Message = _message }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult EditOuterClientTransaction(OuterTransactionUpdateDto input)
+        {
+            try
+            {
+                if (_outerTransactionAppService.EditOuterTransactionForClient(input))
+                    _success = true;
+                else
+                {
+                    _success = false;
+                    _message = "حدثت مشكلة اثناء الحفظ";
+                }
+            }
+            catch (Exception ex)
+            {
+                _success = false;
+                _message = "حدثت مشكلة اثناء الحفظ";
+            }
+
+            return Json(new { Success = _success, Message = _message }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult EditOuterAgentTransaction(OuterTransactionUpdateDto input)
+        {
+            try
+            {
+
+                if (_outerTransactionAppService.EditOuterTransactionForAgent(input))
+                    _success = true;
+                else
+                {
+                    _success = false;
+                    _message = "حدثت مشكلة اثناء الحفظ";
+                }
+            }
+            catch (Exception ex)
+            {
+                _success = false;
+                _message = "حدثت مشكلة اثناء الحفظ";
+            }
+
+            return Json(new { Success = _success, Message = _message }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult EditOuterCompanyTransaction(OuterTransactionUpdateDto input)
+        {
+            try
+            {
+                if (_outerTransactionAppService.EditOuterTranasctionForCompany(input))
                     _success = true;
                 else
                 {

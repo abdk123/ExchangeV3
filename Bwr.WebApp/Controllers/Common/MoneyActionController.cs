@@ -33,10 +33,10 @@ namespace Bwr.WebApp.Controllers.Common
                 }
                 else
                 {
-                    if (moenyAction.Transaction.Deliverd == true)
-                    {
+                    //if (moenyAction.Transaction.Deliverd == true)
+                    //{
                         return RedirectToAction("InnerTransactionDetails", "InnerTransaction", new { transactionId = moenyAction.TransactionId });
-                    }
+                    //}
                 }
             }
             return View();

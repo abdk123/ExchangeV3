@@ -39,7 +39,8 @@ namespace BWR.Application.AppServices.Branches
             var branchcashflowsDtos = new List<BranchCashFlowDto>();
             try
             {
-                var branchcashflows = _unitOfWork.GenericRepository<BranchCashFlow>().GetAll().ToList();
+                var branchcashflows = _unitOfWork.GenericRepository<BranchCashFlow>()
+                    .GetAll().OrderBy(x => x.MoenyAction.Date).ToList();
                 branchcashflowsDtos = Mapper.Map<List<BranchCashFlow>, List<BranchCashFlowDto>>(branchcashflows);
             }
             catch (Exception ex)
@@ -55,7 +56,8 @@ namespace BWR.Application.AppServices.Branches
             var branchcashflowsDtos = new List<BranchCashFlowDto>();
             try
             {
-                var branchcashflows = _unitOfWork.GenericRepository<BranchCashFlow>().FindBy(predicate).ToList();
+                var branchcashflows = _unitOfWork.GenericRepository<BranchCashFlow>()
+                    .FindBy(predicate).OrderBy(x => x.MoenyAction.Date).ToList();
                 if (branchcashflows.Any())
                 {
                     branchcashflowsDtos = Mapper.Map<List<BranchCashFlow>, List<BranchCashFlowDto>>(branchcashflows);
@@ -97,7 +99,8 @@ namespace BWR.Application.AppServices.Branches
 
                 #endregion
 
-                var allBranchCashFlows = _unitOfWork.GenericRepository<BranchCashFlow>().FindBy(c => c.CoinId == coinId && c.BranchId == branchId);
+                var allBranchCashFlows = _unitOfWork.GenericRepository<BranchCashFlow>()
+                    .FindBy(c => c.CoinId == coinId && c.BranchId == branchId).OrderBy(x => x.MoenyAction.Date).ToList();
                 if (allBranchCashFlows.Any())
                 {
                     var branchCashFlows = new List<BranchCashFlow>();

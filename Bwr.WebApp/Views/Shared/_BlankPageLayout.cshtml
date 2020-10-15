@@ -670,7 +670,21 @@
                     }
                 )
 
-            }
+        }
+
+        function convertJsonToDate(jsonDate) {
+            var dateObj = new Date(parseInt(jsonDate.substr(6)));
+            var month = dateObj.getMonth() + 1;
+            var day = dateObj.getDate();
+            var year = dateObj.getFullYear();
+            if (month < 10)
+                month = '0' + month;
+
+            if (day < 10)
+                day = '0' + day;
+
+            return year + "-" + month + "-" + day;
+        }
 
         $('#layoutModalClientCashViewBtn').click(function () {
             window.location.href = '@Url.Action("Detail", "Client")?id=' + $('#layoutModalClientCashAgentSelect').val() +"#cashFlowbtn";

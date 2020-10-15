@@ -9,9 +9,11 @@
 
         /*=====OuterTransaction=====*/
         public const string Action_OuterTransaction_CreateOuterTransaction = "ارسال الحوالات الصادرة";
+        public const string Action_OuterTransaction_EditOuterTransaction = "تعديل الحوالات الصادرة";
 
         /*=====InnerTransaction=====*/
         public const string Action_InnerTransaction_Index = "الحوالات الواردة";
+        public const string Action_OuterTransaction_EditInnerTransaction = "تعديل الحوالة الواردة";
 
         /*=====Transaction=====*/
         public const string Action_Transaction_TransactionDontDileverd = "كشف الحوالات الغير مسلمة";

@@ -1,8 +1,9 @@
 ﻿class IncomeTransactionTableDTO {
     Transactions = [];    
-    constructor(MainCompanyId, Note) {
+    constructor(MainCompanyId, Note, Date) {
         this.MainCompanyId = MainCompanyId;
         this.Note = Note;
+        this.Date = Date;
     }
     
 }
