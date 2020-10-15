@@ -100,7 +100,7 @@ namespace BWR.Application.AppServices.Branches
                 #endregion
 
                 var allBranchCashFlows = _unitOfWork.GenericRepository<BranchCashFlow>()
-                    .FindBy(c => c.CoinId == coinId && c.BranchId == branchId).OrderBy(x => x.MoenyAction.Date).ToList();
+                    .FindBy(c => c.CoinId == coinId && c.BranchId == branchId).OrderBy(x =>new { x.MoenyAction.Date, x.Id }).ToList();
                 if (allBranchCashFlows.Any())
                 {
                     var branchCashFlows = new List<BranchCashFlow>();
@@ -109,7 +109,7 @@ namespace BWR.Application.AppServices.Branches
                     {
                         if (from != null)
                         {
-                            var tempLastBranchCahsFlow = allBranchCashFlows.Where(c => c.Created < from).ToList();
+                            var tempLastBranchCahsFlow = allBranchCashFlows.Where(c => c.MoenyAction.Date< from).ToList();
                             if (tempLastBranchCahsFlow.Any())
                             {
                                 branchCashFlowsDto.Clear();
@@ -123,11 +123,11 @@ namespace BWR.Application.AppServices.Branches
                         }
 
                         if (from != null && to == null)
-                            branchCashFlows = allBranchCashFlows.Where(c => c.Created >= from).ToList();
+                            branchCashFlows = allBranchCashFlows.Where(c => c.MoenyAction.Date >= from).ToList();
                         else if (to != null && from == null)
-                            branchCashFlows = allBranchCashFlows.Where(c => c.Created <= to).ToList();
+                            branchCashFlows = allBranchCashFlows.Where(c => c.MoenyAction.Date <= to).ToList();
                         else
-                            branchCashFlows = allBranchCashFlows.Where(c => c.Created >= from && c.Created <= to).ToList();
+                            branchCashFlows = allBranchCashFlows.Where(c => c.MoenyAction.Date >= from && c.MoenyAction.Date <= to).ToList();
 
                     }
                     else
@@ -141,7 +141,7 @@ namespace BWR.Application.AppServices.Branches
                         var dto = new BranchCashFlowOutputDto()
                         {
                             Id = item.Id,
-                            Balance = item.Total,
+                            Balance = branchCashFlowsDto.Last().Balance + item.Amount,
                             Amount = item.Amount,
                             Type = item.MoenyAction.GetTypeName(Requester.Branch, null),
                             Name = _moneyActionAppService.GetActionName(item.MoenyAction),
