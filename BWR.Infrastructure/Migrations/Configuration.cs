@@ -1,6 +1,10 @@
 ﻿namespace BWR.Infrastructure.Migrations
 {
+    using BWR.Domain.Model.Branches;
     using BWR.Domain.Model.Security;
+    using BWR.Domain.Model.Settings;
+    using BWR.Infrastructure.Context;
+    using BWR.ShareKernel.Interfaces;
     using BWR.ShareKernel.Permisions;
     using System;
     using System.Data.Entity.Migrations;
@@ -9,14 +13,16 @@
 
     internal sealed class Configuration : DbMigrationsConfiguration<BWR.Infrastructure.Context.MainContext>
     {
+
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
             //AutomaticMigrationDataLossAllowed = true;
         }
 
-        protected override void Seed(BWR.Infrastructure.Context.MainContext context)
+        protected override void Seed(MainContext context)
         {
+            #region admin user
             var adminRole = context.Roles.FirstOrDefault(x => x.Name.ToLower() == "admin");
             if (adminRole == null)
             {
@@ -60,6 +66,7 @@
                     UserId = Guid.NewGuid(),
                     FullName = "Admin",
                     UserName = "admin",
+                    //admin
                     PasswordHash = "ANF2VrSJI/ZRaK99ymBl/xHO+jkzMVQOogsWHHCpemIEzQBL5AHqcGnlhDysgiDwtg==",
                     SecurityStamp = "718b64fc-3be0-4467-af63-09ca67e911aa",
                     Email = "admin@bwire.com"
@@ -69,6 +76,63 @@
                 context.Users.Add(admin);
                 context.SaveChanges();
             }
+            #endregion
+            #region country seeder
+            var syria = new Country()
+            {
+                Name = "سوريا",
+                IsEnabled = true,
+            };
+            var iraq = new Country()
+            {
+                Name = "العراق",
+                IsEnabled = true,
+            };
+            context.Countrys.AddRange(new[] { syria, iraq });
+            context.SaveChanges();
+            #endregion
+            #region mainBranch
+            var mainBranch = new Branch()
+            {
+                Name = "الفرع الرئيسي ",
+                Address = "",
+            };
+            context.Branchs.Add(mainBranch);
+            context.SaveChanges();
+            #endregion
+            #region coin
+            var dollar = new Coin()
+            {
+                Name = "دولار",
+                IsEnabled = true,
+            };
+            var irDinar = new Coin()
+            {
+
+                Name = "دينار عراقي",
+                IsEnabled = true
+            };
+            context.Coins.AddRange(new[] { dollar, irDinar });
+            context.SaveChanges();  
+            var total = 100000;
+            var brancheId = context.Branchs.First().Id;
+            var sBranchCash = new BranchCash()
+            {
+                CoinId = dollar.Id,
+                BranchId = brancheId,
+                InitialBalance = total,
+                Total = total,
+            };
+            var iBranchCash = new BranchCash()
+            {
+                BranchId = brancheId,
+                CoinId = irDinar.Id,
+                Total = total,
+                InitialBalance = total
+            };
+            context.BranchCashs.AddRange(new[] { iBranchCash, sBranchCash });
+            context.SaveChanges();
+            #endregion
         }
     }
 }
