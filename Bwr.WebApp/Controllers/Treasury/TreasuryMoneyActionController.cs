@@ -55,7 +55,7 @@ namespace Bwr.WebApp.Controllers.Treasury
         // GET: TreasuryMoneyActionFlow
         public ActionResult Get(TreasuryMoneyActionInputDto input)
         {
-            var treasuryMoneyActiones = _treasuryMoneyActionAppService.Get(input).OrderByDescending(x=>x.Id);
+            var treasuryMoneyActiones = _treasuryMoneyActionAppService.Get(input).OrderBy(x=>x.Id);
             return Json(new { data = treasuryMoneyActiones }, JsonRequestBehavior.AllowGet);
         }
 

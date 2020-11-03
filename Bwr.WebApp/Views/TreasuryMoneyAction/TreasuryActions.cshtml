@@ -100,6 +100,7 @@
                     init: function () {
                         dt = $('#treasuryActionsDataTable').DataTable({
                             'language': dataTableLocalizationArValue(),
+                            
                             'ajax': {
                                 'url': '@Url.Action("GetTreasuryActions", "TreasuryMoneyAction")',
                                 'method': 'POST',
@@ -113,8 +114,8 @@
                                 {
                                     'title': 'الوارد', 'data': "Amount", 'searchable': true,
                                     render: function (data, type, row) {
-                                        if (data < 0) {
-                                            return data * -1;
+                                        if (data > 0) {
+                                            return data;
                                         } else {
                                             return '';
                                         }
@@ -122,8 +123,8 @@
                                 },
                                 {'title': 'الصادر','data': "Amount",'searchable': true,
                                     render: function (data, type, row) {
-                                        if (data > 0) {
-                                            return data;
+                                        if (data < 0) {
+                                            return Math.abs( data);
                                         } else {
                                             return '';
                                         }

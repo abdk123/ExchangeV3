@@ -101,6 +101,22 @@ namespace BWR.Application.AppServices.Setting
 
             return coinsDtos;
         }
+        public IList<CoinForDropdownDto> GetForDropdown()
+        {
+            var coinsDtos = new List<CoinForDropdownDto>();
+            try
+            {
+                var coins = _unitOfWork.GenericRepository<Coin>().GetAll().ToList();
+                Mapper.Map<List<Coin>, List<CoinForDropdownDto>>(coins, coinsDtos);
+            }
+            catch (Exception ex)
+            {
+                Tracing.SaveException(ex);
+            }
+
+            return coinsDtos;
+        }
+
 
         public CoinUpdateDto GetForEdit(int id)
         {

@@ -81,7 +81,7 @@ namespace BWR.Application.AppServices.Companies
                     else if (input.From == null && input.To != null)
                     {
                         dataCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date <= input.To).ToList();
-                    }
+                    }   
                     else if (input.From != null && input.To == null)
                     {
                         dataCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date >= input.From).ToList();

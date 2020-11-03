@@ -123,8 +123,18 @@ namespace BWR.Application.AppServices.Treasuries
                 treasury.IsEnabled = true;
                 treasury.IsAvilable = true;
                 _unitOfWork.CreateTransaction();
-
                 _unitOfWork.GenericRepository<Treasury>().Insert(treasury);
+                foreach (var item in treasury.TreasuryCashes)
+                {
+                    var treasuryMoneyAction = new TreasuryMoneyAction()
+                    {
+                        Total = item.Total,
+                        TreasuryId = treasury.Id,
+                        CoinId=  item.CoinId,
+                        Amount = item.Total,
+                    };
+                    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(treasuryMoneyAction);
+                }
                 _unitOfWork.Save();
 
                 _unitOfWork.Commit();
