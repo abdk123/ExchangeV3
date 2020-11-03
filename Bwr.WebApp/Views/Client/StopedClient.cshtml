@@ -1,0 +1,51 @@
+﻿@model IEnumerable<BWR.Domain.Model.Clients.Client>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <td>
+            اسم العميل
+        </td>
+        <td>
+            الرصيد
+        </td>
+        <td>
+            تاريخ آخر حركة
+        </td>
+        <td>
+            تجميد
+        </td>
+        <td>
+            تفاصيل
+        </td>
+    </tr>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedBy)
+                </td>
+                <td>
+                    @foreach (var blance in item.ClientCashes)
+                    {
+                        var sum = item.ClientCashFlows.Sum(c => c.Total);
+                        string state = sum < 0 ? "عليه" : "له";
+                        Write(blance.Coin.Name + " " + Math.Abs(sum)+" "+ state);
+                    }
+                </td>
+                <td>
+                    @{Write(item.ClientCashFlows.OrderBy(c => c.MoenyAction.Date).Last().MoenyAction.Date);}
+                </td>
+                <td>
+                    <input type="checkbox" @if (item.IsEnabled) { Write("checked"); } />
+                </td>
+                <td>
+                    <button> تفاصيل </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

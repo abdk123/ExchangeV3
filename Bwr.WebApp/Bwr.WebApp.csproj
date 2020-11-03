@@ -6456,6 +6456,8 @@
     <Content Include="Views\TreasuryMoneyAction\Index.cshtml" />
     <Content Include="Views\OuterTransaction\EditOuterTransaction.cshtml" />
     <Content Include="Views\InnerTransaction\EditInnerTransaction.cshtml" />
+    <Content Include="Views\Statement\ClientStoped.cshtml" />
+    <Content Include="Views\Client\StopedClient.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

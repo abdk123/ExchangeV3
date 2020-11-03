@@ -178,6 +178,7 @@
         $.get('@Url.Action("GetCoinsForDropdown","Coin")', { term: "" }, function (data) {
 
             var coins = data.Coins;
+            console.log(data);
             for (var i = 0; i < coins.length; i++) {
                 var ele = '<div class="form-group">' +
                     '<label class="control-label col-md-3 col-sm-3">' + coins[i].Name + ':</label>' +

@@ -73,6 +73,7 @@ namespace Bwr.WebApp.Controllers
         [HttpGet]
         public ActionResult Create()
         {
+            
             return View("_CreateTreasury");
         }
 
@@ -87,7 +88,7 @@ namespace Bwr.WebApp.Controllers
             if (_treasuryAppService.CheckIfExist(dto.Name, 0))
             {
                 _success = false;
-                _message = "توجد صندوق بنفس الاسم";
+                _message = "يوجد صندوق يمتلك نفس الأسم";
                 exist = true;
             }
             else

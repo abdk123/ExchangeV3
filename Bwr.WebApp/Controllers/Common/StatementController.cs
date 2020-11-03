@@ -56,6 +56,12 @@ namespace Bwr.WebApp.Controllers.Common
             //ViewBag.Countries = countries;
 
             return PartialView("_OuterTransactions");
+        
+        }
+        [HttpGet]
+        public ActionResult ClientStoped()
+        {
+            return View();
         }
 
         [HttpGet]

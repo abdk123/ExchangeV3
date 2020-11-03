@@ -121,7 +121,8 @@ namespace Bwr.WebApp
 
             //Coin
             Mapper.CreateMap<Coin, CoinDto>();
-            Mapper.CreateMap<Coin, CoinForDropdownDto>();
+            Mapper.CreateMap<Coin, CoinForDropdownDto>()
+                .ForMember(c=>c.Code,opt=>opt.MapFrom(src=>src.Code==null?" ":src.Code));
             Mapper.CreateMap<CoinInsertDto, Coin>();
             Mapper.CreateMap<CoinUpdateDto, Coin>();
             Mapper.CreateMap<Coin, CoinUpdateDto>();

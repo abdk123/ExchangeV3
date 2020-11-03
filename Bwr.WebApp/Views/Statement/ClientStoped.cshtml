@@ -1,0 +1,28 @@
+﻿<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header ui-draggable-handle">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title">الحوالات الصادرة</h4>
+        </div>
+        <form method="post" action="@Url.Action("StopedClient","Client")"> 
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <label>عدد الأيام</label>
+                        </div>
+                        <div class="col-lg-4">
+                            <input type="text" class="form-control" name="dayesCount" required /> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="submit" value="عرض" class="btn green" />
+                @*<button type="button" class="btn green" id="ClientStopedViewBtn">عرض</button>*@
+                <button type="button" class="btn dark btn-outline" data-dismiss="modal">إلغاء</button>
+            </div>
+        </form>
+    </div>
+    <!-- /.modal-content -->
+</div>

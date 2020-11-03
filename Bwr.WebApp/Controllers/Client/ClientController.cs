@@ -430,6 +430,14 @@ namespace Bwr.WebApp.Controllers
 
             return Json(client.Id);
         }
+        [HttpPost]
+        public ActionResult StopedClient(int dayesCount)
+        {
+            var clients = _clientAppService.Get(c => c.ClientCashFlows.Count > 0 && DateTime.Now.Subtract(c.ClientCashFlows.OrderBy(cc => cc.MoenyAction.Date).Last().MoenyAction.Date).TotalDays > dayesCount).ToList();
+
+            return View(clients);
+        }
+        
 
         #region Helper Method
 
@@ -479,4 +487,4 @@ namespace Bwr.WebApp.Controllers
 
         #endregion
     }
-}
+}   

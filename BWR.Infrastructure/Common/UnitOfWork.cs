@@ -29,7 +29,7 @@ where TContext : DbContext, new()
         }
 
         public TContext Context { get { return _context; } }
-        
+
 
         public void CreateTransaction()
         {
@@ -75,7 +75,7 @@ where TContext : DbContext, new()
             var type = typeof(T);
             if (_repositories == null)
                 _repositories = new Dictionary<string, object>();
-            
+
             if (!_repositories.ContainsKey(type.Name))
             {
                 var repositoryType = typeof(GenericRepository<T>);

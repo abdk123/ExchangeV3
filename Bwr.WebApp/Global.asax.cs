@@ -29,7 +29,7 @@ namespace Bwr.WebApp
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             MapperConfig.Map();
             BootstrapContainer();
-            
+
         }
 
         private static void BootstrapContainer()
