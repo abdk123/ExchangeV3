@@ -13,6 +13,8 @@ using System.Web.Routing;
 using Bwr.WebApp.Windsor;
 using BWR.Application.Dtos.Branch;
 using BWR.Domain.Model.Branches;
+using BWR.Domain.Model.Treasures;
+using BWR.Domain.Model.Settings;
 
 namespace Bwr.WebApp
 {
@@ -47,9 +49,12 @@ namespace Bwr.WebApp
             {
                 _firstOne = true;
                 var unitOfWork = new UnitOfWork<MainContext>();
-                var repository = new GenericRepository<Branch>(unitOfWork);
+                var branchRepository = new GenericRepository<Branch>(unitOfWork);
+                var treasuryRepository = new GenericRepository<Treasury>(unitOfWork);
+                var treasuryCashRepository = new GenericRepository<TreasuryCash>(unitOfWork);
+                var coinRepository = new GenericRepository<Coin>(unitOfWork);
 
-                if (!repository.GetAll().Any())
+                if (!branchRepository.GetAll().Any())
                 {
                     var newBranch = new Branch()
                     {
@@ -57,17 +62,48 @@ namespace Bwr.WebApp
                         Address = "Address"
                     };
 
-                    repository.Insert(newBranch);
-                    repository.Save();
+                    branchRepository.Insert(newBranch);
+                    branchRepository.Save();
                 }
 
 
-                var branch = repository.GetAll().FirstOrDefault();
+                var branch = branchRepository.GetAll().FirstOrDefault();
                 if (branch != null)
                 {
                     BranchHelper.Id = branch.Id;
                     BranchHelper.Name = branch.Name;
                     BranchHelper.CountryId = branch.CountryId;
+                }
+
+                if (!branch.Treasurys.Any(x => x.IsMainTreasury))
+                {
+                    var treasury = new Treasury()
+                    {
+                        IsEnabled = true,
+                        IsMainTreasury = true,
+                        BranchId = branch.Id,
+                        Name = "الصندوق الرئيسي"
+                    };
+
+                    treasuryRepository.Insert(treasury);
+                    treasuryRepository.Save();
+
+                    var coins = coinRepository.GetAll();
+
+                    foreach(var coin in coins)
+                    {
+                        var treasuryCash = new TreasuryCash
+                        {
+                            CoinId = coin.Id,
+                            Total = 0,
+                            Treasury = treasury,
+
+                        };
+
+                        treasuryCashRepository.Insert(treasuryCash);
+                    }
+
+                    treasuryCashRepository.Save();
                 }
             }
         }
@@ -90,6 +126,13 @@ namespace Bwr.WebApp
                 else
                 {
                     Session["UserPermissions"] = new List<string>();
+                }
+
+                var treasuryRepository= new GenericRepository<Treasury>(unitOfWork);
+                var mainTreasury = treasuryRepository.FindBy(x => x.IsMainTreasury).FirstOrDefault();
+                if (mainTreasury != null)
+                {
+                    Session["MainTreasury"] = mainTreasury.Id;
                 }
             }
         }

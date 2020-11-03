@@ -112,6 +112,7 @@ namespace BWR.Application.AppServices.Transactions
                 _unitOfWork.CreateTransaction();
                 var transaction = _unitOfWork.GenericRepository<Transaction>().GetById(transactionId);
                 int treasuryId = _appSession.GetCurrentTreasuryId();
+                var mainTreasuryId = _appSession.GetMainTreasury();
                 if (transaction != null)
                 {
                     transaction.Deliverd = true;
@@ -158,6 +159,18 @@ namespace BWR.Application.AppServices.Transactions
                     };
                     _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(treuseryMoenyAction);
 
+                    if (mainTreasuryId != treasuryId)
+                    {
+                        var mainTruseryMoneyAction = new TreasuryMoneyAction()
+                        {
+                            Amount = -transaction.Amount,
+                            TreasuryId = mainTreasuryId,
+                            CoinId = transaction.CoinId,
+                            BranchCashFlow = branchCashFLow
+                        };
+
+                        _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyAction);
+                    }
                     _unitOfWork.Save();
                     _unitOfWork.Commit();
 

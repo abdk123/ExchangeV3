@@ -24,5 +24,15 @@ namespace Bwr.WebApp.Models.Security
             int.TryParse(currentTreasury.ToString(), out treasuryId);
             return treasuryId;
         }
+        public int GetMainTreasury()
+        {
+            int treasuryId = 0;
+            var currentTreasury = HttpContext.Current.Session["MainTreasury"];
+            if (currentTreasury == null)
+                return 0;
+
+            int.TryParse(currentTreasury.ToString(), out treasuryId);
+            return treasuryId;
+        }
     }
 }

@@ -167,6 +167,7 @@ namespace BWR.Application.AppServices.Transactions
             {
                 _unitOfWork.CreateTransaction();
                 var treasuryId = _appSession.GetCurrentTreasuryId();
+                var mainTreasury = _appSession.GetMainTreasury();
                 var outerTransaction = Mapper.Map<OuterTransactionInsertDto, Transaction>(dto);
                 outerTransaction.ReceiverBranchId = BranchHelper.Id;
                 outerTransaction.TreaseryId = treasuryId;
@@ -254,6 +255,7 @@ namespace BWR.Application.AppServices.Transactions
                 #endregion
 
                 #region Treasury Money Action
+                
                 var truseryMoneyAction = new TreasuryMoneyAction()
                 {
                     Total = treasuryCash.Total,
@@ -265,6 +267,18 @@ namespace BWR.Application.AppServices.Transactions
 
                 _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(truseryMoneyAction);
 
+                if (mainTreasury != treasuryId)
+                {
+                    var mainTruseryMoneyAction = new TreasuryMoneyAction()
+                    {
+                        Amount = dto.Amount + dto.OurComission,
+                        TreasuryId = mainTreasury,
+                        CoinId = dto.CoinId,
+                        BranchCashFlow = branchCashFlow,
+                    };
+
+                    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyAction);
+                }
                 #endregion
 
                 _unitOfWork.Save();
@@ -533,6 +547,7 @@ namespace BWR.Application.AppServices.Transactions
             try
             {
                 var treasuryId = _appSession.GetCurrentTreasuryId();
+                var mainTreasury = _appSession.GetMainTreasury();
                 _unitOfWork.CreateTransaction();
 
                 var outerTransaction = _unitOfWork.GenericRepository<Transaction>().GetById(dto.Id);
@@ -676,6 +691,19 @@ namespace BWR.Application.AppServices.Transactions
                 };
 
                 _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(newTruseryMoneyAction);
+
+                if (mainTreasury != treasuryId)
+                {
+                    var mainTruseryMoneyAction = new TreasuryMoneyAction()
+                    {
+                        Amount = dto.Amount + dto.OurComission,
+                        TreasuryId = mainTreasury,
+                        CoinId = dto.CoinId,
+                        BranchCashFlow = newBranchCashFlow,
+                    };
+
+                    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyAction);
+                }
 
                 #endregion
 
@@ -1018,6 +1046,7 @@ namespace BWR.Application.AppServices.Transactions
                 _unitOfWork.CreateTransaction();
                 var branchId = BranchHelper.Id;
                 var treasuryId = _appSession.GetCurrentTreasuryId();
+                var mainTreasury = _appSession.GetMainTreasury();
                 var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.BranchId == branchId && c.CoinId == dto.CoinId).FirstOrDefault();
                 var boxAction = new BoxAction()
                 {
@@ -1069,6 +1098,19 @@ namespace BWR.Application.AppServices.Transactions
                 };
                 _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(treasuryMoneyAction);
 
+                if (mainTreasury != treasuryId)
+                {
+                    var mainTruseryMoneyAction = new TreasuryMoneyAction()
+                    {
+                        Amount = (decimal)dto.RecivingAmount,
+                        TreasuryId = mainTreasury,
+                        CoinId = dto.CoinId,
+                        BranchCashFlow = branchCashFlow,
+                    };
+
+                    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyAction);
+                }
+
                 var clientCash = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.ClientId == dto.SenderClientId && c.CoinId == dto.CoinId).First();
                 clientCash.Total += (decimal)dto.RecivingAmount;
                 clientCash.ModifiedBy = _appSession.GetUserName();
@@ -1105,6 +1147,7 @@ namespace BWR.Application.AppServices.Transactions
             {
                 var branchId = BranchHelper.Id;
                 var treasuryId = _appSession.GetCurrentTreasuryId();
+                var mainTreasury = _appSession.GetMainTreasury();
 
                 MoneyAction moneyAction = null;
                 var moneyActionDetailDto = dto.MoenyActions.FirstOrDefault(x => x.BoxActionsId != null);
@@ -1207,6 +1250,19 @@ namespace BWR.Application.AppServices.Transactions
 
                 _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(treasuryMoneyAction);
 
+                if (mainTreasury != treasuryId)
+                {
+                    var mainTruseryMoneyAction = new TreasuryMoneyAction()
+                    {
+                        Amount = dto.RecivingAmount.Value,
+                        TreasuryId = mainTreasury,
+                        CoinId = dto.CoinId,
+                        BranchCashFlow = branchCashFlow,
+                    };
+
+                    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyAction);
+                }
+
                 var clientCashFlow = new ClientCashFlow()
                 {
                     CoinId = dto.CoinId,
@@ -1219,6 +1275,7 @@ namespace BWR.Application.AppServices.Transactions
 
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlow);
 
+                
 
                 return true;
             }
@@ -1236,6 +1293,7 @@ namespace BWR.Application.AppServices.Transactions
                 _unitOfWork.CreateTransaction();
                 var branchId = BranchHelper.Id;
                 var treasuryId = _appSession.GetCurrentTreasuryId();
+                var mainTreasury = _appSession.GetMainTreasury();
 
                 int? boxActionId;
 
@@ -1414,6 +1472,19 @@ namespace BWR.Application.AppServices.Transactions
                         Amount = dto.RecivingAmount.Value,
                         CreatedBy = _appSession.GetUserName()
                     };
+
+                    if (mainTreasury != treasuryId)
+                    {
+                        var mainTruseryMoneyAction = new TreasuryMoneyAction()
+                        {
+                            Amount = dto.RecivingAmount.Value,
+                            TreasuryId = mainTreasury,
+                            CoinId = dto.CoinId,
+                            BranchCashFlow = branchCashFlow,
+                        };
+
+                        _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyAction);
+                    }
 
                     var companyCashFlow = new CompanyCashFlow()
                     {

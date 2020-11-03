@@ -99,6 +99,22 @@ namespace BWR.Application.AppServices.Common
                     BranchCashFlow = branchCashFlowForFirstCoin,
                 };
                 _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(sellingCoinTreasuryMoeyAction);
+                var mainTreasuryId = _appSession.GetMainTreasury();
+                if (mainTreasuryId != treasuryId)
+                {
+                    var mainTruseryMoneyAction = new TreasuryMoneyAction()
+                    {
+                        TreasuryId = mainTreasuryId,
+                        Amount = -firstAmount,
+                        CoinId = sellingCoinId,
+                        BranchCashFlow = branchCashFlowForFirstCoin,
+                        CreatedBy = _appSession.GetUserName()
+                    };
+
+                    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyAction);
+                }
+
+
                 var branChCashFlowForSecoundCoin = new BranchCashFlow()
                 {
                     BranchId = BranchHelper.Id,
@@ -122,6 +138,20 @@ namespace BWR.Application.AppServices.Common
                     BranchCashFlow = branChCashFlowForSecoundCoin,
                 };
                 _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(secoundCoinTreasuryMoeyAction);
+                
+                if (mainTreasuryId != treasuryId)
+                {
+                    var mainTruseryMoneyActionSecoundCoin = new TreasuryMoneyAction()
+                    {
+                        TreasuryId = mainTreasuryId,
+                        Amount = +secondCoinAmount,
+                        BranchCashFlow = branChCashFlowForSecoundCoin,
+                        CoinId = purchasingCoinId,
+                        CreatedBy = _appSession.GetUserName()
+                    };
+
+                    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyActionSecoundCoin);
+                }
                 _unitOfWork.Save();
                 _unitOfWork.Commit();
                 return true;

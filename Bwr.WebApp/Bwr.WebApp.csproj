@@ -6458,6 +6458,7 @@
     <Content Include="Views\InnerTransaction\EditInnerTransaction.cshtml" />
     <Content Include="Views\Statement\ClientStoped.cshtml" />
     <Content Include="Views\Client\StopedClient.cshtml" />
+    <Content Include="Views\BoxAction\EditBoxAction.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

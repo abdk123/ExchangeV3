@@ -70,6 +70,14 @@
     <Compile Include="Migrations\202009191341228_Add_Date_To_MoneyAction.designer.cs">
       <DependentUpon>202009191341228_Add_Date_To_MoneyAction.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202011021020245_Test.cs" />
+    <Compile Include="Migrations\202011021020245_Test.designer.cs">
+      <DependentUpon>202011021020245_Test.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202011030745262_Add_Box_Action_Type.cs" />
+    <Compile Include="Migrations\202011030745262_Add_Box_Action_Type.designer.cs">
+      <DependentUpon>202011030745262_Add_Box_Action_Type.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\ExternalLoginRepository.cs" />
@@ -96,6 +104,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009191341228_Add_Date_To_MoneyAction.resx">
       <DependentUpon>202009191341228_Add_Date_To_MoneyAction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011021020245_Test.resx">
+      <DependentUpon>202011021020245_Test.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011030745262_Add_Box_Action_Type.resx">
+      <DependentUpon>202011030745262_Add_Box_Action_Type.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
