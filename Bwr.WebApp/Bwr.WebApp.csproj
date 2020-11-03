@@ -6456,6 +6456,7 @@
     <Content Include="Views\TreasuryMoneyAction\Index.cshtml" />
     <Content Include="Views\OuterTransaction\EditOuterTransaction.cshtml" />
     <Content Include="Views\InnerTransaction\EditInnerTransaction.cshtml" />
+    <Content Include="Views\BoxAction\EditBoxAction.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

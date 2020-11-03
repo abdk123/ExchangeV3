@@ -100,7 +100,7 @@ namespace BWR.Application.AppServices.Companies
                         var temp =  new CompanyCashFlowOutputDto()
                         {
                             Id = companyCashFlow.Id,
-                            //Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.Amount,
+                            Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.Amount,
                             Amount = companyCashFlow.Amount,
                             Commission = companyCashFlow.Commission(),
                             SecondCommission = companyCashFlow.SecounCommission(),
@@ -115,8 +115,8 @@ namespace BWR.Application.AppServices.Companies
                             MoneyActionId = companyCashFlow.MoneyActionId,
                             Matched = companyCashFlow.Matched
                         };
-                        temp.Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.Amount;
-                        temp.Balance += temp.SecondCommission;
+                        //temp.Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.Amount;
+                        temp.Balance += temp.Commission;
                         companyCashFlowsDtos.Add(temp);
 
                     }

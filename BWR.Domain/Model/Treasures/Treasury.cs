@@ -20,6 +20,7 @@ namespace BWR.Domain.Model.Treasures
         public string Name { get; set; }
         public bool IsEnabled { get; set; }
         public bool IsAvilable { get; set; }
+        public bool IsMainTreasury { get; set; }
 
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]

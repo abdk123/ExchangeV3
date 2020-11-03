@@ -9,6 +9,7 @@ using BWR.Domain.Model.Branches;
 
 namespace Bwr.WebApp.Controllers.Setting
 {
+    [Authorize]
     public class BranchCashController : Controller
     {
         private readonly IBranchCashAppService _branchCashAppService;

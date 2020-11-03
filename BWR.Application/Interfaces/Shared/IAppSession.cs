@@ -5,5 +5,6 @@ namespace BWR.Application.Interfaces.Shared
     {
         string GetUserName();
         int GetCurrentTreasuryId();
+        int GetMainTreasury();
     }
 }

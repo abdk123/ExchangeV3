@@ -1,0 +1,854 @@
+﻿@model BWR.Application.Dtos.BoxAction.BoxActionInitialDto
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4">
+            <label>نوع الحركة</label>
+            <select class="form-control" id="typeOfAction">
+                <option value="-1">
+                    صرف
+                </option>
+                <option value="1">
+                    قبض
+                </option>
+            </select>
+        </div>
+        <div class="col-lg-4">
+            <label>العملة</label>
+            @Html.DropDownList("Coins", new SelectList(Model.Coins, "Id", "Name"), " ", htmlAttributes: new { @class = "form-control", id = "coins" })
+        </div>
+        <div class="col-lg-4">
+            <label>الحساب</label>
+            <select class="form-control" id="firstAcountSelect">
+                <option value="1">عامة</option>
+                @*<option value="2">حوالة مباشرة</option>*@
+                <option value="3">حساب العملاء</option>
+                <option value="4">حساب الشركات</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div id="agentDiv" name="acountDiv" >
+            <div class="col-lg-6">
+                <label>اختر العميل</label>
+                @Html.DropDownList("Agents", new SelectList(Model.Agents, "Id", "FullName"), "", htmlAttributes: new { @class = "form-control", id = "agents" })
+            </div>
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label>رصيد العميل</label>
+                        <br />
+                        <span class="label label-primary" id="agentcurrentBalnce"></span>
+                    </div>
+                    <div class="col-lg-6">
+                        <label>الرصيد المتبقي</label>
+                        <br />
+                        <span class="label label-primary" id="agentnewBalnce"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="ExpencesDiv" name="acountDiv" class="col-lg-6">
+            <label>الصرفيات</label>
+            @Html.DropDownList("PublicExpenses", new SelectList(Model.PublicExpenses, "Id", "Name"), "", htmlAttributes: new { @class = "form-control", id = "publicExpenses" })
+        </div>
+        <div id="incominingDiv" name="acountDiv" class="col-lg-6">
+            <label>الإرادات</label>
+            @Html.DropDownList("PublicIncomes", new SelectList(Model.PublicIncomes, "Id", "Name"), "", htmlAttributes: new { @class = "form-control", id = "publicIncomes" })
+        </div>
+        <div id="companyDiv" name="acountDiv" >
+            <div class="col-lg-6">
+                <label>الشركات</label>
+                @Html.DropDownList("Companies", new SelectList(Model.Companies, "Id", "Name"), "", htmlAttributes: new { @class = "form-control", id = "companies" })
+            </div>
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label>رصيد الشركة</label>
+                        <br />
+                        <span class="label label-primary" id="companycurrentBalnce"></span>
+                    </div>
+                    <div class="col-lg-6">
+                        <label>الرصيد المتبقي</label>
+                        <br />
+                        <span class="label label-primary" id="copanynewBalnce"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <label>المبلغ</label>
+            <input type="text" class="form-control" onkeypress="validation(this, event); " onkeyup="FormaittingNumber(this);" onchange="" id="amout" />
+        </div>
+        <div class="col-lg-6">
+            <label>الملاحظات</label>
+            <input type="text" class="form-control" name="note" id="note" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <label>جهة الصرف</label>
+            <select class="form-control" id="secoundAcount">
+                <option value="1">الصندوق</option>
+                <option value="2">حساب العملاء</option>
+                <option value="3">حساب الشركات</option>
+            </select>
+        </div>
+        <div class="col-lg-8" id="secounAcountDetials">
+            <div id="secoundCompanyDiv" >
+                <div class="col-lg-8">
+                    <label> اختر الشركة</label>
+                    <select id="secoundCompanySelect"></select>
+                </div>
+            </div>
+            <div id="secoundAgentDiv" >
+                <div class="col-lg-8">
+                    <label> اختر العميل</label>
+                    <select id="secoundAgentSelect"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:10px" id="submit">حفظ</button>
+</div>
+@section ScriptPath{
+    <script src="~/Scripts/GlopalScript.js"></script>
+    @*<script src="~/Scripts/BoxAction/Index.js"></script>*@
+}
+<script>
+    var clientBalnae;
+    var companyBalnce;
+    var $boxActionDto;
+
+    $(function () {
+
+        $('#secoundAcount').change(function () {
+            hideAllSecoundDiv();
+
+            var secoundAcount = $(this).val();
+            if (secoundAcount == 1) {
+                return;
+            }
+            if (secoundAcount == 2) {
+                secounAcountDetials.style.display = 'block';
+                secoundAgentDiv.style.display = 'block';
+            }
+            if (secoundAcount == 3) {
+                secounAcountDetials.style.display = 'block';
+                secoundCompanyDiv.style.display = 'block';
+            }
+            fillSecoundSelect();
+        });
+        $('#submit').click(function () {
+
+            if (!validate()) {
+                return;
+            }
+            var secoundAcount = $('#secoundAcount').val();
+            var coinId = $('#coins').val();
+            var note = $('#note').val();
+            var amount = $('#amout').val();
+
+            amount = deleteCommaFromNumber(amount);
+            var actionType = parseInt($('#typeOfAction').val());
+            var firstAcountType = $('#firstAcountSelect').val();
+            if (secoundAcount == 1 && firstAcountType == 1 && actionType == -1) {
+
+                payExpenciveFromMainBox(parseInt($('#publicExpenses').val()), coinId, amount, note);
+
+            } else if (secoundAcount == 1 && firstAcountType == 1 && actionType == 1) {
+
+                reciverIncomeToMainBox($('#publicIncomes').val(), coinId, amount, note);
+
+            } else if (secoundAcount == 1 && firstAcountType == 3 && actionType == -1) {
+
+                var client = $('#agents').val();
+                if (client == "") {
+                    toastr["error"]("يجب عليك اختيار عميل", "");
+                    return;
+                }
+                payForClientFromMainBox($('#agents').val(), $('#coins').val(), amount, note);
+
+            } else if (secoundAcount == 1 && firstAcountType == 3 && actionType == 1) {
+                var client = $('#agents').val();
+                if (client == "") {
+                    toastr["error"]("يجب عليك اختيار عميل", "");
+                    return;
+                }
+                reciveFromClientToMainBox($('#agents').val(), $('#coins').val(), amount, note);
+
+            } else if (secoundAcount == 1 && firstAcountType == 4 && actionType == -1) {
+
+                var company = $('#companies').val();
+                if (company == "") {
+                    toastr["error"]("يجب عليك ان تحدد الشركة", "خطاْ");
+                    return;
+                }
+
+                payForCompanyFromMainBox($('#companies').val(), $('#coins').val(), amount, note);
+
+            } else if (secoundAcount == 1 && firstAcountType == 4 && actionType == 1) {
+
+                var company = $('#companies').val();
+                if (company == "") {
+                    toastr["error"]("يجب عليك ان تحدد الشركة", "خطاْ");
+                    return;
+                }
+
+                reciveFromCompanyToMainBox($('#companies').val(), $('#coins').val(), amount, note);
+
+            } else if (secoundAcount == 2 && firstAcountType == 3 && actionType == -1) {
+
+                amount = parseFloat(amount);
+                amount = amount * -1;
+
+                fromClientToClient($('#agents').val(), $('#secoundAgentSelect').val(), $('#coins').val(), amount, note);
+
+            } else if (secoundAcount == 2 && firstAcountType == 3 && actionType == 1) {
+
+                amount = parseFloat(amount);
+                fromClientToClient($('#agents').val(), $('#secoundAgentSelect').val(), $('#coins').val(), amount, note);
+            } else if (secoundAcount == 2 && firstAcountType == 4 && actionType == -1) {
+
+                amount = parseFloat(amount);
+                amount = amount * -1;
+
+                fromCompanyToClient($('#companies').val(), $('#secoundAgentSelect').val(), $('#coins').val(), amount, note);
+            } else if (secoundAcount == 2 && firstAcountType == 4 && actionType == 1) {
+
+                amount = parseFloat(amount);
+
+                fromCompanyToClient($('#companies').val(), $('#secoundAgentSelect').val(), $('#coins').val(), amount, note);
+
+            } else if (secoundAcount == 3 && firstAcountType == 3 && actionType == -1) {
+
+                amount = parseFloat(amount);
+                amount = amount * -1;
+
+                fromClientToCompany($('#agents').val(), $('#secoundCompanySelect').val(), $('#coins').val(), amount, note);
+            } else if (secoundAcount == 3 && firstAcountType == 3 && actionType == 1) {
+                amount = parseFloat(amount);
+
+                fromClientToCompany($('#agents').val(), $('#secoundCompanySelect').val(), $('#coins').val(), amount, note);
+
+            } else if (secoundAcount == 3 && firstAcountType == 4 && actionType == -1) {
+
+                amount = parseFloat(amount);
+                amount = amount * -1;
+                fromCompanyToCompany($('#companies').val(), $('#secoundCompanySelect').val(), $('#coins').val(), amount, note);
+
+            } else if (secoundAcount == 3 && firstAcountType == 4 && actionType == 1) {
+
+                amount = parseFloat(amount);
+                fromCompanyToCompany($('#companies').val(), $('#secoundCompanySelect').val(), $('#coins').val(), amount, note);
+            }
+            else if (secoundAcount == 3 && firstAcountType == 1 && actionType == -1) {
+                amount = parseFloat(amount);
+                fromCompanyToPublicExpenes(coinId, $('#secoundCompanySelect').val(), $('#publicExpenses').val(), amount, note);
+            }
+            else if (secoundAcount == 3 && firstAcountType == 1 && actionType == 1) {
+                amount = parseFloat(amount);
+                fromCompanyToPublicIncome(coinId, $('#secoundCompanySelect').val(), $('#publicIncomes').val(), amount, note);
+            }
+            else if (secoundAcount == 2 && firstAcountType == 1 && actionType == -1) {
+                amount = parseFloat(amount);
+                fromClientToPublicExpenes(coinId, $('#secoundAgentSelect').val(), $('#publicExpenses').val(), amount, note);
+            }
+            else if (secoundAcount == 2 && firstAcountType == 1 && actionType == 1) {
+                amount = parseFloat(amount);
+                fromClientToPublicIncome(coinId, $('#secoundAgentSelect').val(), $('#publicIncomes').val(), amount, note);
+            }
+
+        });
+        $('#amout').keyup(() => {
+
+            clacAgentCurrentBalcne();
+        });
+        $('#coins').change(function () {
+
+            if ($('#agents').val() == "") {
+                resetAgentBlance();
+            } else {
+                getClientBalanceByCoin($('#agents').val(), $(this).val());
+            }
+            if ($('#companies').val() == "") {
+                resetCompanyBalnce();
+            } else {
+                getCompanyBalnceByCoin($('#companies').val(), $(this).val())
+            }
+            if ($('#agents').val() != '') {
+                clacAgentCurrentBalcne();
+            }
+        });
+        $('#companies').change(function () {
+            if ($(this).val() == "") {
+                resetCompanyBalnce();
+                return;
+            }
+            getCompanyBalnceByCoin($(this).val(), $('#coins').val());
+        })
+        $('#agents').change(function () {
+            if ($(this).val() == "") {
+                resetAgentBlance();
+                return;
+            }
+            getClientBalanceByCoin($(this).val(), $('#coins').val());
+            setTimeout(function () { clacAgentCurrentBalcne(); }, 500);
+        });
+        $('#typeOfAction').change(function () {
+
+            //var firstAcountSelect = document.getElementById('firstAcountSelect');
+            //firstAcountSelect.getElementsByTagName('option')[1].hidden = !firstAcountSelect.getElementsByTagName('option')[1].hidden;
+            showFromAcount($(this).val(), $("#firstAcountSelect").val());
+        });
+        $('#firstAcountSelect').change(function () {
+
+            showFromAcount($('#typeOfAction').val(), $(this).val());
+
+        });
+
+        getBoxActionById('@ViewBag.BoxAction');
+
+    });
+
+    function hideAllSecoundDiv() {
+        secounAcountDetials.style.display = 'none';
+        secoundAgentDiv.style.display = 'none';
+        secoundCompanyDiv.style.display = 'none';
+    }
+
+    function fillSecoundSelect() {
+
+        $('#secoundAgentSelect').html('');
+        $('#secoundCompanySelect').html('');
+        $('#secoundAgentSelect').select2({ allowClear: !0, placeholder: "العملاء", width: null });
+        $('#secoundCompanySelect').select2({ allowClear: !0, placeholder: "الشركات", width: null });
+        var companyId;
+        var agentId;
+        if ($('#agents').val() == "") {
+            agentId = null;
+        } else {
+            agentId = $('#agents').val();
+        }
+        if ($('#companies').val() == "") {
+            companyId = null;
+        } else {
+            companyId = $('#companies').val();
+        }
+        $.post(
+            '@Url.Action("GetCompanyWithoutSpecific", "Company")',
+            {
+                'companyId': companyId,
+            },
+            function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var newOption = new Option(data[i].Name, data[i].Id, false, false);
+                    $('#secoundCompanySelect').append(newOption).trigger('change');
+                }
+                $('#secoundCompanySelect').val(null).trigger('change');
+            }
+        )
+        $.post(
+            '@Url.Action("GetAllWithoutSpecific", "Client")',
+            {
+                'clientId': agentId,
+            },
+            function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var newOption = new Option(data[i].FullName, data[i].Id, false, false);
+
+                    $('#secoundAgentSelect').append(newOption).trigger('change');
+                }
+                $('#secoundAgentSelect').val(null).trigger('change');
+            }
+        )
+
+    }
+
+    function emptyForm() {
+        $('#typeOfAction').val(-1).change();
+        $('#firstAcountSelect').val(1).change();
+        $('#amout').val("");
+        $('#note').val("");
+        $('#secoundAcount').val(1).change();
+        $('#companies').val("").change();
+        $('#agents').val("").change();
+    }
+
+    function showFromAcount(typeOfAction, acountId) {
+
+        $('div[name="acountDiv"]').each(function (index) {
+            $(this).hide();
+        });
+        if (acountId == 3) {
+            $('#agentDiv').show(0, function () {
+                $('#agents').select2();
+            });
+            return;
+        }
+        if (acountId == 4) {
+            $('#companyDiv').show(0, function () {
+                $('#companies').select2();
+            });
+            return;
+        }
+        if (acountId == 1) {
+            if ($('#typeOfAction').val() == -1) {
+                $('#ExpencesDiv').show();
+                return;
+            } else {
+                $('#incominingDiv').show();
+                return;
+            }
+        }
+    }
+
+    function getClientBalanceByCoin(clientId, coinId) {
+        $.post(
+            '@Url.Action("GetClientCashByCoin", "ClientCash")',
+            {
+                clientId: clientId,
+                coinId: coinId
+            }, function (data) {
+                console.log(data);
+                clientBalnae = data;
+                var balnce = numberWithCommas(parseFloat(data.Total));
+                $('#agentnewBalnce').text(balnce);
+                $('#agentcurrentBalnce').text(numberWithCommas(balnce));
+            }
+        );
+    }
+
+    function getCompanyBalnceByCoin(companyId, coinId) {
+        $.post(
+            '@Url.Action("GetCompanyMaxAndDeptByCoin", "CompanyCash")', {
+                companyId: companyId,
+                coinId: coinId
+            }, function (data) {
+                companyBalnce = data;
+                var balnce = numberWithCommas(parseFloat(data.Total));
+                $('#companycurrentBalnce').text(balnce);
+                $('#copanynewBalnce').text(balnce);
+            }
+        )
+    }
+
+    function resetAgentBlance() {
+        $('#agentcurrentBalnce').empty();
+        $('#agentnewBalnce').empty();
+    }
+
+    function resetCompanyBalnce() {
+        $('#companycurrentBalnce').empty();
+        $('#copanynewBalnce').empty();
+    }
+
+    function clacAgentCurrentBalcne() {
+
+        var amount = parseFloat(deleteCommaFromNumber($('#amout').val()));
+        if (isNaN(amount)) {
+            amount = 0;
+        }
+
+        var typeOfAtionVal = $('#typeOfAction').val();
+        if (clientBalnae != null) {
+            if (typeOfAtionVal == 1) {
+
+                $('#agentnewBalnce').text(numberWithCommas(clientBalnae.Total + amount));
+            } else {
+                $('#agentnewBalnce').text(numberWithCommas(clientBalnae.Total - amount));
+            }
+        }
+
+    }
+
+    function CalcCompanyCurrentBalnce() {
+        var amount = parseFloat(deleteCommaFromNumber($('#amout').val()));
+        if (isNaN(amount)) {
+            amount = 0;
+        }
+        var typeOfAtionVal = $('#typeOfAction').val();
+        if (typeOfAtionVal == 1) {
+            $('#copanynewBalnce').text(numberWithCommas(parseFloat(companyBalance.Total) + amount));
+        } else {
+            $('#copanynewBalnce').text(numberWithCommas(parseFloat(companyBalance.Total) - amount));
+        }
+    }
+
+    function validate() {
+        var firstAcountType = $('#firstAcountSelect').val();
+        var secoundAcountType = $('#secoundAcount').val();
+        if (firstAcountType == 3) {
+            if ($('#agents').val() == "") {
+                toastr["error"]("يجب عليك ان تحدد العميل", "خطاْ");
+                return false;
+            }
+        }
+        if (firstAcountType == 4) {
+            if ($('#companies').val() == "") {
+                toastr["error"]("يجب عليك ان تحدد الشركة", "خطاء");
+                return false;
+            }
+        }
+        var amount = $('#amout').val();
+        if (amount == "" || amount == 0) {
+            toastr["error"]("يجب عليك ان تحدد المبلغ", "خطاْ");
+            return false;
+        }
+        if (secoundAcountType == 2) {
+            if ($('#secoundAgentSelect').val() == null) {
+                toastr["error"]("يجب عليك ان تحدد عميل جهة الصرف", "خطاْ");
+                return false;
+            }
+        }
+        if (secoundAcountType == 3) {
+            if ($('#secoundCompanySelect').val() == null) {
+                toastr["error"]("يجب عليك ان تحدد شركة جهة الصرف", "خطاْ");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function payExpenciveFromMainBox(publicExpenses, coinId, amount, note){
+        $.post(
+            '@Url.Action("EditPayExpenciveFromMainBox", "BoxAction")', {
+                ExpensiveId: publicExpenses,
+                CoinId: coinId,
+                Amount: amount,
+                Note: note,
+                MoneyActionId: $boxActionDto.MoneyActionId
+            }, function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدثت مشكلة اثناء الحفظ");
+                }
+
+            }
+        );
+    }
+
+    function reciverIncomeToMainBox(publicIncomeId, coinId, amount, note) {
+        $.post(
+            '@Url.Action("EditReciverIncomeToMainBox", "BoxAction")', {
+                IncomeId: publicIncomeId,
+                CoinId: coinId,
+                Amount: amount,
+                MoneyActionId: $boxActionDto.MoneyActionId
+                Note: note
+            }, function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدثت مشكلة اثناء الحفظ");
+                }
+
+            }
+        );
+    }
+
+    function payForClientFromMainBox(clientId, coinId, amount, note) {
+        $.post(
+            '@Url.Action("EditPayForClientFromMainBox", "BoxAction")', {
+                ClientId: clientId,
+                CoinId: coinId,
+                MoneyActionId: $boxActionDto.MoneyActionId,
+                Amount: amount,
+                Note: note
+            }, function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدثت مشكلة اثناء الحفظ");
+                }
+            });
+    }
+
+    function reciveFromClientToMainBox(clientId, coinId, amount, note) {
+        $.post(
+            '@Url.Action("EditReciveFromClientToMainBox", "BoxAction")', {
+                ClientId: clientId,
+                CoinId: coinId,
+                Amount: amount,
+                MoneyActionId: $boxActionDto.MoneyActionId,
+                Note: note
+            }, function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدثت مشكلة اثناء الحفظ");
+                }
+            });
+    }
+
+    function payForCompanyFromMainBox(companyId, coinId, amount, not) {
+
+        $.post(
+            '@Url.Action("EditPayForCompanyFromMainBox", "BoxAction")'
+            , {
+                CompanyId: companyId,
+                CoinId: coinId,
+                Amount: amount,
+                MoneyActionId: $boxActionDto.MoneyActionId,
+                Note: not
+            }
+            , function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدثت مشكلة اثناء الحفظ");
+                }
+            });
+    }
+
+    function reciveFromCompanyToMainBox(companyId, coinId, amount, note) {
+        $.post(
+            '@Url.Action("EditReciveFromCompanyToMainBox", "BoxAction")', {
+                CompanyId: companyId,
+                CoinId: coinId,
+                Amount: amount,
+                MoneyActionId: $boxActionDto.MoneyActionId,
+                Note: note
+            }, function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدثت مشكلة اثناء الحفظ");
+                }
+            }
+        );
+    }
+
+    function fromClientToClient(agentId, clientSecondAcount, coinId, amount, note) {
+
+        $.post(
+            '@Url.Action("EditFromClientToClient", "BoxAction")', {
+                FirstClientId: agentId,
+                SecondClientId: clientSecondAcount,
+                CoinId: coinId,
+                Amount: amount,
+                MoneyActionId: $boxActionDto.MoneyActionId,
+                Note: note,
+                MoneyActionId: $moneyActionId
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحاولة ", "");
+                    emptyForm();
+                }
+            }
+        );
+    }
+
+    function fromCompanyToClient(companyId, clientSecondAcount, coinId, amount, note) {
+        $.post(
+            '@Url.Action("EditFromCompanyToClient", "BoxAction")', {
+                CompanyId: companyId,
+                ClientId: clientSecondAcount,
+                CoinId: coinId,
+                Amount: amount,
+                MoneyActionId: $boxActionDto.MoneyActionId,
+                Note: note
+            }, function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+
+    function fromClientToCompany(agentId, secoundCompanyId, coinId, amount, note) {
+        $.post(
+            '@Url.Action("EditFromClientToCompany", "BoxAction")', {
+                ClientId: agentId,
+                CompanyId: secoundCompanyId,
+                CoinId: coinId,
+                MoneyActionId: $boxActionDto.MoneyActionId,
+                Amount: amount,
+                Note: note
+            },
+            function (data) {
+                console.log(data);
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+
+    function fromCompanyToCompany(companyId, secondCompanyId, coinId, amount, note) {
+        if (secondCompanyId == undefined)
+            return;
+        if (secondCompanyId == "")
+            return;
+                $.post(
+                    '@Url.Action("EditFromCompanyToCompany", "BoxAction")', {
+                        FirstCompanyId: companyId,
+                        SecondCompanyId: secondCompanyId,
+                        CoinId: coinId,
+                        Amount: amount,
+                        MoneyActionId: $boxActionDto.MoneyActionId,
+                        Note: note
+                    },
+                    function (data) {
+                        if (data.Success) {
+                            toastr["success"]("تم");
+                            emptyForm();
+                        } else {
+                            toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                        }
+                    }
+                )
+    }
+
+    function fromClientToPublicExpenes(coinId, clientId, publicExpenseId, amount, note) {
+        $.post(
+            '@Url.Action("EditFromClientToPublicExpenes", "BoxAction")', {
+                CoinId: coinId,
+                ClientId: clientId,
+                PublicExpenseId: publicExpenseId,
+                Amount: amount,
+                MoneyActionId: $boxActionDto.MoneyActionId,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+
+    function fromClientToPublicIncome(coinId, clientId, publicIncomeId, amount, note) {
+        $.post(
+            '@Url.Action("EditFromClientToPublicIncome", "BoxAction")', {
+                CoinId: coinId,
+                ClientId: clientId,
+                PublicIncomeId: publicIncomeId,
+                Amount: amount,
+                MoneyActionId: $boxActionDto.MoneyActionId,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+
+    function fromCompanyToPublicExpenes(coinId, companyId, publicExpenseId, amount, note) {
+        $.post(
+            '@Url.Action("EditFromCompanyToPublicExpenes", "BoxAction")', {
+                CoinId: coinId,
+                CompanyId: companyId,
+                PublicExpenseId: publicExpenseId,
+                Amount: amount,
+                MoneyActionId: $boxActionDto.MoneyActionId,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+
+    function fromCompanyToPublicIncome(coinId, companyId, publicIncomeId, amount, note) {
+        console.log(publicIncomeId);
+        $.post(
+            '@Url.Action("EditFromCompanyToPublicIncome", "BoxAction")', {
+                CoinId: coinId,
+                CompanyId:companyId,
+                PublicIncomeId: publicIncomeId,
+                Amount: amount,
+                MoneyActionId: $boxActionDto.MoneyActionId,
+                Note: note
+            },
+            function (data) {
+                if (data.Success) {
+                    toastr["success"]("تم");
+                    emptyForm();
+                } else {
+                    toastr["error"]("حدث خطاء ما الرجاء إعادة تحميل الصفحة و المحوالة من جديد");
+                }
+            }
+        );
+    }
+
+    function getBoxAxtionById(id) {
+
+        console.log('getBoxAxtionById (id):' + id);
+        $.post(
+            '@Url.Action("GetBoxActionForEdit", "BoxAction")',
+            {
+                boxActionId: id,
+            }, function (data) {
+                console.log('getBoxAxtionById (post_data):' + data);
+                $boxActionDto = data;
+
+                initialElement();
+            }
+        );
+    }
+
+    function initialElement() {
+        console.log('initialElement (FirstClientId):' + $boxActionDto.FirstClientId);
+
+        switch ($boxActionDto.BoxActionType) {
+            case 'ExpenseFromTreasury': {
+                displayAndHideElements({ firstAccount: 1, secoundAccount: 1, agent: 'none', expence: 'block', income: 'none', company: 'none', secondAccountDetial: 'none', secoundCompany: 'none', secondClient: 'none' });
+                $('#publicExpenses').val($boxActionDto.ExpensiveId);
+                
+            } break;
+        }
+    }
+
+    function displayAndHideElements(data) {
+        $('#coins').val($boxActionDto.CoinId);
+        $('#firstAcountSelect').val(data.firstAccount);
+        $('#secoundAcount').val(data.secoundAccount);
+        var typeOfAction = $boxActionDto.IsIncome ? 1 : -1;
+        $('#typeOfAction').val(typeOfAction);
+
+        $('#agentDiv').attr('display', data.agent);
+        $('#ExpencesDiv').attr('display', Expence.expence);
+        $('#incominingDiv').attr('display', data.income);
+        $('#companyDiv').attr('display', data.company);
+        $('#secounAcountDetials').attr('display', data.secondAccountDetial);
+        $('#secoundCompanyDiv').attr('display', data.secoundCompany);
+        $('#secoundAgentDiv').attr('display', data.secondClient);
+    }
+
+</script>

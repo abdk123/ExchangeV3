@@ -26,6 +26,7 @@ namespace Bwr.WebApp.Controllers
         private readonly IGenericRepository<Permission> _permissionRepository;
         private readonly IGenericRepository<Role> _roleRepository;
         private readonly IGenericRepository<BWR.Domain.Model.Treasures.UserTreasuery> _userTreasuryRepository;
+        private readonly IGenericRepository<BWR.Domain.Model.Treasures.Treasury> _treasuryRepository;
 
         public AccountController(UserManager<IdentityUser, Guid> userManager,
             IUnitOfWork<MainContext> unitOfWork)
@@ -35,6 +36,7 @@ namespace Bwr.WebApp.Controllers
             _roleRepository = new GenericRepository<Role>(_unitOfWork);
             _permissionRepository = new GenericRepository<Permission>(_unitOfWork);
             _userTreasuryRepository = new GenericRepository<BWR.Domain.Model.Treasures.UserTreasuery>(_unitOfWork);
+            _treasuryRepository = new GenericRepository<BWR.Domain.Model.Treasures.Treasury>(_unitOfWork);
         }
 
         //
@@ -65,7 +67,20 @@ namespace Bwr.WebApp.Controllers
                     var userTreasuries = _userTreasuryRepository.FindBy(x => x.UserId == user.Id && x.DeliveryDate == null);
                     if (userTreasuries.Any())
                     {
-                        Session["CurrentTreasury"] = userTreasuries.LastOrDefault().Treasury.Id;
+                        var treasury = userTreasuries.LastOrDefault().Treasury;
+                        Session["CurrentTreasury"] = treasury.Id;
+                        if (treasury.IsMainTreasury)
+                        {
+                            Session["MainTreasury"] = treasury.Id;
+                        }
+                        else
+                        {
+                            var mainTreasury = _treasuryRepository.FindBy(x => x.IsMainTreasury).FirstOrDefault();
+                            if (mainTreasury != null)
+                            {
+                                Session["MainTreasury"] = mainTreasury.Id;
+                            }
+                        }
                     }
                     return RedirectToLocal(returnUrl);
                 }
