@@ -26,8 +26,7 @@
     <!-- /.modal-content -->
 </div>
 
-<script>
-
+<script> 
         $(function () {
             fillAllBalancesCoins();
 
@@ -36,6 +35,9 @@
             $('#allBalncesViewBtn').click(function () {
                 var coinId = $('#allBalancesCoins').val();
                 var date = $('#allBalancesDate').val();
+                if (coinId == "") {
+                    alert("يجب عليك تحديد التاريخ");
+                }
                 location.href = '@Url.Action("AllBalances", "Statement")?coinId=' + coinId + '&to=' + date;
             });
 
@@ -53,5 +55,8 @@
                     }
                 }
             )
-        }
-    </script>
+    }
+    $(document).ready(function () {
+        $('#allBalancesDate').val(new Date().toDateInputValue());
+    });
+</script>

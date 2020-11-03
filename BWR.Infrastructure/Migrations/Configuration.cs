@@ -78,60 +78,69 @@
             }
             #endregion
             #region country seeder
-            var syria = new Country()
+            if (!context.Countrys.Any())
             {
-                Name = "سوريا",
-                IsEnabled = true,
-            };
-            var iraq = new Country()
-            {
-                Name = "العراق",
-                IsEnabled = true,
-            };
-            context.Countrys.AddRange(new[] { syria, iraq });
-            context.SaveChanges();
+                var syria = new Country()
+                {
+                    Name = "سوريا",
+                    IsEnabled = true,
+                };
+                var iraq = new Country()
+                {
+                    Name = "العراق",
+                    IsEnabled = true,
+                };
+                context.Countrys.AddRange(new[] { syria, iraq });
+                context.SaveChanges();
+            }
             #endregion
             #region mainBranch
-            var mainBranch = new Branch()
+            if (!context.Branchs.Any())
             {
-                Name = "الفرع الرئيسي ",
-                Address = "",
-            };
-            context.Branchs.Add(mainBranch);
-            context.SaveChanges();
+                var mainBranch = new Branch()
+                {
+                    Name = "الفرع الرئيسي ",
+                    Address = "",
+                };
+                context.Branchs.Add(mainBranch);
+                context.SaveChanges();
+            }
             #endregion
             #region coin
-            var dollar = new Coin()
+            if (!context.Coins.Any())
             {
-                Name = "دولار",
-                IsEnabled = true,
-            };
-            var irDinar = new Coin()
-            {
+                var dollar = new Coin()
+                {
+                    Name = "دولار",
+                    IsEnabled = true,
+                };
+                var irDinar = new Coin()
+                {
 
-                Name = "دينار عراقي",
-                IsEnabled = true
-            };
-            context.Coins.AddRange(new[] { dollar, irDinar });
-            context.SaveChanges();  
-            var total = 100000;
-            var brancheId = context.Branchs.First().Id;
-            var sBranchCash = new BranchCash()
-            {
-                CoinId = dollar.Id,
-                BranchId = brancheId,
-                InitialBalance = total,
-                Total = total,
-            };
-            var iBranchCash = new BranchCash()
-            {
-                BranchId = brancheId,
-                CoinId = irDinar.Id,
-                Total = total,
-                InitialBalance = total
-            };
-            context.BranchCashs.AddRange(new[] { iBranchCash, sBranchCash });
-            context.SaveChanges();
+                    Name = "دينار عراقي",
+                    IsEnabled = true
+                };
+                context.Coins.AddRange(new[] { dollar, irDinar });
+                context.SaveChanges();
+                var total = 100000;
+                var brancheId = context.Branchs.First().Id;
+                var sBranchCash = new BranchCash()
+                {
+                    CoinId = dollar.Id,
+                    BranchId = brancheId,
+                    InitialBalance = total,
+                    Total = total,
+                };
+                var iBranchCash = new BranchCash()
+                {
+                    BranchId = brancheId,
+                    CoinId = irDinar.Id,
+                    Total = total,
+                    InitialBalance = total
+                };
+                context.BranchCashs.AddRange(new[] { iBranchCash, sBranchCash });
+                context.SaveChanges();
+            }
             #endregion
         }
     }

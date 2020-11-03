@@ -93,7 +93,7 @@ namespace Bwr.WebApp.Controllers.Common
         }
 
         [HttpGet]
-        public ActionResult GetClientsAndCompaniesBalances(int coinId, DateTime? to)
+        public ActionResult GetClientsAndCompaniesBalances(int coinId, DateTime to)
         {
             var balances = _statementAppService.GetAllBalances(coinId,to);
             return Json(new { Balances = balances }, JsonRequestBehavior.AllowGet);

@@ -8,7 +8,7 @@ namespace BWR.Application.Interfaces.Client
     public interface IClientCashFlowAppService
     {
         IList<ClientCashFlowOutputDto> Get(ClientCashFlowInputDto input);
-        IList<BalanceStatementDto> GetForStatement(int coinId, DateTime? to);
+        IList<BalanceStatementDto> GetForStatement(int coinId, DateTime to);
         ClientMatchDto ConvertMatchingStatus(ClientMatchDto dto);
     }
 }
