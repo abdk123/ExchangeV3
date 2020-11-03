@@ -35,7 +35,7 @@ namespace BWR.Application.AppServices.Common
             _clientCashFlowAppService = clientCashFlowAppService;
         }
 
-        public IList<BalanceStatementDto> GetAllBalances(int coinId, DateTime? to)
+        public IList<BalanceStatementDto> GetAllBalances(int coinId, DateTime to)
         {
             var balances = _companyCashFlowAppService.GetForStatement(coinId, to).ToList();
             var clientBalances = _clientCashFlowAppService.GetForStatement(coinId, to).ToList();

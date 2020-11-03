@@ -6,7 +6,7 @@ namespace BWR.Application.Interfaces
 {
     public interface IStatementAppService
     {
-        IList<BalanceStatementDto> GetAllBalances(int coinId, DateTime? to);
+        IList<BalanceStatementDto> GetAllBalances(int coinId, DateTime to);
         ConclusionDto GetConclusion(int coinId, DateTime date);
     }
 }

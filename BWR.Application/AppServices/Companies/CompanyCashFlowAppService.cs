@@ -97,7 +97,7 @@ namespace BWR.Application.AppServices.Companies
                     }
                     foreach (var companyCashFlow in dataCashFlows)
                     {
-                        var temp =  new CompanyCashFlowOutputDto()
+                        var temp = new CompanyCashFlowOutputDto()
                         {
                             Id = companyCashFlow.Id,
                             Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.Amount,
@@ -173,26 +173,32 @@ namespace BWR.Application.AppServices.Companies
             return companyCashFlowDto;
         }
 
-        public IList<BalanceStatementDto> GetForStatement(int coinId, DateTime? date)
+        public IList<BalanceStatementDto> GetForStatement(int coinId, DateTime date)
         {
             var companyCashFlowsDtos = new List<BalanceStatementDto>();
+            date = date.AddHours(24);
             try
             {
-                var companyCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>()
-                        .FindBy(x => x.CoinId.Equals(coinId));
 
-                if (date != null)
+                var compaies = _unitOfWork.GenericRepository<Company>().GetAll();
+
+                foreach (var item in compaies)
                 {
-                    companyCashFlows = companyCashFlows.Where(x => x.Created <= date);
+                    decimal total = 0;
+                    var initalBalance = _unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == coinId && c.CompanyId == item.Id).First().InitialBalance;
+                    var cashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == coinId && c.CompanyId == item.Id && c.MoenyAction.Date <= date);
+                    if (cashFlow.Any())
+                    {
+                        total += cashFlow.Sum(c => c.Amount);
+                    }
+                    total += initalBalance;
+                    companyCashFlowsDtos.Add(new BalanceStatementDto()
+                    {
+                        Name = item.Name,
+                        Type = "شركة",
+                        Total = total
+                    });
                 }
-
-                companyCashFlowsDtos = (from c in companyCashFlows
-                                        select new BalanceStatementDto()
-                                        {
-                                            Name = c.Company != null ? c.Company.Name : string.Empty,
-                                            Total = c.Total,
-                                            Type = "الشركة "
-                                        }).ToList();
 
             }
             catch (Exception ex)

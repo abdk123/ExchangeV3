@@ -162,17 +162,18 @@ namespace BWR.Application.AppServices.Companies
             }
         }
 
-        public IList<BalanceStatementDto> GetForStatement(int coinId, DateTime? date)
+        public IList<BalanceStatementDto> GetForStatement(int coinId, DateTime date)
         {
+             date= date.AddHours(24);
             var clientCashFlowsDtos = new List<BalanceStatementDto>();
             try
             {
                 var clients = _unitOfWork.GenericRepository<Client>().GetAll();
                 foreach (var item in  clients)
                 {
-                    var initialBlance = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == coinId).First().InitialBalance;
+                    var initialBlance = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == coinId&&c.ClientId==item.Id).First().InitialBalance;
                     var clientcashFlow = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.ClientId == item.Id && c.MoenyAction.Date <= date).ToList();
-                    decimal total=0;
+                    decimal total=0;    
                     if (clientcashFlow.Count != 0)
                     {
                         total = clientcashFlow.Sum(c => c.Amount);
