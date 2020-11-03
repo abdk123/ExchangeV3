@@ -80,3 +80,4 @@ C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKe
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CopyComplete
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.dll
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.pdb
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csprojAssemblyReference.cache

@@ -26,11 +26,12 @@ namespace BWR.Application.AppServices.Companies
         private readonly IUnitOfWork<MainContext> _unitOfWork;
         private readonly IMoneyActionAppService _moneyActionAppService;
         private readonly IAppSession _appSession;
-
         public ClientCashFlowAppService(
             IUnitOfWork<MainContext> unitOfWork,
             IMoneyActionAppService moneyActionAppService,
-            IAppSession appSession)
+            IAppSession appSession,
+            IClientAppService clientAppService,
+            IClientCashAppService clientCashAppService)
         {
             _unitOfWork = unitOfWork;
             _moneyActionAppService = moneyActionAppService;
@@ -166,21 +167,24 @@ namespace BWR.Application.AppServices.Companies
             var clientCashFlowsDtos = new List<BalanceStatementDto>();
             try
             {
-                var clientCashFlows = _unitOfWork.GenericRepository<ClientCashFlow>()
-                        .FindBy(x => x.CoinId.Equals(coinId));
-
-                if (date != null)
+                var clients = _unitOfWork.GenericRepository<Client>().GetAll();
+                foreach (var item in  clients)
                 {
-                    clientCashFlows = clientCashFlows.Where(x => x.Created <= date);
+                    var initialBlance = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == coinId).First().InitialBalance;
+                    var clientcashFlow = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.ClientId == item.Id && c.MoenyAction.Date <= date).ToList();
+                    decimal total=0;
+                    if (clientcashFlow.Count != 0)
+                    {
+                        total = clientcashFlow.Sum(c => c.Amount);
+                    }
+                    total += initialBlance;
+                    clientCashFlowsDtos.Add(new BalanceStatementDto()
+                    {
+                        Name = item.FullName,
+                        Total = total,
+                        Type = "عميل"
+                    });
                 }
-
-                clientCashFlowsDtos = (from c in clientCashFlows
-                                       select new BalanceStatementDto()
-                                       {
-                                           Name = c.Client != null ? c.Client.FullName : string.Empty,
-                                           Total = c.Total,
-                                           Type = "العميل "
-                                       }).ToList();
 
             }
             catch (Exception ex)

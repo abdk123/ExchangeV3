@@ -541,7 +541,6 @@
                 var url = $(this).attr('href');
 
                 $.get(url, function (data) {
-                    console.log(data);
                     $('#allBalancesModel').html(data);
 
                     $('#allBalancesModel').modal('show');
@@ -556,7 +555,6 @@
                 var url = $(this).attr('href');
 
                 $.get(url, function (data) {
-                    console.log(data);
                     $('#conclusionModel').html(data);
 
                     $('#conclusionModel').modal('show');
@@ -653,11 +651,9 @@
         }
 
         function fillCompanyModelSelect() {
-            console.log('xxx');
             $.get(
                 '@Url.Action("GetCompanyForSelect2", "Company")',
                 function (companies) {
-                    console.log(companies);
                     for (var i = 0; i < companies.length; i++) {
                         $('#layoutModalCompanyCashSelect').append(new Option(companies[i].text, companies[i].id));
                     }

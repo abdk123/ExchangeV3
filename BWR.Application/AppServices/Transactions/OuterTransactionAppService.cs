@@ -183,8 +183,8 @@ namespace BWR.Application.AppServices.Transactions
                 #region Money Action
                 var moneyAction = new MoneyAction()
                 {
-                    TransactionId = outerTransaction.Id,
-                    //Transaction = outerTransaction,
+                    //TransactionId = outerTransaction.Id,
+                    Transaction = outerTransaction,
                     CreatedBy = _appSession.GetUserName(),
                     Date = dto.Date
                 };
