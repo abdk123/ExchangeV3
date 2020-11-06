@@ -4,6 +4,7 @@ namespace BWR.Domain.Model.Enums
     public enum BoxActionType
     {
         None,
+        
         ExpenseFromTreasury,
         ExpenseFromTreasuryToClient,
         ExpenseFromTreasuryToCompany,

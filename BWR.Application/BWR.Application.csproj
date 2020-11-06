@@ -86,6 +86,7 @@
     <Compile Include="AppServices\Treasuries\TreasuryMoneyActionAppService.cs" />
     <Compile Include="Common\DtoForDropdown.cs" />
     <Compile Include="Common\EntityDto.cs" />
+    <Compile Include="Common\PaymentsTypeEnum.cs" />
     <Compile Include="Dtos\BoxAction\BoxActionClientDto.cs" />
     <Compile Include="Dtos\BoxAction\BoxActionClientUpateDto.cs" />
     <Compile Include="Dtos\BoxAction\BoxActionCompanyUpdateDto.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Dtos\Log\LogInsertDto.cs" />
     <Compile Include="Dtos\Log\LogUpdateDto.cs" />
     <Compile Include="Dtos\MoneyAction\MoneyActionOutputDto.cs" />
+    <Compile Include="Dtos\ReportsDto\IncomeOutcomeReport.cs" />
     <Compile Include="Dtos\Security\Permission\PermissionDto.cs" />
     <Compile Include="Dtos\Security\Permission\PermissionForDropdownDto.cs" />
     <Compile Include="Dtos\Security\Permission\PermissionInsertDto.cs" />
@@ -236,6 +238,7 @@
     <Compile Include="Dtos\Treasury\TreasurysDto.cs" />
     <Compile Include="Dtos\Treasury\TreasuryUpdateDto.cs" />
     <Compile Include="Dtos\Treasury\UserTreasury\UserTreasuryDto.cs" />
+    <Compile Include="Extensions\BoxActionExensions.cs" />
     <Compile Include="Extensions\ClearingExtension.cs" />
     <Compile Include="Extensions\ClientExtension.cs" />
     <Compile Include="Extensions\CompanyCashFlowExtension.cs" />
@@ -244,6 +247,7 @@
     <Compile Include="Extensions\DecimalExtension.cs" />
     <Compile Include="Extensions\EnumExtension.cs" />
     <Compile Include="Extensions\MoneyActionExtension.cs" />
+    <Compile Include="Extensions\OperatorExtensions.cs" />
     <Compile Include="Extensions\PublicMoneyExtension.cs" />
     <Compile Include="Extensions\TransactionExtension.cs" />
     <Compile Include="Interfaces\Common\IBoxActionAppService.cs" />

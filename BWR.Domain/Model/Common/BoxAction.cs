@@ -15,6 +15,7 @@ namespace BWR.Domain.Model.Common
         [ForeignKey("CoinId")]
         public virtual Coin Coin { get; set; }
 
+
         
     }
 }
