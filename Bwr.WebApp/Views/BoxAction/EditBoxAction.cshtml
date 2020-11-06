@@ -832,6 +832,11 @@
                 $('#publicExpenses').val($boxActionDto.ExpensiveId);
                 
             } break;
+            case 'ReceiveToTreasury': {
+                displayAndHideElements({ firstAccount: 1, secoundAccount: 1, agent: 'none', expence: 'none', income: 'block', company: 'none', secondAccountDetial: 'none', secoundCompany: 'none', secondClient: 'none' });
+                $('#publicIncomes').val($boxActionDto.IncomeId);
+
+            } break;
         }
     }
 
