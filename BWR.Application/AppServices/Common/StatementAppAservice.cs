@@ -60,35 +60,47 @@ namespace BWR.Application.AppServices.Common
 
         public ConclusionDto GetConclusion(int coinId, DateTime to)
         {
+            //decimal clientAmount = 0;
+            //decimal companyAmount = 0;
+            //decimal boxBalance = 0;
+            //if (to.Date == DateTime.Now.Date && to.Month == DateTime.Now.Month && to.Year == DateTime.Now.Year)
+            //{
+            //    clientAmount = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == coinId).Sum(c => c.Total);
+            //    companyAmount = _unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == coinId).Sum(c => c.Total);
+            //    boxBalance = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.CoinId == coinId).First().Total;
+            //}
+            //else
+            //{
+            //    clientAmount = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.CoinId == coinId & c.Created <= to)
+            //   .GroupBy(c => c.ClientId)
+            //   .Select(c => c.OrderByDescending(s => s.Id).FirstOrDefault())
+            //   .Select(c => c.Total).DefaultIfEmpty(0).Sum();
+            //    companyAmount = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == coinId)
+            //    .Where(c => c.Created <= to)
+            //    .GroupBy(c => c.CompanyId)
+            //    .Select(c => c.OrderByDescending(s => s.Id).FirstOrDefault())
+            //    .Select(c => c.Total).DefaultIfEmpty(0).Sum();
+            //    boxBalance = _unitOfWork.GenericRepository<BranchCashFlow>().FindBy(c => c.CoinId == coinId && c.Created <= to)
+            //   .LastOrDefault() != null ? _unitOfWork.GenericRepository<BranchCashFlow>().FindBy(c => c.CoinId == coinId && c.Created <= to)
+            //   .LastOrDefault().Total : 0;
+            //}
+            //var transactionDontDeleivred = _unitOfWork.GenericRepository<Transaction>()
+            //    .FindBy(c => c.CoinId == coinId && c.DeliverdDate <= to)
+            //    .Select(c => c.Amount).DefaultIfEmpty(0).Sum();
+            //var actualyBalnce = boxBalance - clientAmount - companyAmount - transactionDontDeleivred;
             decimal clientAmount = 0;
             decimal companyAmount = 0;
             decimal boxBalance = 0;
-            if (to.Date == DateTime.Now.Date && to.Month == DateTime.Now.Month && to.Year == DateTime.Now.Year)
-            {
-                clientAmount = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == coinId).Sum(c => c.Total);
-                companyAmount = _unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == coinId).Sum(c => c.Total);
-                boxBalance = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.CoinId == coinId).First().Total;
-            }
-            else
-            {
-                clientAmount = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.CoinId == coinId & c.Created <= to)
-               .GroupBy(c => c.ClientId)
-               .Select(c => c.OrderByDescending(s => s.Id).FirstOrDefault())
-               .Select(c => c.Total).DefaultIfEmpty(0).Sum();
-                companyAmount = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == coinId)
-                .Where(c => c.Created <= to)
-                .GroupBy(c => c.CompanyId)
-                .Select(c => c.OrderByDescending(s => s.Id).FirstOrDefault())
-                .Select(c => c.Total).DefaultIfEmpty(0).Sum();
-                boxBalance = _unitOfWork.GenericRepository<BranchCashFlow>().FindBy(c => c.CoinId == coinId && c.Created <= to)
-               .LastOrDefault() != null ? _unitOfWork.GenericRepository<BranchCashFlow>().FindBy(c => c.CoinId == coinId && c.Created <= to)
-               .LastOrDefault().Total : 0;
-            }
+            clientAmount = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.CoinId == coinId).Sum(c => c.Amount);
+            clientAmount += _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == coinId).Sum(c => c.InitialBalance);
+            companyAmount += _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == coinId).Sum(c => c.Amount);
+            companyAmount += _unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == coinId).Sum(c => c.InitialBalance);
+            boxBalance += _unitOfWork.GenericRepository<BranchCashFlow>().FindBy(c => c.CoinId == coinId).Sum(c => c.Amount);
+            boxBalance += _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.CoinId == coinId).Sum(c => c.InitialBalance);
             var transactionDontDeleivred = _unitOfWork.GenericRepository<Transaction>()
                 .FindBy(c => c.CoinId == coinId && c.DeliverdDate <= to)
                 .Select(c => c.Amount).DefaultIfEmpty(0).Sum();
-            var actualyBalnce = boxBalance - clientAmount - companyAmount - transactionDontDeleivred;
-
+            var actualyBalnce = boxBalance - clientAmount + companyAmount + transactionDontDeleivred;
             var dto = new ConclusionDto
             {
                 ClientAmount = clientAmount * -1,
@@ -356,7 +368,7 @@ namespace BWR.Application.AppServices.Common
             }
             if (paymentsTypeEnum == PaymentsTypeEnum.Agent)
             {
-               return this.GetAgentInome(coinId, from, to, incomeFromEntitiyId);
+                return this.GetAgentInome(coinId, from, to, incomeFromEntitiyId);
             }
             if (paymentsTypeEnum == PaymentsTypeEnum.Company)
             {
