@@ -6,7 +6,10 @@ namespace BWR.ShareKernel.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {
+        T First();
+        T FirstOrDefualt();
         IEnumerable<T> GetAll();
+        IEnumerable<T> GetAll(params Expression<Func<T, object>>[] propertySelectors);
         T GetById(object id);
         void Insert(T obj);
         void Update(T obj);

@@ -184,10 +184,11 @@ namespace BWR.Application.AppServices.Transactions
                 #region Money Action
                 var moneyAction = new MoneyAction()
                 {
-                    //TransactionId = outerTransaction.Id,
-                    Transaction = outerTransaction,
+                    //FK_dbo.MoneyAction_dbo.Clearing_TransactionId\
+                    TransactionId = outerTransaction.Id,
                     CreatedBy = _appSession.GetUserName(),
-                    Date = dto.Date
+                    Date = dto.Date,
+                    Clearing = null
                 };
 
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);

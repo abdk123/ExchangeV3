@@ -105,6 +105,10 @@
                 context.Branchs.Add(mainBranch);
                 context.SaveChanges();
             }
+            if (!context.Treasurys.Any())
+            {
+                
+            }
             #endregion
             #region coin
             if (!context.Coins.Any())
