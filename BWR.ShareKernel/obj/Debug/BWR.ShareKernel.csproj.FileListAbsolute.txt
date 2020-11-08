@@ -59,16 +59,6 @@ C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\obj\Debug
 C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CopyComplete
 C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.dll
 C:\Users\tarek\Desktop\Work\Exchange v3 git\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.pdb
-C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\bin\Debug\BWR.ShareKernel.dll
-C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\bin\Debug\BWR.ShareKernel.pdb
-C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.dll
-C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.SqlServer.dll
-C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.xml
-C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.SqlServer.xml
-C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CoreCompileInputs.cache
-C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CopyComplete
-C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.dll
-C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.pdb
 F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Debug\BWR.ShareKernel.dll
 F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Debug\BWR.ShareKernel.pdb
 F:\Projects\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.dll
@@ -80,3 +70,14 @@ F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CoreComp
 F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CopyComplete
 F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.dll
 F:\Projects\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.pdb
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\bin\Debug\BWR.ShareKernel.dll
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\bin\Debug\BWR.ShareKernel.pdb
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.dll
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.xml
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csprojAssemblyReference.cache
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CoreCompileInputs.cache
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CopyComplete
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.dll
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.pdb

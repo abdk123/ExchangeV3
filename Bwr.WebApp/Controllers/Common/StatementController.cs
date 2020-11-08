@@ -1,12 +1,16 @@
 ﻿using BWR.Application.AppServices.Common;
+using BWR.Application.Common;
 using BWR.Application.Interfaces;
 using BWR.Application.Interfaces.Client;
 using BWR.Application.Interfaces.Company;
 using BWR.Application.Interfaces.Setting;
+using BWR.Domain.Model.Settings;
+using BWR.Infrastructure.Context;
+using BWR.ShareKernel.Interfaces;
 using System;
 using System.Linq;
 using System.Web.Mvc;
-
+using System.Dynamic;
 namespace Bwr.WebApp.Controllers.Common
 {
     public class StatementController : Controller
@@ -17,6 +21,7 @@ namespace Bwr.WebApp.Controllers.Common
         private readonly ICountryAppService _countryAppService;
         private readonly IStatementAppService _statementAppService;
         private readonly IClientCashFlowAppService _clientCashFlowAppService;
+        private readonly IUnitOfWork<MainContext> _unitOfWork;
 
         public StatementController(
             ICompanyAppService companyAppService,
@@ -24,7 +29,8 @@ namespace Bwr.WebApp.Controllers.Common
             ICoinAppService coinAppService,
             ICountryAppService countryAppService,
             IStatementAppService statementAppService,
-            IClientCashFlowAppService clientCashFlowAppService)
+            IClientCashFlowAppService clientCashFlowAppService,
+            IUnitOfWork<MainContext> unitOfWork)
         {
             _clientAppService = clientAppService;
             _companyAppService = companyAppService;
@@ -32,6 +38,7 @@ namespace Bwr.WebApp.Controllers.Common
             _countryAppService = countryAppService;
             _statementAppService = statementAppService;
             _clientCashFlowAppService = clientCashFlowAppService;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: Statement
@@ -56,7 +63,7 @@ namespace Bwr.WebApp.Controllers.Common
             //ViewBag.Countries = countries;
 
             return PartialView("_OuterTransactions");
-        
+
         }
         [HttpGet]
         public ActionResult ClientStoped()
@@ -77,7 +84,7 @@ namespace Bwr.WebApp.Controllers.Common
             return PartialView("_ClientsAndCompaniesBalances");
         }
 
-        
+
         [HttpGet]
         public ActionResult AllBalances(int coinId, DateTime? to)
         {
@@ -95,18 +102,38 @@ namespace Bwr.WebApp.Controllers.Common
         [HttpGet]
         public ActionResult GetClientsAndCompaniesBalances(int coinId, DateTime to)
         {
-            var balances = _statementAppService.GetAllBalances(coinId,to);
+            var balances = _statementAppService.GetAllBalances(coinId, to);
             return Json(new { Balances = balances }, JsonRequestBehavior.AllowGet);
 
         }
 
         [HttpGet]
-        public ActionResult GetConclusion(int coinId,DateTime to)
+        public ActionResult GetConclusion(int coinId, DateTime to)
         {
             var conclusion = _statementAppService.GetConclusion(coinId, to);
             return Json(new { Conclusion = conclusion }, JsonRequestBehavior.AllowGet);
         }
-
+        [HttpGet]
+        public ActionResult IncmeOuteComeView()
+        {
+            ViewBag.Coins = new SelectList(_unitOfWork.GenericRepository<Coin>().GetAll(), "Id", "Name");
+            var coins = _unitOfWork.GenericRepository<BWR.Domain.Model.Clients.Client>().GetAll();
+            ViewBag.Agent = new SelectList(coins, "Id", "FullName", coins.FirstOrDefault().Id);
+            ViewBag.Companies = new SelectList(_unitOfWork.GenericRepository<BWR.Domain.Model.Companies.Company>().GetAll(), "Id", "Name");
+            ViewBag.Expenses = new SelectList(_unitOfWork.GenericRepository<PublicExpense>().GetAll(), "Id", "Name");
+            ViewBag.Income = new SelectList(_unitOfWork.GenericRepository<PublicIncome>().GetAll(), "Id", "Name");
+            return View();
+        }
+        [HttpGet]
+        public ActionResult IncomeOutCome(int generealType, int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? PaymentsTypeEntityId)
+        {
+            if (generealType == -1)
+            {
+                var info = this._statementAppService.GetPayment(coinId, paymentsTypeEnum, from, to, PaymentsTypeEntityId).ToList();
+                return Json(info, JsonRequestBehavior.AllowGet);
+            }
+            return Json(null);
+        }
 
     }
 }

@@ -22,7 +22,7 @@ namespace BWR.Application.AppServices.Clients
         private readonly IClientCashAppService _clientCashAppService;
         private readonly IClientPhoneAppService _clientPhoneAppService;
         private readonly IAppSession _appSession;
-
+        
         public ClientAppService(
             IUnitOfWork<MainContext> unitOfWork,
             IClientCashAppService clientCashAppService,

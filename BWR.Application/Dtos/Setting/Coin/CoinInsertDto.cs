@@ -11,9 +11,9 @@ namespace BWR.Application.Dtos.Setting.Coin
         [Display(Name = "اسم العملة")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "رمز العملة مطلوب")]
-        [Display(Name = "رمز العملة")]
-        [StringLength(3,ErrorMessage ="يجب أن يكون الكود مكون من ثلاث محارف")]
+        //[Required(ErrorMessage = "رمز العملة مطلوب")]
+        //[Display(Name = "رمز العملة")]
+        //[StringLength(3,ErrorMessage ="يجب أن يكون الكود مكون من ثلاث محارف")]
         public string Code { get; set; }
 
         public string ISOCode { get; set; }

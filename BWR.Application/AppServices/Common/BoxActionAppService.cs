@@ -89,9 +89,9 @@ namespace BWR.Application.AppServices.BoxActions
                 }
                 
             }
-            catch (Exception)
+            catch (Exception  ex) 
             {
-
+                Tracing.SaveException(ex);
             }
 
             return dto;

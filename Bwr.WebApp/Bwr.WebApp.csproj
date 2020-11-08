@@ -6459,6 +6459,7 @@
     <Content Include="Views\Statement\ClientStoped.cshtml" />
     <Content Include="Views\Client\StopedClient.cshtml" />
     <Content Include="Views\BoxAction\EditBoxAction.cshtml" />
+    <Content Include="Views\Statement\IncmeOuteComeView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

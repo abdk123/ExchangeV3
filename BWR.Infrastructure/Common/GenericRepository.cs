@@ -40,9 +40,29 @@ namespace BWR.Infrastructure.Common
                 Context.Dispose();
             _isDisposed = true;
         }
+        public virtual T First()
+        {
+            return Entities.First();
+        }
+        public virtual T FirstOrDefualt()
+        {
+            return Entities.FirstOrDefault();
+        }
         public virtual IEnumerable<T> GetAll()
         {
             return Entities.ToList();
+        }
+        public IEnumerable<T> GetAll(params Expression<Func<T, object>>[] propertySelectors)
+        {
+            IQueryable<T> entities = Entities;
+            if (propertySelectors != null)
+            {
+                foreach (var item in propertySelectors)
+                {
+                    entities = entities.Include(item);
+                }
+            }
+            return entities;
         }
         public virtual T GetById(object id)
         {
@@ -165,5 +185,7 @@ namespace BWR.Infrastructure.Common
             }
             return entities;
         }
+
+
     }
 }

@@ -168,17 +168,17 @@ namespace BWR.Application.AppServices.Companies
             var clientCashFlowsDtos = new List<BalanceStatementDto>();
             try
             {
-                var clients = _unitOfWork.GenericRepository<Client>().GetAll();
+                var clients = _unitOfWork.GenericRepository<Client>().FindBy(c=>c.ClientType==ClientType.Client).ToList();
                 foreach (var item in  clients)
                 {
-                    var initialBlance = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == coinId&&c.ClientId==item.Id).First().InitialBalance;
+                    var initialBlance = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == coinId && c.ClientId == item.Id).FirstOrDefault();
                     var clientcashFlow = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.ClientId == item.Id && c.MoenyAction.Date <= date).ToList();
                     decimal total=0;    
                     if (clientcashFlow.Count != 0)
                     {
                         total = clientcashFlow.Sum(c => c.Amount);
                     }
-                    total += initialBlance;
+                    total += initialBlance.InitialBalance;
                     clientCashFlowsDtos.Add(new BalanceStatementDto()
                     {
                         Name = item.FullName,

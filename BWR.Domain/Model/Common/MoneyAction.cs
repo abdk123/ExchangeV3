@@ -33,13 +33,12 @@ namespace BWR.Domain.Model.Common
         public virtual PublicMoney PublicMoney { get; set; }
 
         public int? ClearingId { get; set; }
-        [ForeignKey("ClearingId")]
+        [ForeignKey(nameof(ClearingId))]
         public virtual Clearing Clearing { get; set; }
 
         public int? TransactionId { get; set; }
-        [ForeignKey("TransactionId")]
+        [ForeignKey(nameof(TransactionId))]
         public virtual Transaction Transaction { get; set; }
-
         public virtual IList<CompanyCashFlow> CompanyCashFlows { get; set; }
         public virtual IList<ClientCashFlow> ClientCashFlows { get; set; }
         public virtual IList<BranchCashFlow> BranchCashFlows { get; set; }

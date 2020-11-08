@@ -10,6 +10,7 @@ using System.Globalization;
 
 namespace BWR.Application.Extensions
 {
+    
     public static class MoneyActionExtension
     {
         public static decimal? OurCommission(this MoneyAction moneyAction)
@@ -24,7 +25,6 @@ namespace BWR.Application.Extensions
             }
             return null;
         }
-
 
         public static int? GetActionId(this MoneyAction moneyAction)
         {

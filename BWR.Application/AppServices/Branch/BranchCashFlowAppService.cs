@@ -100,7 +100,7 @@ namespace BWR.Application.AppServices.Branches
                 #endregion
 
                 var allBranchCashFlows = _unitOfWork.GenericRepository<BranchCashFlow>()
-                    .FindBy(c => c.CoinId == coinId && c.BranchId == branchId).OrderBy(x =>new { x.MoenyAction.Date, x.Id }).ToList();
+                    .FindBy(c => c.CoinId == coinId && c.BranchId == branchId,c=>c.MoenyAction).OrderBy(x =>x.MoenyAction.Date ).ThenBy(c=>c.Id).ToList();
                 if (allBranchCashFlows.Any())
                 {
                     var branchCashFlows = new List<BranchCashFlow>();
