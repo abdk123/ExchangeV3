@@ -23,6 +23,16 @@ namespace Bwr.WebApp.Controllers.Treasury
             _appSession = appSession;
         }
 
+        public ActionResult Detail(int? id)
+        {
+            if (id != null)
+            {
+                return RedirectToAction("BoxActionDetails", "BoxAction", new { moneyActionId = id });
+            }
+
+            return null;
+        }
+
         public ActionResult Index()
         {
             var entityDto = new EntityDto()
@@ -61,7 +71,7 @@ namespace Bwr.WebApp.Controllers.Treasury
 
         public ActionResult GetTreasuryActions(TreasuryMoneyActionInputDto input)
         {
-            var treasuryActiones = _treasuryMoneyActionAppService.GetMoneyActions(input).OrderByDescending(x => x.Id);
+            var treasuryActiones = _treasuryMoneyActionAppService.GetMoneyActions(input).OrderBy(x => x.Date);
             return Json(new { data = treasuryActiones }, JsonRequestBehavior.AllowGet);
         }
 

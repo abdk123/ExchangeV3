@@ -9,7 +9,7 @@ namespace BWR.Application.Dtos.Treasury.TreasuryMoneyAction
         public decimal Total { get; set; }
         public int CoinId { get; set; }
         public int? MoneyActionId { get; set; }
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
         public string CreatedBy { get; set; }
         public int? BranchCashFlowId { get; set; }
         public string Type { get; set; }

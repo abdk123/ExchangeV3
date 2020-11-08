@@ -689,6 +689,23 @@
             return year + "-" + month + "-" + day;
         }
 
+        function convertJsonToRealDate(jsonDate) {
+            var dateObj = new Date(parseInt(jsonDate.substr(6)));
+            var month = dateObj.getMonth() + 1;
+            var day = dateObj.getDate();
+            var year = dateObj.getFullYear();
+            //var hours = dateObj.getHours();
+            //var minutes = dateObj.getMinutes();
+            if (month < 10)
+                month = '0' + month;
+
+            if (day < 10)
+                day = '0' + day;
+
+            return day + "/" + month + "/" + year;
+            //return day + "/" + month + "/" + year + " " + hours + ":" + minutes;
+        }
+
         $('#layoutModalClientCashViewBtn').click(function () {
             window.location.href = '@Url.Action("Detail", "Client")?id=' + $('#layoutModalClientCashAgentSelect').val() +"#cashFlowbtn";
         });
@@ -696,7 +713,7 @@
             window.location.href = '@Url.Action("Detail", "Company")?id=' + $('#layoutModalCompanyCashSelect').val() +"#cashFlowbtn";
         });
 
-       
+
     </script>
     @RenderSection("ScriptPath", required: false)
 </body>

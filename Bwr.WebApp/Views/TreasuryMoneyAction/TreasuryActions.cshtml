@@ -64,7 +64,7 @@
 
 
         $('#a-coinId').on("change", function (e) {
-            
+
             search();
 
         });
@@ -100,7 +100,8 @@
                     init: function () {
                         dt = $('#treasuryActionsDataTable').DataTable({
                             'language': dataTableLocalizationArValue(),
-                            
+                            "ordering": false,
+                            "searching":false,
                             'ajax': {
                                 'url': '@Url.Action("GetTreasuryActions", "TreasuryMoneyAction")',
                                 'method': 'POST',
@@ -134,9 +135,23 @@
                                 { 'title': 'النوع', 'data': 'Type', 'searchable': true },
                                 { 'title': 'الاسم', 'data': 'Name', 'searchable': true },
                                 { 'title': 'رقم السند', 'data': 'Number', 'searchable': true },
-                                { 'title': 'التاريخ', 'data': 'Date', 'searchable': true },
+                                {
+                                    'title': 'التاريخ', 'data': "Date", 'searchable': true,
+                                    render: function (data, type, row) {
+                                        return convertJsonToRealDate(data);
+                                    },
+                                },
                                 { 'title': 'المنشئ', 'data': 'CreatedBy', 'searchable': true },
-                                { 'title': 'ملاحظات', 'data': 'Note',  'searchable': true },
+                                { 'title': 'ملاحظات', 'data': 'Note', 'searchable': true },
+                                {
+                                    'title': 'خيارات',
+                                    'data': 'MoneyActionId',
+                                    'searchable': false,
+                                    'sortable': false,
+                                    'render': function (data, type, full, meta) {
+                                        return '<a href="@Url.Action("Detail", "TreasuryMoneyAction")?id=' + data + '" class="btn btn-defult"><span class="glyphicon glyphicon-eye-open"></span>  تفاصيل</a>'
+                                                                        }
+                                }
 
                             ],
                             'lengthMenu': [10, 25, 50, 100],
@@ -153,7 +168,7 @@
     }
 
     function initialCoinsDropdown() {
-        
+
          $.get('@Url.Action("GetCoinsForDropdown","Coin")', { term: "" }, function (data) {
 
             var coins = data.Coins;

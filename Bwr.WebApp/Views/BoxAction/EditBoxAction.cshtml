@@ -92,7 +92,7 @@
     </div>
     <div class="row">
         <div class="col-lg-4">
-            <label>جهة الصرف</label>
+            <label id="secoundAcountLabel">جهة الصرف</label>
             <select class="form-control" id="secoundAcount">
                 <option value="1">الصندوق</option>
                 <option value="2">حساب العملاء</option>
@@ -126,6 +126,7 @@
     var $boxActionDto;
 
     $(function () {
+        getBoxAxtionById('@ViewBag.MoneyActionId');
 
         $('#secoundAcount').change(function () {
             hideAllSecoundDiv();
@@ -301,10 +302,16 @@
             setTimeout(function () { clacAgentCurrentBalcne(); }, 500);
         });
         $('#typeOfAction').change(function () {
-
             //var firstAcountSelect = document.getElementById('firstAcountSelect');
             //firstAcountSelect.getElementsByTagName('option')[1].hidden = !firstAcountSelect.getElementsByTagName('option')[1].hidden;
             showFromAcount($(this).val(), $("#firstAcountSelect").val());
+            //if ($('#typeOfAction').val() == 1) {
+            //    $('secoundAcountLabel').text('');
+            //    $('secoundAcountLabel').text('جهة القبض');
+            //} else {
+            //    $('secoundAcountLabel').text('');
+            //    $('secoundAcountLabel').text('جهة الصرف');
+            //}
         });
         $('#firstAcountSelect').change(function () {
 
@@ -312,7 +319,6 @@
 
         });
 
-        getBoxActionById('@ViewBag.BoxAction');
 
     });
 
@@ -371,13 +377,13 @@
     }
 
     function emptyForm() {
-        $('#typeOfAction').val(-1).change();
-        $('#firstAcountSelect').val(1).change();
-        $('#amout').val("");
-        $('#note').val("");
-        $('#secoundAcount').val(1).change();
-        $('#companies').val("").change();
-        $('#agents').val("").change();
+        //$('#typeOfAction').val(-1).change();
+        //$('#firstAcountSelect').val(1).change();
+        //$('#amout').val("");
+        //$('#note').val("");
+        //$('#secoundAcount').val(1).change();
+        //$('#companies').val("").change();
+        //$('#agents').val("").change();
     }
 
     function showFromAcount(typeOfAction, acountId) {
@@ -541,7 +547,7 @@
                 IncomeId: publicIncomeId,
                 CoinId: coinId,
                 Amount: amount,
-                MoneyActionId: $boxActionDto.MoneyActionId
+                MoneyActionId: $boxActionDto.MoneyActionId,
                 Note: note
             }, function (data) {
                 if (data.Success) {
@@ -641,7 +647,6 @@
                 Amount: amount,
                 MoneyActionId: $boxActionDto.MoneyActionId,
                 Note: note,
-                MoneyActionId: $moneyActionId
             },
             function (data) {
                 if (data.Success) {
@@ -809,13 +814,11 @@
 
     function getBoxAxtionById(id) {
 
-        console.log('getBoxAxtionById (id):' + id);
         $.post(
             '@Url.Action("GetBoxActionForEdit", "BoxAction")',
             {
-                boxActionId: id,
+                moneyActionId: id,
             }, function (data) {
-                console.log('getBoxAxtionById (post_data):' + data);
                 $boxActionDto = data;
 
                 initialElement();
@@ -830,30 +833,166 @@
             case 'ExpenseFromTreasury': {
                 displayAndHideElements({ firstAccount: 1, secoundAccount: 1, agent: 'none', expence: 'block', income: 'none', company: 'none', secondAccountDetial: 'none', secoundCompany: 'none', secondClient: 'none' });
                 $('#publicExpenses').val($boxActionDto.ExpensiveId);
-                
+
             } break;
             case 'ReceiveToTreasury': {
                 displayAndHideElements({ firstAccount: 1, secoundAccount: 1, agent: 'none', expence: 'none', income: 'block', company: 'none', secondAccountDetial: 'none', secoundCompany: 'none', secondClient: 'none' });
                 $('#publicIncomes').val($boxActionDto.IncomeId);
 
             } break;
+            case 'ExpenseFromTreasuryToClient': {
+                displayAndHideElements({ firstAccount: 3, secoundAccount: 1, agent: 'block', expence: 'none', income: 'none', company: 'none', secondAccountDetial: 'none', secoundCompany: 'none', secondClient: 'none' });
+                $('#agents').val($boxActionDto.FirstClientId).trigger("change");
+
+            } break;
+            case 'ReceiveFromClientToTreasury': {
+                displayAndHideElements({ firstAccount: 3, secoundAccount: 1, agent: 'block', expence: 'none', income: 'none', company: 'none', secondAccountDetial: 'none', secoundCompany: 'none', secondClient: 'none' });
+                $('#agents').val($boxActionDto.FirstClientId).trigger("change");
+
+            } break;
+            case 'ReceiveFromCompanyToTreasury': {
+                displayAndHideElements({ firstAccount: 4, secoundAccount: 1, agent: 'none', expence: 'none', income: 'none', company: 'block', secondAccountDetial: 'none', secoundCompany: 'none', secondClient: 'none' });
+                $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
+
+            } break;
+            case 'ExpenseFromTreasuryToCompany': {
+                displayAndHideElements({ firstAccount: 4, secoundAccount: 1, agent: 'none', expence: 'none', income: 'none', company: 'block', secondAccountDetial: 'none', secoundCompany: 'none', secondClient: 'none' });
+                $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
+
+            } break;
+
+            case 'None': {
+                
+                if ($boxActionDto.FirstClientId != null && $boxActionDto.SecondClientId != null) {
+                    displayAndHideElements({ firstAccount: 3, secoundAccount: 2, agent: 'block', expence: 'none', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
+                    $('#agents').val($boxActionDto.FirstClientId).trigger("change");
+                    fillSecoundSelect();
+                    
+                    setTimeout(function () {
+                        $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
+                    }, 1000);
+
+                } else if ($boxActionDto.FirstClientId != null && $boxActionDto.SecondCompanyId != null) {
+                    displayAndHideElements({ firstAccount: 3, secoundAccount: 3, agent: 'block', expence: 'none', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'block', secondClient: 'none' });
+                    $('#agents').val($boxActionDto.FirstClientId).trigger("change");
+                    fillSecoundSelect();
+                    
+                    setTimeout(function () {
+                        $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
+                    }, 1000);
+
+                } else if ($boxActionDto.FirstCompanyId != null && $boxActionDto.SecondCompanyId != null) {
+                    displayAndHideElements({ firstAccount: 4, secoundAccount: 3, agent: 'none', expence: 'none', income: 'none', company: 'block', secondAccountDetial: 'block', secoundCompany: 'block', secondClient: 'none' });
+                    $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
+                    fillSecoundSelect();
+                    
+                    setTimeout(function () {
+                        $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
+                    }, 1000);
+                } else if ($boxActionDto.FirstCompanyId != null && $boxActionDto.SecondClientId != null) {
+                    displayAndHideElements({ firstAccount: 4, secoundAccount: 2, agent: 'none', expence: 'none', income: 'none', company: 'block', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
+                    $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
+                    fillSecoundSelect();
+                    
+                    setTimeout(function () {
+                        $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
+                    }, 1000);
+                }
+
+            } break;
+            case 'ExpenseFromClientToPublic': {
+                displayAndHideElements({ firstAccount: 1, secoundAccount: 2, agent: 'none', expence: 'block', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
+                $('#publicExpenses').val($boxActionDto.ExpensiveId);
+                fillSecoundSelect();
+                setTimeout(function () {
+                    $('#secoundAgentSelect').val($boxActionDto.FirstClientId).trigger("change");
+                }, 1000);
+
+            } break;
+            case 'ReceiveFromPublicToClient': {
+                displayAndHideElements({ firstAccount: 1, secoundAccount: 2, agent: 'none', expence: 'none', income: 'block', company: 'none', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
+                $('#publicIncomes').val($boxActionDto.IncomeId);
+                fillSecoundSelect();
+                setTimeout(function () {
+                    $('#secoundAgentSelect').val($boxActionDto.FirstClientId).trigger("change");
+                }, 1000);
+
+            } break;
+            case 'ExpenseFromCompanyToPublic': {
+                displayAndHideElements({ firstAccount: 1, secoundAccount: 3, agent: 'none', expence: 'block', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'block', secondClient: 'none' });
+                $('#publicExpenses').val($boxActionDto.ExpensiveId);
+                fillSecoundSelect();
+                setTimeout(function () {
+                    $('#secoundCompanySelect').val($boxActionDto.FirstCompanyId).trigger("change");
+                }, 1000);
+
+            } break;
+            case 'ReceiveFromPublicToCompany': {
+                displayAndHideElements({ firstAccount: 1, secoundAccount: 3, agent: 'none', expence: 'none', income: 'block', company: 'none', secondAccountDetial: 'block', secoundCompany: 'block', secondClient: 'none' });
+                $('#publicIncomes').val($boxActionDto.IncomeId);
+                fillSecoundSelect();
+                setTimeout(function () {
+                    $('#secoundCompanySelect').val($boxActionDto.FirstCompanyId).trigger("change");
+                }, 1000);
+
+            } break;
         }
     }
 
     function displayAndHideElements(data) {
+        
+        $boxActionDto.Amount = Math.abs($boxActionDto.Amount);
         $('#coins').val($boxActionDto.CoinId);
         $('#firstAcountSelect').val(data.firstAccount);
         $('#secoundAcount').val(data.secoundAccount);
         var typeOfAction = $boxActionDto.IsIncome ? 1 : -1;
         $('#typeOfAction').val(typeOfAction);
+        $('#note').val($boxActionDto.Note);
+        $('#amout').val(numberWithCommas($boxActionDto.Amount));
 
-        $('#agentDiv').attr('display', data.agent);
-        $('#ExpencesDiv').attr('display', Expence.expence);
-        $('#incominingDiv').attr('display', data.income);
-        $('#companyDiv').attr('display', data.company);
-        $('#secounAcountDetials').attr('display', data.secondAccountDetial);
-        $('#secoundCompanyDiv').attr('display', data.secoundCompany);
-        $('#secoundAgentDiv').attr('display', data.secondClient);
+        $('#agentDiv').css('display', data.agent);
+        $('#ExpencesDiv').css('display', data.expence);
+        $('#incominingDiv').css('display', data.income);
+        $('#companyDiv').css('display', data.company);
+        $('#secounAcountDetials').css('display', data.secondAccountDetial);
+        $('#secoundCompanyDiv').css('display', data.secoundCompany);
+        $('#secoundAgentDiv').css('display', data.secondClient);
+    }
+
+    function displayAndHideElementsForCleaning() {
+        
+        $('#coins').val($boxActionDto.CoinId);
+        var typeOfAction = $boxActionDto.IsIncome ? 1 : -1;
+        $('#typeOfAction').val(typeOfAction);
+        $('#note').val($boxActionDto.Note);
+        $('#amout').val(numberWithCommas($boxActionDto.Amount));
+
+        $('#ExpencesDiv').css('display', 'none');
+        $('#incominingDiv').css('display', 'none');
+
+        if ($boxActionDto.FirstCompanyId != null) {
+            $('#firstAcountSelect').val(4);
+            $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
+            $('#agentDiv').css('display', 'block');
+            $('#companyDiv').css('display', 'none');
+        } else if ($boxActionDto.FirstClientId != null) {
+            $('#firstAcountSelect').val(3);
+            $('#agents').val($boxActionDto.FirstClientId).trigger("change");
+            $('#agentDiv').css('display', 'none');
+            $('#companyDiv').css('display', 'block');
+        }
+        
+        if ($boxActionDto.SecondCompanyId != null) {
+            $('#secoundAcount').val(3);
+            $('#secoundCompanyDiv').css('display', 'block');
+            $('#secoundAgentDiv').css('display', 'none');
+            $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
+        } else if ($boxActionDto.SecondClientId != null) {
+            $('#secoundAcount').val(2);
+            $('#secoundCompanyDiv').css('display', 'none');
+            $('#secoundAgentDiv').css('display', 'block');
+            $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
+        }
     }
 
 </script>
