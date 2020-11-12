@@ -5,3 +5,8 @@
 /.vs
 /obj
 /bin
+/BWR.Application/obj
+/BWR.Domain/obj
+/BWR.Infrastructure/obj
+/BWR.ShareKernel/obj
+/Bwr.WebApp/obj
