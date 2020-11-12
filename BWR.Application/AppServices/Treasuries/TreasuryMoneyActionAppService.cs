@@ -85,6 +85,7 @@ namespace BWR.Application.AppServices.Treasuries
             {
                 var treasuryMoneyActions = _unitOfWork.GenericRepository<TreasuryMoneyAction>()
                     .FindBy(x => x.TreasuryId == input.TreasuryId && x.CoinId == input.CoinId);
+                    
 
                 if (input.From == null && input.To != null)
                 {
@@ -98,7 +99,7 @@ namespace BWR.Application.AppServices.Treasuries
                 {
                     treasuryMoneyActions = treasuryMoneyActions.Where(x => x.Created > input.From && x.Created < input.To);
                 }
-
+                
                 foreach (var treasuryMoneyAction in treasuryMoneyActions.ToList())
                 {
                     if (treasuryMoneyAction.BranchCashFlowId != null)
@@ -112,7 +113,7 @@ namespace BWR.Application.AppServices.Treasuries
                             Type = moneyAction.GetTypeName(Requester.Branch, null),
                             Name = _moneyActionAppService.GetActionName(moneyAction),
                             Number = moneyAction.GetActionId(),
-                            Date = moneyAction.GetDate(),
+                            Date = moneyAction.Date,
                             Note = moneyAction.GetNote(Requester.Branch, null),
                             MoneyActionId = moneyAction.Id,
                             CreatedBy = treasuryMoneyAction.BranchCashFlow.CreatedBy
@@ -126,7 +127,8 @@ namespace BWR.Application.AppServices.Treasuries
                             Total = treasuryMoneyAction.Total,
                             Id = treasuryMoneyAction.Id,
                             Type = treasuryMoneyAction.Amount > 0 ? "إعطاء" : "اخذ",
-                            Date = treasuryMoneyAction.Created != null ? treasuryMoneyAction.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
+                            //Date = treasuryMoneyAction.Created != null ? treasuryMoneyAction.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
+                            Date = treasuryMoneyAction.Created.Value ,
                             CreatedBy = treasuryMoneyAction.CreatedBy
                         });
                     }

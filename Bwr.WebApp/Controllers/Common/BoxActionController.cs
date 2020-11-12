@@ -49,7 +49,7 @@ namespace Bwr.WebApp.Controllers
                 return RedirectToAction("NoTreasury", "Home");
 
             var boxActionInitialDto = _boxActionAppService.InitialInputData();
-            ViewBag.MoneyAction = moneyActionId;
+            ViewBag.MoneyActionId = moneyActionId;
 
             return View(boxActionInitialDto);
         }

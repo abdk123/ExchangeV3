@@ -225,6 +225,7 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     PubLicMoneyId = publicActionMoneyId,
                     BoxAction = boxAction,
+                    Date = DateTime.Now,
                     CreatedBy = _appSession.GetUserName()
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
@@ -711,15 +712,16 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     FromClientId = dto.FirstClientId,
                     ToClientId = dto.SecondClientId,
+                    Amount = dto.Amount,
                     IsIncome = dto.Amount > 0,
                     CoinId = dto.CoinId,
-                    Note = dto.Note,
-                    Amount= Math.Abs(dto.Amount)
+                    Note = dto.Note
                 };
                 _unitOfWork.GenericRepository<Clearing>().Insert(clearing);
                 var moenyAction = new MoneyAction()
                 {
-                    ClearingId = clearing.Id
+                    ClearingId = clearing.Id,
+                    Date = DateTime.Now
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moenyAction);
                 ClientCashFlow firstClientCashFlow = new ClientCashFlow()
@@ -767,15 +769,16 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     FromCompanyId = dto.CompanyId,
                     ToClientId = dto.ClientId,
+                    Amount = dto.Amount,
                     IsIncome = dto.Amount > 0,
                     CoinId = dto.CoinId,
-                    Note = dto.Note,
-                    Amount = Math.Abs(dto.Amount)
+                    Note = dto.Note
                 };
                 _unitOfWork.GenericRepository<Clearing>().Insert(clearing);
                 var moenyAction = new MoneyAction()
                 {
-                    ClearingId = clearing.Id
+                    ClearingId = clearing.Id,
+                    Date = DateTime.Now
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moenyAction);
                 CompanyCashFlow companyCashFlow = new CompanyCashFlow()
@@ -824,16 +827,15 @@ namespace BWR.Application.AppServices.BoxActions
                     FromClientId = dto.ClientId,
                     ToCompanyId = dto.CompanyId,
                     IsIncome = dto.Amount > 0,
+                    Amount = dto.Amount,
                     CoinId = dto.CoinId,
-                    Note = dto.Note,
-                    Amount = Math.Abs(dto.Amount)
-
+                    Note = dto.Note
                 };
                 _unitOfWork.GenericRepository<Clearing>().Insert(clearing);
                 var moenyAction = new MoneyAction()
                 {
                     ClearingId = clearing.Id,
-                     Date = DateTime.Now,
+                    Date = DateTime.Now
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moenyAction);
                 ClientCashFlow clientCashFlow = new ClientCashFlow()
@@ -859,9 +861,8 @@ namespace BWR.Application.AppServices.BoxActions
                 _unitOfWork.Commit();
                 return true;
             }
-            catch(Exception ex)
+            catch
             {
-                Tracing.SaveException(ex);
                 _unitOfWork.Rollback();
                 return false;
             }
@@ -882,15 +883,16 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     FromCompanyId = dto.FirstCompanyId,
                     ToCompanyId = dto.SecondCompanyId,
+                    Amount = dto.Amount,
                     IsIncome = dto.Amount > 0,
                     CoinId = dto.CoinId,
-                    Note = dto.Note,
-                    Amount = Math.Abs(dto.Amount)
+                    Note = dto.Note
                 };
                 _unitOfWork.GenericRepository<Clearing>().Insert(clearing);
                 var moenyAction = new MoneyAction()
                 {
-                    ClearingId = clearing.Id
+                    ClearingId = clearing.Id,
+                    Date = DateTime.Now
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moenyAction);
                 CompanyCashFlow firstCompanyCahsFlwo = new CompanyCashFlow()
@@ -1159,12 +1161,10 @@ namespace BWR.Application.AppServices.BoxActions
                 var branchId = BranchHelper.Id;
                 var treasuryId = _appSession.GetCurrentTreasuryId();
 
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == input.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
-
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 var boxAction = new BoxAction()
                 {
@@ -1172,18 +1172,16 @@ namespace BWR.Application.AppServices.BoxActions
                     CoinId = input.CoinId,
                     IsIncmoe = false,
                     Note = input.Note,
+                    BoxActionType = BoxActionType.ExpenseFromTreasury,
                     CreatedBy = _appSession.GetUserName()
                 };
                 _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
 
-                var moneyAction = new MoneyAction()
-                {
-                    PubLicMoneyId = publicActionMoneyId,
-                    BoxAction = boxAction,
-                    CreatedBy = _appSession.GetUserName(),
-                    Date = date
-                };
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.BoxAction = boxAction;
+                moneyAction.PubLicMoneyId = publicActionMoneyId;
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
+
                 var branchCashFlow = new BranchCashFlow()
                 {
                     BranchId = branchId,
@@ -1242,12 +1240,11 @@ namespace BWR.Application.AppServices.BoxActions
 
                 var branchId = BranchHelper.Id;
                 var treasuryId = _appSession.GetCurrentTreasuryId();
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == input.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
 
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 var boxAction = new BoxAction()
                 {
@@ -1255,18 +1252,15 @@ namespace BWR.Application.AppServices.BoxActions
                     CoinId = input.CoinId,
                     IsIncmoe = true,
                     Note = input.Note,
+                    BoxActionType = BoxActionType.ReceiveToTreasury,
                     CreatedBy = _appSession.GetUserName()
                 };
                 _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
 
-                var moneyAction = new MoneyAction()
-                {
-                    PubLicMoneyId = publicActionMoneyId,
-                    BoxAction = boxAction,
-                    CreatedBy = _appSession.GetUserName(),
-                    Date = date
-                };
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.BoxAction = boxAction;
+                moneyAction.PubLicMoneyId = publicActionMoneyId;
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
 
                 var branchCashFlow = new BranchCashFlow()
                 {
@@ -1325,12 +1319,11 @@ namespace BWR.Application.AppServices.BoxActions
 
                 var branchId = BranchHelper.Id;
                 var treasuryId = _appSession.GetCurrentTreasuryId();
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == input.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
 
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 var boxAction = new BoxAction()
                 {
@@ -1341,14 +1334,11 @@ namespace BWR.Application.AppServices.BoxActions
                     CreatedBy = _appSession.GetUserName()
                 };
                 _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
-                var moneyAction = new MoneyAction()
-                {
-                    BoxAction = boxAction,
-                    CreatedBy = _appSession.GetUserName(),
-                    Date = date
-                };
 
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.BoxAction = boxAction;
+
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
 
                 var branchCashFlow = new BranchCashFlow()
                 {
@@ -1407,12 +1397,11 @@ namespace BWR.Application.AppServices.BoxActions
                 var branchId = BranchHelper.Id;
                 var treasuryId = _appSession.GetCurrentTreasuryId();
 
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == input.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
 
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 var boxAction = new BoxAction()
                 {
@@ -1420,17 +1409,15 @@ namespace BWR.Application.AppServices.BoxActions
                     IsIncmoe = true,
                     CoinId = input.CoinId,
                     Note = input.Note,
+                    BoxActionType = BoxActionType.ReceiveFromClientToTreasury,
                     CreatedBy = _appSession.GetUserName()
                 };
                 _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
-                var moneyAction = new MoneyAction()
-                {
-                    BoxAction = boxAction,
-                    Date = date,
-                    CreatedBy = _appSession.GetUserName()
-                };
+                
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.BoxAction = boxAction;
 
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
 
                 var branchCashFlow = new BranchCashFlow()
                 {
@@ -1499,12 +1486,11 @@ namespace BWR.Application.AppServices.BoxActions
 
                 var branchId = BranchHelper.Id;
                 var treasuryId = _appSession.GetCurrentTreasuryId();
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == input.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
 
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 var boxAction = new BoxAction()
                 {
@@ -1512,17 +1498,14 @@ namespace BWR.Application.AppServices.BoxActions
                     IsIncmoe = true,
                     CoinId = input.CoinId,
                     Note = input.Note,
+                    BoxActionType = BoxActionType.ReceiveFromCompanyToTreasury,
                     CreatedBy = _appSession.GetUserName()
                 };
                 _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
-                var moneyAction = new MoneyAction()
-                {
-                    BoxAction = boxAction,
-                    Date = date,
-                    CreatedBy = _appSession.GetUserName()
-                };
-
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
+                
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.BoxAction = boxAction;
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
 
                 var branchCashFlow = new BranchCashFlow()
                 {
@@ -1593,12 +1576,10 @@ namespace BWR.Application.AppServices.BoxActions
             {
                 var branchId = BranchHelper.Id;
                 var treasuryId = _appSession.GetCurrentTreasuryId();
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == input.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
-
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 var boxAction = new BoxAction()
                 {
@@ -1610,15 +1591,11 @@ namespace BWR.Application.AppServices.BoxActions
                     CreatedBy = _appSession.GetUserName()
                 };
                 _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
-                var moneyAction = new MoneyAction()
-                {
-                    BoxAction = boxAction,
-                    Date = date,
-                    CreatedBy = _appSession.GetUserName()
-                };
 
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
-                
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.BoxAction = boxAction;
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
+
                 var branchCashFlow = new BranchCashFlow()
                 {
                     BranchId = branchId,
@@ -1690,15 +1667,14 @@ namespace BWR.Application.AppServices.BoxActions
             {
                 _unitOfWork.CreateTransaction();
 
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == dto.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
-
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 Clearing clearing = new Clearing()
                 {
+                    Amount = dto.Amount,
                     FromClientId = dto.FirstClientId,
                     ToClientId = dto.SecondClientId,
                     IsIncome = dto.Amount > 0,
@@ -1706,18 +1682,16 @@ namespace BWR.Application.AppServices.BoxActions
                     Note = dto.Note
                 };
                 _unitOfWork.GenericRepository<Clearing>().Insert(clearing);
-                var moenyAction = new MoneyAction()
-                {
-                    ClearingId = clearing.Id,
-                    Date = date,
-                    CreatedBy = _appSession.GetUserName()
-                };
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moenyAction);
+               
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.Clearing = clearing;
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
+
                 ClientCashFlow firstClientCashFlow = new ClientCashFlow()
                 {
                     ClientId = dto.FirstClientId,
                     CoinId = dto.CoinId,
-                    MoenyActionId = moenyAction.Id,
+                    MoenyActionId = moneyAction.Id,
                     Amount = dto.Amount,
                     
                 };
@@ -1727,7 +1701,7 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     ClientId = dto.SecondClientId,
                     CoinId = dto.CoinId,
-                    MoenyActionId = moenyAction.Id,
+                    MoenyActionId = moneyAction.Id,
                     Amount = -dto.Amount,
                     
                 };
@@ -1749,15 +1723,15 @@ namespace BWR.Application.AppServices.BoxActions
             {
                 _unitOfWork.CreateTransaction();
 
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == dto.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
 
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 Clearing clearing = new Clearing()
                 {
+                    Amount = dto.Amount,
                     FromCompanyId = dto.CompanyId,
                     ToClientId = dto.ClientId,
                     IsIncome = dto.Amount > 0,
@@ -1765,17 +1739,16 @@ namespace BWR.Application.AppServices.BoxActions
                     Note = dto.Note
                 };
                 _unitOfWork.GenericRepository<Clearing>().Insert(clearing);
-                var moenyAction = new MoneyAction()
-                {
-                    Date = date,
-                    ClearingId = clearing.Id
-                };
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moenyAction);
+
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.Clearing = clearing;
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
+
                 CompanyCashFlow companyCashFlow = new CompanyCashFlow()
                 {
                     CompanyId = dto.CompanyId,
                     CoinId = dto.CoinId,
-                    MoneyActionId = moenyAction.Id,
+                    MoneyActionId = moneyAction.Id,
                     Amount = dto.Amount,
                     
                 };
@@ -1785,7 +1758,7 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     ClientId = dto.ClientId,
                     CoinId = dto.CoinId,
-                    MoenyActionId = moenyAction.Id,
+                    MoenyActionId = moneyAction.Id,
                     Amount = -dto.Amount
                     
                 };
@@ -1806,15 +1779,14 @@ namespace BWR.Application.AppServices.BoxActions
             try
             {
                 _unitOfWork.CreateTransaction();
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == dto.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
-
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 Clearing clearing = new Clearing()
                 {
+                    Amount = dto.Amount,
                     FromClientId = dto.ClientId,
                     ToCompanyId = dto.CompanyId,
                     IsIncome = dto.Amount > 0,
@@ -1822,17 +1794,16 @@ namespace BWR.Application.AppServices.BoxActions
                     Note = dto.Note
                 };
                 _unitOfWork.GenericRepository<Clearing>().Insert(clearing);
-                var moenyAction = new MoneyAction()
-                {
-                    Date = date,
-                    ClearingId = clearing.Id
-                };
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moenyAction);
+
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.Clearing = clearing;
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
+
                 ClientCashFlow clientCashFlow = new ClientCashFlow()
                 {
                     ClientId = dto.ClientId,
                     CoinId = dto.CoinId,
-                    MoenyActionId = moenyAction.Id,
+                    MoenyActionId = moneyAction.Id,
                     Amount = dto.Amount,
                     
                 };
@@ -1842,7 +1813,7 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     CompanyId = dto.CompanyId,
                     CoinId = dto.CoinId,
-                    MoneyActionId = moenyAction.Id,
+                    MoneyActionId = moneyAction.Id,
                     Amount = -dto.Amount,
                     
                 };
@@ -1863,14 +1834,13 @@ namespace BWR.Application.AppServices.BoxActions
             try
             {
                 _unitOfWork.CreateTransaction();
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == dto.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
-
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
                 Clearing clearing = new Clearing()
                 {
+                    Amount = dto.Amount,
                     FromCompanyId = dto.FirstCompanyId,
                     ToCompanyId = dto.SecondCompanyId,
                     IsIncome = dto.Amount > 0,
@@ -1878,17 +1848,16 @@ namespace BWR.Application.AppServices.BoxActions
                     Note = dto.Note
                 };
                 _unitOfWork.GenericRepository<Clearing>().Insert(clearing);
-                var moenyAction = new MoneyAction()
-                {
-                    ClearingId = clearing.Id,
-                    Date = date
-                };
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moenyAction);
+
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.Clearing = clearing;
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
+
                 CompanyCashFlow firstCompanyCahsFlwo = new CompanyCashFlow()
                 {
                     CompanyId = dto.FirstCompanyId,
                     CoinId = dto.CoinId,
-                    MoneyActionId = moenyAction.Id,
+                    MoneyActionId = moneyAction.Id,
                     Amount = dto.Amount,
                     
                 };
@@ -1898,7 +1867,7 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     CompanyId = dto.SecondCompanyId,
                     CoinId = dto.CoinId,
-                    MoneyActionId = moenyAction.Id,
+                    MoneyActionId = moneyAction.Id,
                     Amount = -dto.Amount,
                     
                 };
@@ -1920,12 +1889,10 @@ namespace BWR.Application.AppServices.BoxActions
             {
                 _unitOfWork.CreateTransaction();
 
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == dto.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
-
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 var publicMoenyId = _unitOfWork.GenericRepository<PublicMoney>().FindBy(c => c.ExpenseId == dto.PublicExpenseId).First().Id;
                 var boxAction = new BoxAction()
@@ -1933,17 +1900,16 @@ namespace BWR.Application.AppServices.BoxActions
                     CoinId = dto.CoinId,
                     Amount = dto.Amount,
                     IsIncmoe = false,
+                    BoxActionType = BoxActionType.ExpenseFromClientToPublic,
                     Note = dto.Note,
                 };
                 _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
-                var moneyAction = new MoneyAction()
-                {
-                    BoxActionsId = boxAction.Id,
-                    PubLicMoneyId = publicMoenyId,
-                    Date = date
-                };
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
                 
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.BoxAction = boxAction;
+                moneyAction.PubLicMoneyId = publicMoenyId;
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
+
                 var clientCashFlow = new ClientCashFlow()
                 {
                     CoinId = dto.CoinId,
@@ -1969,12 +1935,10 @@ namespace BWR.Application.AppServices.BoxActions
             try
             {
                 _unitOfWork.CreateTransaction();
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == dto.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
-
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 var publicMoenyId = _unitOfWork.GenericRepository<PublicMoney>().FindBy(c => c.IncomeId == dto.PublicIncomeId).First().Id;
                 var boxAction = new BoxAction()
@@ -1982,17 +1946,16 @@ namespace BWR.Application.AppServices.BoxActions
                     CoinId = dto.CoinId,
                     Amount = dto.Amount,
                     IsIncmoe = true,
+                    BoxActionType = BoxActionType.ReceiveFromPublicToClient,
                     Note = dto.Note,
                 };
                 _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
-                var moneyAction = new MoneyAction()
-                {
-                    BoxActionsId = boxAction.Id,
-                    Date = date,
-                    PubLicMoneyId = publicMoenyId
-                };
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
-                
+
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.BoxAction = boxAction;
+                moneyAction.PubLicMoneyId = publicMoenyId;
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
+
                 var clientCashFlow = new ClientCashFlow()
                 {
                     CoinId = dto.CoinId,
@@ -2018,12 +1981,10 @@ namespace BWR.Application.AppServices.BoxActions
             try
             {
                 _unitOfWork.CreateTransaction();
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == dto.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
-
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 var publicMoenyId = _unitOfWork.GenericRepository<PublicMoney>().FindBy(c => c.ExpenseId == dto.PublicExpenseId).First().Id;
                 var boxAction = new BoxAction()
@@ -2031,17 +1992,16 @@ namespace BWR.Application.AppServices.BoxActions
                     CoinId = dto.CoinId,
                     Amount = dto.Amount,
                     IsIncmoe = false,
+                    BoxActionType = BoxActionType.ExpenseFromCompanyToPublic,
                     Note = dto.Note,
                 };
                 _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
-                var moneyAction = new MoneyAction()
-                {
-                    BoxActionsId = boxAction.Id,
-                    Date = date,
-                    PubLicMoneyId = publicMoenyId
-                };
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
-                
+
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.BoxAction = boxAction;
+                moneyAction.PubLicMoneyId = publicMoenyId;
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
+
                 var companyCashFlow = new CompanyCashFlow()
                 {
                     CoinId = dto.CoinId,
@@ -2068,30 +2028,26 @@ namespace BWR.Application.AppServices.BoxActions
             try
             {
                 _unitOfWork.CreateTransaction();
-                var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>()
                     .FindBy(x => x.Id == dto.MoneyActionId).FirstOrDefault();
 
-                var date = oldMoneyAction.Date;
-
-                DeleteMoneyAction(oldMoneyAction);
+                DeleteMoneyActionDetail(moneyAction);
 
                 var publicMoenyId = _unitOfWork.GenericRepository<PublicMoney>().FindBy(c => c.IncomeId == dto.PublicIncomeId).First().Id;
                 var boxAction = new BoxAction()
                 {
                     CoinId = dto.CoinId,
                     Amount = dto.Amount,
+                    BoxActionType = BoxActionType.ReceiveFromPublicToCompany,
                     IsIncmoe = true,
                     Note = dto.Note,
                 };
                 _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
-                var moneyAction = new MoneyAction()
-                {
-                    BoxActionsId = boxAction.Id,
-                    Date = date,
-                    PubLicMoneyId = publicMoenyId
-                };
-                _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
-                
+
+                moneyAction.ModifiedBy = _appSession.GetUserName();
+                moneyAction.BoxAction = boxAction;
+                moneyAction.PubLicMoneyId = publicMoenyId;
+                _unitOfWork.GenericRepository<MoneyAction>().Update(moneyAction);
 
                 var companyCashFlow = new CompanyCashFlow()
                 {
@@ -2115,7 +2071,7 @@ namespace BWR.Application.AppServices.BoxActions
         #endregion
 
         #region Help Methods
-        public void DeleteMoneyAction(MoneyAction moneyAction)
+        public void DeleteMoneyActionDetail(MoneyAction moneyAction)
         {
             
 
@@ -2160,7 +2116,7 @@ namespace BWR.Application.AppServices.BoxActions
             if(oldClearing != null)
                 _unitOfWork.GenericRepository<Clearing>().Delete(oldClearing);
 
-            _unitOfWork.GenericRepository<MoneyAction>().Delete(moneyAction);
+            //_unitOfWork.GenericRepository<MoneyAction>().Delete(moneyAction);
         }
 
 

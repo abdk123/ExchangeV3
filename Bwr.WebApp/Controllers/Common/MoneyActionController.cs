@@ -39,7 +39,7 @@ namespace Bwr.WebApp.Controllers.Common
                     //}
                 }
             }
-            else if (moenyAction.BoxActionsId != null)
+            else if (moenyAction.BoxActionsId != null || moenyAction.ClearingId != null)
             {
                 return RedirectToAction("BoxActionDetails", "BoxAction", new { moneyActionId = moenyAction.Id });
             }
