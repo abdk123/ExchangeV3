@@ -713,7 +713,8 @@ namespace BWR.Application.AppServices.BoxActions
                     ToClientId = dto.SecondClientId,
                     IsIncome = dto.Amount > 0,
                     CoinId = dto.CoinId,
-                    Note = dto.Note
+                    Note = dto.Note,
+                    Amount= Math.Abs(dto.Amount)
                 };
                 _unitOfWork.GenericRepository<Clearing>().Insert(clearing);
                 var moenyAction = new MoneyAction()
@@ -768,7 +769,8 @@ namespace BWR.Application.AppServices.BoxActions
                     ToClientId = dto.ClientId,
                     IsIncome = dto.Amount > 0,
                     CoinId = dto.CoinId,
-                    Note = dto.Note
+                    Note = dto.Note,
+                    Amount = Math.Abs(dto.Amount)
                 };
                 _unitOfWork.GenericRepository<Clearing>().Insert(clearing);
                 var moenyAction = new MoneyAction()
@@ -823,12 +825,15 @@ namespace BWR.Application.AppServices.BoxActions
                     ToCompanyId = dto.CompanyId,
                     IsIncome = dto.Amount > 0,
                     CoinId = dto.CoinId,
-                    Note = dto.Note
+                    Note = dto.Note,
+                    Amount = Math.Abs(dto.Amount)
+
                 };
                 _unitOfWork.GenericRepository<Clearing>().Insert(clearing);
                 var moenyAction = new MoneyAction()
                 {
-                    ClearingId = clearing.Id
+                    ClearingId = clearing.Id,
+                     Date = DateTime.Now,
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moenyAction);
                 ClientCashFlow clientCashFlow = new ClientCashFlow()
@@ -854,8 +859,9 @@ namespace BWR.Application.AppServices.BoxActions
                 _unitOfWork.Commit();
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                Tracing.SaveException(ex);
                 _unitOfWork.Rollback();
                 return false;
             }
@@ -878,7 +884,8 @@ namespace BWR.Application.AppServices.BoxActions
                     ToCompanyId = dto.SecondCompanyId,
                     IsIncome = dto.Amount > 0,
                     CoinId = dto.CoinId,
-                    Note = dto.Note
+                    Note = dto.Note,
+                    Amount = Math.Abs(dto.Amount)
                 };
                 _unitOfWork.GenericRepository<Clearing>().Insert(clearing);
                 var moenyAction = new MoneyAction()

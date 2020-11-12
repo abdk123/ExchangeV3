@@ -12,5 +12,8 @@ namespace BWR.Application.Interfaces
         ConclusionDto GetConclusion(int coinId, DateTime date);
         IList<IncomeOutcomeReport> GetPayment(int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? form = null, DateTime? to =null, int? PaymentsTypeEntityId =null);
         IList<IncomeOutcomeReport> GetIncme(int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? incomeFromEntitiyId);
+        IList<ClearigStatement> GetClearing(int coinId, IncomeOrOutCame incomeOrOutCame, DateTime? from, DateTime? to, ClearingAccountType fromAccountType, int?fromAccountId, ClearingAccountType toAccountType, int? toAccountId);
+
+
     }
 }

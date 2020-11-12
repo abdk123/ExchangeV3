@@ -84,6 +84,8 @@
     <Compile Include="AppServices\Treasuries\TreasuryAppService.cs" />
     <Compile Include="AppServices\Treasuries\TreasuryCashAppService.cs" />
     <Compile Include="AppServices\Treasuries\TreasuryMoneyActionAppService.cs" />
+    <Compile Include="Common\IncomeOrOutCame.cs" />
+    <Compile Include="Common\ClearingAccountType.cs" />
     <Compile Include="Common\DtoForDropdown.cs" />
     <Compile Include="Common\EntityDto.cs" />
     <Compile Include="Common\PaymentsTypeEnum.cs" />
@@ -138,6 +140,7 @@
     <Compile Include="Dtos\Client\ClientPhoneDto.cs" />
     <Compile Include="Dtos\Client\ClientTypeDto.cs" />
     <Compile Include="Dtos\Client\ClientUpdateDto.cs" />
+    <Compile Include="Dtos\Client\StopedClientDto.cs" />
     <Compile Include="Dtos\Common\BoxActionDto.cs" />
     <Compile Include="Dtos\Common\CashFlowDto.cs" />
     <Compile Include="Dtos\Common\ExchangeDto.cs" />
@@ -182,8 +185,10 @@
     <Compile Include="Dtos\Setting\Action\ActionInsertDto.cs" />
     <Compile Include="Dtos\Setting\Action\ActionUpdateDto.cs" />
     <Compile Include="Dtos\Statement\BalanceStatementDto.cs" />
+    <Compile Include="Dtos\Statement\ClearigStatement.cs" />
     <Compile Include="Dtos\Statement\ConclusionDto.cs" />
     <Compile Include="Dtos\Statement\ExpensesDetailDto.cs" />
+    <Compile Include="Dtos\Statement\InnerTransactionStatementDetailedDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertInitialDto.cs" />

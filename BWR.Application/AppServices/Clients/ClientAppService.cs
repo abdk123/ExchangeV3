@@ -72,7 +72,7 @@ namespace BWR.Application.AppServices.Clients
         }
 
         public IList<ClientDto> Get(Expression<Func<Client, bool>> predicate)
-        {
+        {   
             var clientsDtos = new List<ClientDto>();
             try
             {

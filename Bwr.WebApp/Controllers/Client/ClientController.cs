@@ -14,6 +14,10 @@ using System;
 using BWR.Application.Interfaces.Shared;
 using System.IO;
 using BWR.Application.Extensions;
+using BWR.ShareKernel.Interfaces;
+using BWR.Infrastructure.Context;
+using BWR.Domain.Model.Common;
+using System.Globalization;
 
 namespace Bwr.WebApp.Controllers
 {
@@ -23,6 +27,7 @@ namespace Bwr.WebApp.Controllers
         private readonly IClientAttatchmentAppService _clientAttatchmentAppService;
         private readonly IProvinceAppService _provinceAppService;
         private readonly IAppSession _appSession;
+        private readonly IUnitOfWork<MainContext> _unitOfWork;
         private string _message;
         private bool _success;
 
@@ -30,7 +35,8 @@ namespace Bwr.WebApp.Controllers
             IClientAppService clientAppService,
             IProvinceAppService provinceAppService,
             IClientAttatchmentAppService clientAttatchmentAppService,
-            IAppSession appSession)
+            IUnitOfWork<MainContext> unitOfWork,
+        IAppSession appSession)
         {
             _clientAppService = clientAppService;
             _provinceAppService = provinceAppService;
@@ -38,6 +44,7 @@ namespace Bwr.WebApp.Controllers
             _appSession = appSession;
             _message = "";
             _success = false;
+            _unitOfWork = unitOfWork;
         }
 
         public ActionResult Index()
@@ -408,7 +415,9 @@ namespace Bwr.WebApp.Controllers
         {
             try
             {
-                var clients = _clientAppService.GetAll().Where(x => x.ClientType == ClientType.Normal);
+                if (fullName != null)
+                    fullName = fullName.Trim();
+                var clients = _unitOfWork.GenericRepository<BWR.Domain.Model.Clients.Client>().FindBy(c => c.ClientType == ClientType.Normal && c.FullName.StartsWith(fullName)).ToList();
                 return Json(clients.Select(c => new { id = c.Id, text = c.FullName }), JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -430,14 +439,48 @@ namespace Bwr.WebApp.Controllers
 
             return Json(client.Id);
         }
-        [HttpPost]
+        [HttpGet]
         public ActionResult StopedClient(int dayesCount)
         {
-            var clients = _clientAppService.Get(c => c.ClientCashFlows.Count > 0 && DateTime.Now.Subtract(c.ClientCashFlows.OrderBy(cc => cc.MoenyAction.Date).Last().MoenyAction.Date).TotalDays > dayesCount).ToList();
+            List<StopedClientDto> list = new List<StopedClientDto>();
+            try
+            {
+                var date = DateTime.Now.AddDays(dayesCount * -1);
+                var coins = _unitOfWork.GenericRepository<BWR.Domain.Model.Settings.Coin>().GetAll().ToList();
+                var clients = _unitOfWork.GenericRepository<BWR.Domain.Model.Clients.Client>().FindBy(c => c.ClientCashFlows.Count > 0 && !c.ClientCashFlows.Any(cc => cc.MoenyAction.Date > date)).ToList();
+                foreach (var client in clients)
+                {
 
-            return View(clients);
+                    var x = client.ClientCashFlows.Any(cc => cc.MoenyAction.Date > date);
+                    string blacnes = "";
+                    foreach (var coin in coins)
+                    {
+                        var amount = client.ClientCashFlows.Where(c => c.CoinId == coin.Id).Sum(c => c.Amount);
+                        amount += client.ClientCashes.Where(c => c.CoinId == coin.Id).First().InitialBalance;
+                        blacnes += coin.Name + " : " + Math.Abs(amount) + (amount == 0 ? "" : amount > 0 ? "له" : "عليه");
+                        blacnes += ",";
+                    }
+                    var lastActionDate = client.ClientCashFlows.OrderBy(c => c.MoenyAction.Date).Last().MoenyAction.Date;
+
+                    StopedClientDto stopedClientDto = new StopedClientDto()
+                    {
+                        FullName = client.FullName,
+                        ClientId = (int)client.Id,
+                        IsEnabled = client.IsEnabled,
+                        Balnces = blacnes,
+                        LastAction = lastActionDate.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")),
+                        DayDifference = (int)DateTime.Now.Subtract(lastActionDate).TotalDays
+                    };
+                    list.Add(stopedClientDto);
+                }
+            }
+            catch (Exception ex)
+            {
+                Tracing.SaveException(ex);
+            }
+            return Json(list, JsonRequestBehavior.AllowGet);
         }
-        
+
 
         #region Helper Method
 
@@ -481,10 +524,36 @@ namespace Bwr.WebApp.Controllers
         [HttpGet]
         public ActionResult GetAgentForSelect2()
         {
-            return Json(this._clientAppService.GetSelect2(c=>c.ClientType==ClientType.Client), JsonRequestBehavior.AllowGet);
+            return Json(this._clientAppService.GetSelect2(c => c.ClientType == ClientType.Client), JsonRequestBehavior.AllowGet);
         }
+        [HttpPost]
+        public bool ChangeClientAccountState(int clientId, bool? state)
+        {
+            try
+            {
+                var client = _unitOfWork.GenericRepository<BWR.Domain.Model.Clients.Client>().GetById(clientId);
+                if (client == null)
+                    return false;
+                if (state == null)
+                {
+                    client.IsEnabled = !client.IsEnabled;
+                }
+                else
+                {
+                    client.IsEnabled = (bool)state;
+                }
+                _unitOfWork.GenericRepository<BWR.Domain.Model.Clients.Client>().Update(client);
+                _unitOfWork.Save();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Tracing.SaveException(ex);
+                return false;
+            }
 
+        }
 
         #endregion
     }
-}   
+}

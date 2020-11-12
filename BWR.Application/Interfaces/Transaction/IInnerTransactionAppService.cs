@@ -1,4 +1,6 @@
 ﻿using BWR.Application.Dtos.Transaction.InnerTransaction;
+using BWR.Domain.Model.Settings;
+using BWR.Domain.Model.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +18,8 @@ namespace BWR.Application.Interfaces.Transaction
         InnerTransactionInsertInitialDto InitialInputData();
         bool SaveInnerTransactions(InnerTransactionInsertListDto incometransacrions);
         bool EditInnerTransaction(InnerTransactionUpdateDto dto);
-        
-        
+        IList<InnerTransactionDto> InnerTransactionStatementDetailed(int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId,int? senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered);
+
+
     }
 }

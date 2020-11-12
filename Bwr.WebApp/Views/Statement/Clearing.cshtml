@@ -1,0 +1,63 @@
+﻿@model IEnumerable<BWR.Application.Dtos.Statement.ClearigStatement>
+
+<p>
+    
+</p>
+<table class="table table-bordered">
+    <tr>
+        <th>
+            المبلغ
+        </th>
+        <th>
+            نوع الرحكة
+        </th>
+        <th>
+            تبويب
+        </th>
+        <th>
+            الاسم
+        </th>
+        <th>
+            جهة الصرف او القبض
+        </th>
+        <th>
+            التاريخ
+        </th>
+        <th>
+            ملاحظات
+        </th>
+        <th>
+            تفاصيل
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Type)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.From)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.To)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Note)
+        </td>
+        <td>
+            <a href="#" class="btn btn-primary">تفاصيل</a>
+        </td>
+    </tr>
+}
+
+</table>

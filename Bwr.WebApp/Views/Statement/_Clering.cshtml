@@ -1,0 +1,240 @@
+﻿<div class="modal-dialog">
+
+    <div class="modal-content">
+
+        <div class="modal-header ui-draggable-handle">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title">كشف المقاصة</h4>
+        </div>
+        <div class="modal-body">
+            
+            <div class="row">
+                <div class="col-lg-12">
+                    <label>
+                        العملة
+                    </label>
+                    <select class="form-control" id="coinSelect">
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <label>نوع الحركة</label>
+                        <select class="form-control" id="incomeOrOutCame">
+                            <option value="0">الكل</option>
+                            <option value="-1">صرف</option>
+                            <option value="1">قبض</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <label>
+                            تبويب
+                        </label>
+                        <select class="form-control" id="fromAccountSelect">
+                            <option value="0"> الكل </option>
+                            <option value="1"> شركات</option>
+                            <option value="2"> عملاء</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <div id="formAgentDiv" style="display:none">
+                            <label> العميل</label>
+                            <select class="form-control" id="fromAgentSelect">
+                                <option value="0">الكل</option>
+                            </select>
+                        </div>
+                        <div id="fromCompanyDiv" style="display:none">
+                            <label>الشركات</label>
+                            <select class="form-control" id="fromCompanySelect">
+                                <option value="0">الكل</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <label>
+                            جهة الصرف او القبض
+                        </label>
+                        <select class="form-control" id="toAccountSelect">
+                            <option value="0"> الكل </option>
+                            <option value="1"> شركات</option>
+                            <option value="2"> عملاء</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <div id="toAgnetDiv" style="display:none">
+                            <label>العميل</label>
+                            <select class="form-control" id="toClientSelect">
+                                <option value="0">الكل</option>
+                            </select>
+                        </div>
+                        <div id="toCompanyDiv" style="display:none">
+                            <label>الشركات</label>
+                            <select class="form-control" id="toCompanySelect">
+                                <option value="0">الكل</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label>من تاريخ</label>
+                        <input type="date" class="form-control" id="from"/>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label>إلى  تاريخ</label>
+                        <input type="date" class="form-control" id="to" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn green" id="ClearingBtn">عرض</button>
+            <button type="button" class="btn dark btn-outline" data-dismiss="modal">إلغاء</button>
+        </div>
+    </div>
+</div>
+<script>
+    var fromAccountSelect = $('#fromAccountSelect');
+    var fromAgentSelect = $('#fromAgentSelect');
+    var fromCompanySelect = $('#fromCompanySelect');
+    var toClientSelect = $('#toClientSelect');
+    var toCompanySelect = $('#toCompanySelect');
+    var toAccountSelect = $('#toAccountSelect');
+    $.get(
+            '@Url.Action("GetCoinsForDropdown", "Coin")', {"term":""},
+            function (data) {
+                for (var i = 0; i < data.Coins.length; i++) {
+                    var option = new Option(data.Coins[i].Name, data.Coins[i].Id);
+                    $('#coinSelect').append(option);
+                }
+
+            }
+        )
+            $.post('@Url.Action("GetAllWithoutSpecific", "Client")', function (agents) {
+                for (var i = 0; i < agents.length; i++) {
+                    var option = new Option(agents[i].FullName, agents[i].Id);
+                    var option2 = new Option(agents[i].FullName, agents[i].Id);
+                    fromAgentSelect.append(option);
+                    toClientSelect.append(option2);
+                }
+            })
+    $.post('@Url.Action("GetCompanyWithoutSpecific", "Company")', function (companies) {
+                for (var i = 0; i < companies.length; i++) {
+                    var option = new Option(companies[i].Name, companies[i].Id);
+                    var option2 = new Option(companies[i].Name, companies[i].Id);
+                    fromCompanySelect.append(option);
+                    toCompanySelect.append(option2);
+                }
+    });
+
+    function hidFromAcount() {
+        $('#formAgentDiv').hide();
+        $('#fromCompanyDiv').hide();
+        fromAgentSelect.val(0).change();
+        fromCompanySelect.val(0).change();
+    }
+    fromAccountSelect.change(function () {
+        var val = $(this).val();
+        hidFromAcount();
+        if (val == "") {
+            return;
+        }
+        if (val == 2) {
+            $('#formAgentDiv').show();
+        }
+        if (val == 1) {
+            $('#fromCompanyDiv').show();
+        }
+    });
+    function hidToAccount() {
+        $('#toAgnetDiv').hide();
+        $('#toCompanyDiv').hide();
+    }
+    toAccountSelect.change(function () {
+        var val = $(this).val();
+
+        hidToAccount();
+        if (val == "") {
+            return;
+        }
+        if (val == 2) {
+            $('#toAgnetDiv').show();
+        }
+        if (val == 1) {
+            $('#toCompanyDiv').show();
+        }
+    });
+
+    fromCompanySelect.change(function () {
+        let thisvalue = $(this).val();
+        var secoundValue = toCompanySelect.val();   
+        toCompanySelect.children().removeAttr('disabled', 'disabled');
+        if (thisvalue == 0)
+            return; 
+        if (thisvalue == secoundValue) {
+            toCompanySelect.val(0);
+        }
+        var childOption = toCompanySelect.children();
+        for (var i = 0; i < childOption.length; i++) {
+
+            console.log(childOption[i]);
+            console.log(childOption[i].value == thisvalue);
+            if (childOption[i].value == thisvalue) {
+                childOption[i].disabled = true;
+                break;
+            }
+        }
+    });
+    fromAgentSelect.change(function () {
+        let thisvalue = $(this).val();
+        var secoundValue = toClientSelect.val();
+        toClientSelect.children().removeAttr('disabled', 'disabled');
+        if (thisvalue == 0)
+            return;
+        if (thisvalue == secoundValue) {
+            toClientSelect.val(0);
+        }
+        var childOption = toClientSelect.children();
+        for (var i = 0; i < childOption.length; i++) {
+
+            console.log(childOption[i]);
+            console.log(childOption[i].value == thisvalue);
+            if (childOption[i].value == thisvalue) {
+                childOption[i].disabled = true;
+                break;
+            }
+        }
+    });
+    $('#ClearingBtn').click(function () {
+        let coinId = $('#coinSelect').val();
+        let incomeOrOutCame = $('#incomeOrOutCame').val();
+        let fromAccountType = $('#fromAccountSelect').val();
+        let toAccountType = $('#toAccountSelect').val();
+        let fromClientId = $('#fromAgentSelect').val();
+      
+        let fromCompanyId = $('#fromCompanySelect').val();
+        let toClientId = $('#toClientSelect').val();
+        let toCompanyId = $('#toCompanySelect').val();
+        let from = $('#from').val();
+        let to = $('#to').val();
+        let fromAccountId = fromClientId == 0 ? fromCompanyId == 0 ? null : fromCompanyId : fromClientId;
+        let toAccountId = toClientId == 0 ? toCompanyId == 0 ? null : toCompanyId : toClientId;
+        window.location.href = '@Url.Action("Clearing", "Statement")?coinId=' + coinId + '&incomeOrOutCame=' + incomeOrOutCame + '&fromAccountType=' + fromAccountType + '&toAccountType=' + toAccountType + '&from=' + from + '&to=' + to + '&fromAccountId=' + fromAccountId + '&toAccountId=' + toAccountId;
+    });
+</script>
