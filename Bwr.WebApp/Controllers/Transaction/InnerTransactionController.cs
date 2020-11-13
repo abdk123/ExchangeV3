@@ -2,6 +2,8 @@
 using BWR.Application.Dtos.Transaction.InnerTransaction;
 using BWR.Application.Interfaces.Transaction;
 using BWR.Application.Interfaces.Treasury;
+using BWR.Domain.Model.Settings;
+using BWR.Domain.Model.Transactions;
 using BWR.ShareKernel.Permisions;
 using System;
 using System.Web.Mvc;
@@ -48,7 +50,7 @@ namespace Bwr.WebApp.Controllers.Transaction
 
         public ActionResult InnerTransactionDetails(int transactionId)
         {
-            if(PermissionHelper.CheckPermission(AppPermision.Action_OuterTransaction_EditInnerTransaction))
+            if (PermissionHelper.CheckPermission(AppPermision.Action_OuterTransaction_EditInnerTransaction))
                 return RedirectToAction("EditInnerTransaction", "InnerTransaction", new { id = transactionId });
 
             var innerTransactionInitialDto = _innerTransactionAppService.InitialInputData();
@@ -61,7 +63,7 @@ namespace Bwr.WebApp.Controllers.Transaction
             return View(innerTransaction);
         }
 
-        
+
         [HttpPost]
         public ActionResult SaveInnerTransactions(InnerTransactionInsertListDto input)
         {
@@ -90,6 +92,13 @@ namespace Bwr.WebApp.Controllers.Transaction
             {
                 return Json("error");
             }
+        }
+        [HttpGet]
+        public ActionResult InnerTransactionStatementDetailed(int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId,int?senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
+        {
+            var list = _innerTransactionAppService.InnerTransactionStatementDetailed(reciverCompanyId, typeOfPay, reciverId, senderCompanyId, senderClientId, coinId, transactionStatus, from, to, isDelivered);
+            
+            return Json("tttt");
         }
 
         private bool CheckTreasury()

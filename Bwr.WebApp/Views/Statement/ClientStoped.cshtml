@@ -1,28 +1,107 @@
-﻿<div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header ui-draggable-handle">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-            <h4 class="modal-title">الحوالات الصادرة</h4>
+﻿
+@{
+    ViewBag.Title = "ClientStoped";
+    Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
+}
+
+<h2>العملاء متقوفي الحكة</h2>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label>عدد الأيام</label>
+            <input type="number" class="form-control" min="1" value="1" id="dayes" />
         </div>
-        <form method="post" action="@Url.Action("StopedClient","Client")"> 
-            <div class="modal-body">
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <label>عدد الأيام</label>
-                        </div>
-                        <div class="col-lg-4">
-                            <input type="text" class="form-control" name="dayesCount" required /> 
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <input type="submit" value="عرض" class="btn green" />
-                @*<button type="button" class="btn green" id="ClientStopedViewBtn">عرض</button>*@
-                <button type="button" class="btn dark btn-outline" data-dismiss="modal">إلغاء</button>
-            </div>
-        </form>
     </div>
-    <!-- /.modal-content -->
 </div>
+<div class="row">
+    <div class="col-lg-12">
+        <table class="table table-bordered" id="table">
+            <thead>
+                <tr>
+                    <td>
+                        الاسم
+                    </td>
+                    <td>
+                        تاريخ آخر حركة
+                    </td>
+                    <td>
+                        فرق الأيام
+                    </td>
+                    <td>
+                        الرصيد
+                    </td>
+                    <td>
+                        الحساب فعال
+                    </td>
+                    <td>
+                        الحساب
+                    </td>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    let tbody = $('#tbody');
+    
+    $(function () {
+        fillTable();
+        $('#dayes').change(fillTable);
+    });
+    function fillTable() {
+        
+        var dayes = $('#dayes').val();
+        $.get('@Url.Action("StopedClient","Client")', { dayesCount: dayes }
+            , function (data) {
+                tbody.empty();
+                for (var i = 0; i < data.length; i++) {
+                    console.log(data[i]);
+                    var row = document.createElement('tr');
+                    var nameTd = document.createElement('td');
+                    row.appendChild(nameTd);
+                    var lastActionDateTd = document.createElement('td');
+                    row.appendChild(lastActionDateTd);
+                    var dDayTd = document.createElement('td');
+                    row.appendChild(dDayTd);
+                    var balanceTd = document.createElement('td');
+                    row.appendChild(balanceTd);
+                    var isEnabledTd = document.createElement('td');
+                    row.appendChild(isEnabledTd)
+                    var accountTd = document.createElement('td');
+                    row.appendChild(accountTd);
+                    
+                 
+                    dDayTd.innerHTML = data[i].DayDifference;
+                    nameTd.innerHTML = data[i].FullName;
+                    balanceTd.innerHTML = data[i].Balnces.split(',').join('<br>');
+                    lastActionDateTd.innerHTML = data[i].LastAction;
+
+                    var isEnabledCheckBox = document.createElement('input');
+                    isEnabledCheckBox.setAttribute("type", "checkbox");
+                    isEnabledCheckBox.setAttribute("onChange", "IsEnabledChange(this," + data[i].ClientId+");");
+                    isEnabledCheckBox.checked = data[i].IsEnabled;
+                    isEnabledTd.append(isEnabledCheckBox);
+                    var accountBtn = document.createElement('a');
+                    accountBtn.href = '@Url.Action("Detail", "Client")' + '?id=' + data[i].ClientId;
+                    accountBtn.text = "عرض";
+                    accountBtn.classList = "btn btn-primary";
+                    accountTd.appendChild(accountBtn);
+                    
+                    tbody.append(row);
+                }
+            });
+    }
+    function IsEnabledChange(element, id) {
+        $.post('@Url.Action("ChangeClientAccountState", "Client")', {
+            clientId: id
+        },
+            function (data) {
+                
+                if (data != "True") {
+                    element.checked = !element.checked;
+                }
+            })
+    }
+</script>

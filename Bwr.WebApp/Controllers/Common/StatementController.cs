@@ -11,6 +11,7 @@ using System;
 using System.Linq;
 using System.Web.Mvc;
 using System.Dynamic;
+using BWR.Domain.Model.Companies;
 namespace Bwr.WebApp.Controllers.Common
 {
     public class StatementController : Controller
@@ -50,18 +51,6 @@ namespace Bwr.WebApp.Controllers.Common
         [HttpGet]
         public ActionResult OuterTransactions()
         {
-            //var coins = _coinAppService.GetForDropdown("");
-            //var agents = _clientAppService.Get(x => x.ClientType == ClientType.Client);
-            //var clients = _clientAppService.Get(x => x.ClientType == ClientType.Normal);
-            //var companies = _clientAppService.GetAll();
-            //var countries = _countryAppService.GetForDropdown("");
-
-            //ViewBag.Coins = coins;
-            //ViewBag.Agents = agents;
-            //ViewBag.Clients = clients;
-            //ViewBag.Companies = companies;
-            //ViewBag.Countries = countries;
-
             return PartialView("_OuterTransactions");
 
         }
@@ -69,6 +58,17 @@ namespace Bwr.WebApp.Controllers.Common
         public ActionResult ClientStoped()
         {
             return View();
+        }
+        [HttpGet]
+        public ActionResult Clering()
+        {
+            return PartialView("_Clering");
+        }
+        [HttpGet]
+        public ActionResult Clearing(int coinId, DateTime? from, DateTime? to, IncomeOrOutCame incomeOrOutCame, ClearingAccountType fromAccountType, int? fromAccountId, ClearingAccountType toAccountType, int? toAccountId)
+        {
+            var list = this._statementAppService.GetClearing(coinId, incomeOrOutCame, from, to, fromAccountType, fromAccountId, toAccountType, toAccountId);
+            return View(list);
         }
 
         [HttpGet]
@@ -133,6 +133,17 @@ namespace Bwr.WebApp.Controllers.Common
                 return Json(info, JsonRequestBehavior.AllowGet);
             }
             return Json(null);
+        }
+        [HttpGet]
+        public ActionResult IncomeTransactionStatementDetailed()
+        {
+            var companies = _unitOfWork.GenericRepository<BWR.Domain.Model.Companies.Company>().GetAll();
+            var agents = _unitOfWork.GenericRepository<BWR.Domain.Model.Clients.Client>().FindBy(c => c.ClientType == BWR.Domain.Model.Clients.ClientType.Client).ToList();
+            var coins = _unitOfWork.GenericRepository<BWR.Domain.Model.Settings.Coin>().GetAll().ToList();
+            ViewBag.Companies = new SelectList(companies, "Id", "Name");
+            ViewBag.Agents = new SelectList(agents, "Id", "FullName");
+            ViewBag.Coins = new SelectList(coins, "Id", "Name");
+            return View();
         }
 
     }

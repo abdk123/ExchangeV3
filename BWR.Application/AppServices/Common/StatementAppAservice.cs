@@ -546,5 +546,221 @@ namespace BWR.Application.AppServices.Common
             }
             return incomeOutcomeReports;
         }
+
+        public IList<ClearigStatement> GetClearing(int coinId, IncomeOrOutCame incomeOrOutCame, DateTime? from, DateTime? to, ClearingAccountType fromAccountType, int? fromAccountId, ClearingAccountType toAccountType, int? toAccountId)
+        {
+            List<ClearigStatement> clearigStatements = new List<ClearigStatement>();
+            try
+            {
+                #region expression Code
+                //Expression<Func<MoneyAction, bool>> expression = c => c.Clearing != null && c.Clearing.CoinId == coinId;
+
+                //var test = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression);
+                ////expression.
+                //if (incomeOrOutCame != IncomeOrOutCame.Non)
+                //{
+
+
+                //    Expression<Func<MoneyAction, bool>> incomeOrOutComeExperssion;
+                //    if (incomeOrOutCame == IncomeOrOutCame.Income)
+                //    {
+                //        incomeOrOutComeExperssion = c => c.Clearing.IsIncome == true;
+                //    }
+                //    else
+                //    {
+                //        incomeOrOutComeExperssion = c => c.Clearing.IsIncome == false;
+                //    }
+
+                //    expression = Expression.Lambda<Func<MoneyAction, bool>>(Expression.AndAlso(expression.Body, incomeOrOutComeExperssion.Body), expression.Parameters[0]);
+                //    var test2 = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression);
+                //}
+                //if (from != null)
+                //{
+                //    Expression<Func<MoneyAction, bool>> dateExp = c => c.Date >= from;
+                //    expression = Expression.Lambda<Func<MoneyAction, bool>>(Expression.And(expression.Body, dateExp.Body), expression.Parameters[0]);
+                //}
+                //if (to != null)
+                //{
+                //    DateTime dto = ((DateTime)to).AddHours(24);
+                //    Expression<Func<MoneyAction, bool>> dateExp = c => c.Date <= to;
+                //    expression = Expression.Lambda<Func<MoneyAction, bool>>(Expression.And(expression.Body, dateExp.Body), expression.Parameters[0]);
+                //}
+                //if (fromAccountType != ClearingAccountType.All)
+                //{
+                //    Expression<Func<MoneyAction, bool>> fromAccountExpresion;
+                //    if (fromAccountType == ClearingAccountType.Agent)
+                //    {
+                //        if (fromAccountId != null)
+                //        {
+                //            fromAccountExpresion = c => c.Clearing.FromClientId == fromAccountId;
+                //        }
+                //        else
+                //        {
+                //            fromAccountExpresion = c => c.Clearing.FromClientId != null;
+                //        }
+                //    }
+                //    else
+                //    {
+                //        if (fromAccountId != null)
+                //        {
+                //            fromAccountExpresion = c => c.Clearing.FromCompanyId == fromAccountId;
+                //        }
+                //        else
+                //        {
+                //            fromAccountExpresion = c => c.Clearing.FromCompanyId != null;
+                //        }
+                //    }
+                //    expression = Expression.Lambda<Func<MoneyAction, bool>>(Expression.And(expression.Body, fromAccountExpresion.Body), expression.Parameters[0]);
+                //}
+                //if (toAccountType != ClearingAccountType.All)
+                //{
+                //    Expression<Func<MoneyAction, bool>> toAccountExpresion;
+                //    if (toAccountType == ClearingAccountType.Agent)
+                //    {
+                //        if (toAccountId != null)
+                //        {
+                //            toAccountExpresion = c => c.Clearing.ToClientId == toAccountId;
+                //        }
+                //        else
+                //        {
+                //            toAccountExpresion = c => c.Clearing.ToClientId != null;
+                //        }
+                //    }
+                //    else
+                //    {
+                //        if (toAccountId != null)
+                //        {
+                //            toAccountExpresion = c => c.Clearing.ToCompanyId == toAccountId;
+                //        }
+                //        else
+                //        {
+                //            toAccountExpresion = c => c.Clearing.ToCompanyId != null;
+                //        }
+                //    }
+                //    expression = Expression.Lambda<Func<MoneyAction, bool>>(Expression.And(expression.Body, toAccountExpresion.Body), expression.Parameters[0]);
+                //}
+                //var clearingMoneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,c=>c.Clearing,c=>c.Clearing.FromClient, c => c.Clearing.ToClient, c => c.Clearing.FromCompany, c => c.Clearing.ToCompany);
+                #endregion
+                var clearingMoneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(c => c.Clearing != null && c.Clearing.CoinId == coinId, c => c.Clearing, c => c.Clearing.FromClient, c => c.Clearing.ToClient, c => c.Clearing.FromCompany, c => c.Clearing.ToCompany);
+                if (incomeOrOutCame != IncomeOrOutCame.Non)
+                {
+                    if (incomeOrOutCame == IncomeOrOutCame.Income)
+                    {
+                        clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.IsIncome == true);
+                    }
+                    else
+                    {
+                        clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.IsIncome == false);
+                    }
+                    if (from != null)
+                    {
+                        clearingMoneyAction = clearingMoneyAction.Where(c => c.Date >= from);
+                    }
+                }
+                if (to != null)
+                {
+                    DateTime dto = ((DateTime)to).AddHours(24);
+                    clearingMoneyAction = clearingMoneyAction.Where(c => c.Date <= dto);
+                }
+                if (fromAccountType != ClearingAccountType.All)
+                {
+                    if (fromAccountType == ClearingAccountType.Agent)
+                    {
+                        if (fromAccountId != null)
+                        {
+                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.FromClientId == fromAccountId);
+                        }
+                        else
+                        {
+                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.FromClientId !=null);
+                        }
+                    }
+                    else
+                    {
+                        if (fromAccountId != null)
+                        {
+                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.FromCompanyId== fromAccountId);
+                        }
+                        else
+                        {
+                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.FromCompanyId != fromAccountId);
+                        }
+                    }
+                }
+                if (toAccountType != ClearingAccountType.All)
+                {
+                    if (toAccountType == ClearingAccountType.Agent)
+                    {
+                        if (toAccountId != null)
+                        {
+                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.ToClientId == toAccountId);
+                        }
+                        else
+                        {
+                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.ToClientId != toAccountId);
+                        }
+                    }
+                    else
+                    {
+                        if (toAccountId != null)
+                        {
+                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.ToCompanyId == toAccountId);
+                        }
+                        else
+                        {
+                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.ToCompanyId !=null);
+                        }
+                    }
+                }
+                foreach (var item in clearingMoneyAction)
+                {
+                    var cleraing = item.Clearing;
+                    string tab;
+                    if (cleraing.FromClient == null)
+                    {
+                        tab = "تبويب الشركات";
+                    }
+                    else
+                    {
+                        tab = "تبويب العملاء";
+                    }
+                    string fromName;
+                    if (cleraing.FromClient != null)
+                    {
+                        fromName = cleraing.FromClient.FullName;
+                    }
+                    else
+                    {
+                        fromName = cleraing.FromCompany.Name;
+                    }
+                    string toName;
+                    if (cleraing.ToClient != null)
+                    {
+                        toName = cleraing.ToClient.FullName;
+                    }
+                    else
+                    {
+                        toName = cleraing.ToCompany.Name;
+                    }
+                    ClearigStatement clearigStatement = new ClearigStatement()
+                    {
+                        Id = item.Id,
+                        Amount = cleraing.Amount,
+                        Note = cleraing.Note,
+                        Date = item.Date,
+                        Type = cleraing.IsIncome == true ? "قبض" : "صرف",
+                        From = tab,
+                        Name = fromName,
+                        To = toName
+                    };
+                    clearigStatements.Add(clearigStatement);
+                }
+            }
+            catch (Exception ex)
+            {
+                Tracing.SaveException(ex);
+            }
+            return clearigStatements;
+        }
     }
 }

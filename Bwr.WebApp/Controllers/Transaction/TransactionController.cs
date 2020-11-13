@@ -2,8 +2,10 @@
 using BWR.Application.Interfaces.Setting;
 using BWR.Application.Interfaces.Transaction;
 using BWR.Application.Interfaces.Treasury;
+using BWR.Domain.Model.Settings;
 using PagedList;
 using System;
+using System.EnterpriseServices;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -92,6 +94,12 @@ namespace Bwr.WebApp.Controllers.Transaction
 
             return View();
         }
+        //[HttpGet]
+        //public ActionResult IncomeTransactionStatementDetailed(int? snederCompanyId, TypeOfPay typeOfPay, int? reciverId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
+        //{
+
+        //    return Json("");
+        //}
 
         private bool CheckTreasury()
         {

@@ -49,7 +49,7 @@ namespace BWR.Application.AppServices.Transactions
             }
             catch (Exception ex)
             {
-                Infrastructure.Exceptions.Tracing.SaveException(ex);
+                Tracing.SaveException(ex);
             }
             return innerTransactionsDto;
         }
@@ -67,7 +67,7 @@ namespace BWR.Application.AppServices.Transactions
             }
             catch (Exception ex)
             {
-                Infrastructure.Exceptions.Tracing.SaveException(ex);
+                Tracing.SaveException(ex);
             }
             return innerTransactionDto;
         }
@@ -232,7 +232,7 @@ namespace BWR.Application.AppServices.Transactions
             }
         }
 
-        private MoneyAction IncomeTrasactionForClient(InnerTransactionInsertDto dto, int mainCompayId, DateTime date ,IncomeTransactionCollection incomeTransactionCollection)
+        private MoneyAction IncomeTrasactionForClient(InnerTransactionInsertDto dto, int mainCompayId, DateTime date, IncomeTransactionCollection incomeTransactionCollection)
         {
             int branchId = BranchHelper.Id;
             int treasuryId = _appSession.GetCurrentTreasuryId();
@@ -281,10 +281,12 @@ namespace BWR.Application.AppServices.Transactions
             transaction.CreatedBy = _appSession.GetUserName();
             _unitOfWork.GenericRepository<Transaction>().Insert(transaction);
 
-            var moneyAction = new MoneyAction();
-            moneyAction.Transaction = transaction;
-            moneyAction.Date = date;
-            moneyAction.CreatedBy = _appSession.GetUserName();
+            var moneyAction = new MoneyAction
+            {
+                Transaction = transaction,
+                Date = date,
+                CreatedBy = _appSession.GetUserName()
+            };
             _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
             return moneyAction;
         }
@@ -606,6 +608,49 @@ namespace BWR.Application.AppServices.Transactions
             }
 
             return client;
+        }
+
+        public IList<InnerTransactionDto> InnerTransactionStatementDetailed(int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId,int? senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
+        {
+            var innerTransaction = _unitOfWork.GenericRepository<Transaction>().GetAll();
+            if (reciverCompanyId != null)
+            {
+                innerTransaction = innerTransaction.Where(c => c.ReceiverCompanyId == reciverCompanyId);
+            }
+            if (typeOfPay != TypeOfPay.None)
+            {
+                innerTransaction = innerTransaction.Where(c => c.TypeOfPay == typeOfPay);
+                if (typeOfPay == TypeOfPay.Cash || typeOfPay == TypeOfPay.ClientsReceivables)
+                {
+                    if (reciverId != null)
+                    {
+                        innerTransaction = innerTransaction.Where(c => c.ReciverClientId == reciverId);
+                    }
+                }
+                else if (typeOfPay == TypeOfPay.CompaniesReceivables)
+                {
+                    if (reciverId != null)
+                    {
+                        innerTransaction = innerTransaction.Where(c => c.ReciverClientId == reciverId);
+                    }
+                    if (senderCompanyId != null)
+                    {
+                        innerTransaction = innerTransaction.Where(c => c.SenderCompanyId == senderCompanyId);
+                    }
+                }
+            }
+            if (senderClientId != null)
+                innerTransaction = innerTransaction.Where(c => c.SenderClientId == senderClientId);
+            if(coinId!=null)
+                innerTransaction = innerTransaction.Where(c => c.CoinId==coinId);
+            if (transactionStatus != TransactionStatus._0)
+                innerTransaction = innerTransaction.Where(c => c.TransactionsStatus == transactionStatus);
+            if (from != null)
+            {
+                
+            }
+            
+            return null;
         }
     }
 }

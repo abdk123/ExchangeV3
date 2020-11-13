@@ -50,11 +50,24 @@ namespace BWR.Infrastructure.Common
         }
         public virtual IEnumerable<T> GetAll()
         {
-            return Entities.ToList();
+            return Entities;
         }
         public IEnumerable<T> GetAll(params Expression<Func<T, object>>[] propertySelectors)
         {
             IQueryable<T> entities = Entities;
+            if (propertySelectors != null)
+            {
+                foreach (var item in propertySelectors)
+                {
+                    entities = entities.Include(item);
+                }
+            }
+            return entities;
+        }
+        
+        public IEnumerable<T> FindBy(Expression<Func<T, bool>> predicate, params string[] propertySelectors)
+        {
+            var entities = Entities.Where(predicate);
             if (propertySelectors != null)
             {
                 foreach (var item in propertySelectors)
@@ -186,6 +199,6 @@ namespace BWR.Infrastructure.Common
             return entities;
         }
 
-
+        
     }
 }

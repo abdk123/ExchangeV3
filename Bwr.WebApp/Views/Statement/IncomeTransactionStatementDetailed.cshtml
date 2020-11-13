@@ -1,0 +1,252 @@
+﻿
+@{
+    ViewBag.Title = "IncomeTransactionStatementDetailed";
+    Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
+}
+
+<h2>كشف الحوالات الواردة مفصل</h2>
+<div class="row">
+    <div class="col-lg-4">
+        <div class="form-group">
+            <label>الفرع المرسل</label>
+            @Html.DropDownList("Companies", null, "---اخياري---", htmlAttributes: new { @class = "form-control", @id = "reciverCompanyId" })
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="form-group">
+            <label>نوع الدفع</label>
+            <select class="form-control" id="TypeOfPay">
+                <option value="0">الكل</option>
+                <option value="1">نقدي</option>
+                <option value="2">
+                    ذمم عملاء
+                </option>
+                <option value="3">
+                    ذمم شركات
+                </option>
+            </select>
+        </div>
+    </div>
+    <div class="col-lg-4">
+
+        <div class="form-group" id="companiesDiv" style="display:none">
+            <div class="row">
+                <div class="col-lg-6">
+                    <label>الشركات</label>
+                    @Html.DropDownList("Companies", null, "---اختياري---", htmlAttributes: new { @class = "form-control", @id = "senderCompanyId", @style = "width:100%" })
+                </div>
+                <div class="col-lg-6">
+                    <label>المستفيد</label>
+                    <select id="normalClientSelect2">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group" id="asgentsDiv" style="display:none">
+            <label>العملاء</label>
+            @Html.DropDownList("Agents", null, "---اختياري---", htmlAttributes: new { @class = "form-control", @style = "width:100%" })
+        </div>
+        <div class="form-group" id="normaClientDiv" style="display:none">
+            <label>المستفيد</label>
+            <select id="normalClientSelect">
+            </select>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4">
+        <div class="form-group">
+            <label>المرسل</label>
+            <select id="senderSelect" style="width:86%">
+                <option value="">اختياري</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="form-group">
+            <label>العملة</label>
+            @Html.DropDownList("Coins", null, "---اختياري---", htmlAttributes: new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="form-group">
+            <label>الحالة</label>
+            <select class="form-control" id="TransactionStatus">
+                <option value="0">---اختياري---</option>
+                <option value="1">مبلغ</option>
+                <option value="2">غير مبلغ</option>
+                <option value="3">بلا</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4">
+        <div class="form-group">
+            <label>من تاريخ:</label>
+            <input type="date" class="form-control" id="from" />
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="form-group">
+            <label>إلى تاريخ:</label>
+            <input type="date" class="form-control" id="to" />
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="form-group">
+            <label>
+                حالة التسليم
+            </label>
+            <select class="form-control" id="isDelivered">
+                <option value="">---اختياري---</option>
+                <option value="1">مسلمة</option>
+                <option value="0">غير مسلمة</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td>
+                    العلمة
+                </td>
+                <td>
+                    المبلغ
+                </td>
+                <td>
+                    نوع الدفع
+                </td>
+                <td>
+                    اسم المسفيد
+                </td>
+                <td>
+                    عنوان المستقيد
+                </td>
+                <td>
+                    رقم المستفيد
+                </td>
+                <td>
+                    الحالة
+                </td>
+                <td>
+                    اسم المرسل
+                </td>
+                <td>
+                    التاريخ
+                </td>
+                <td>
+                    الفرع المرسل
+                </td>
+                <td>
+                    حالة التسليم
+                </td>
+                <td>
+                    تفاصيل
+                </td>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+        </tbody>
+    </table>
+</div>
+<script>
+
+    $('#TypeOfPay').change(function () {
+        hidAllReciver();
+        var value = $(this).val();
+        if (value == 0)
+            return;
+        if (value == 1) {
+            $('#normaClientDiv').show();
+        } else if (value == 2) {
+            $('#asgentsDiv').show();
+        } else {
+            $('#companiesDiv').show();
+
+        }
+    });
+    function hidAllReciver() {
+        $('#companiesDiv').hide();
+        $('#asgentsDiv').hide();
+        $('#normaClientDiv').hide();
+        $('#senderCompanyId').val("").val("").change();;
+        $('#Agents').val("").change();
+        $('#normaClientDiv').val("").change();
+    }
+
+    $(function () {
+        $('#senderCompanyId').select2();
+        $('#Agents').select2();
+        $('#senderCompanySelect').select2();
+        $('#normalClientSelect').select2({
+            //Select2ClientAjaxObject exist in Layout
+            ajax: Select2ClientAjaxObject.ajax,
+            placeholder: "---اختياري---",
+            allowClear: true
+        });
+        $('#normalClientSelect2').select2({
+            //Select2ClientAjaxObject exist in Layout
+            ajax: Select2ClientAjaxObject.ajax,
+            placeholder: "---اختياري---",
+            allowClear: true
+        });
+        $('#senderSelect').select2({
+            ajax: Select2ClientAjaxObject.ajax,
+            placeholder: "---اختياري---",
+            allowClear: true
+        })
+    });
+    let tbody = $('#tbody');
+    function FillTable() {
+        let reciverCompanyId = $('#reciverCompanyId').val();
+        let typeOfPay = $('#TypeOfPay').val();
+        let reciverId = getReciverId();
+        let senderClientId = $('#senderSelect').val();
+        let coinId = $('#Coins').val();
+        let transactionStatus = $('#TransactionStatus').val();
+        let from = $('#form').val();
+        let to = $('#to').val();
+        let isDelivered = $('#isDelivered').val();
+        let senderCompanyId = $('#senderCompanyId').val();
+        $.get('@Url.Action("InnerTransactionStatementDetailed", "InnerTransaction")',
+            {
+                reciverCompanyId: reciverCompanyId,
+                typeOfPay: typeOfPay,
+                reciverId: reciverId,
+                senderCompanyId: senderCompanyId,
+                senderClientId: senderClientId,
+                coinId: coinId,
+                transactionStatus: transactionStatus,
+                from: from,
+                to: to,
+                isDelivered: isDelivered
+            }
+            , function (data) {
+                console.log(data);
+            });
+    }
+    function getReciverId() {
+        let typeOfPay = $('#TypeOfPay').val();
+        if (typeOfPay==0) {
+            return null;
+        }
+        if (typeOfPay == 1) {
+            return $('#normalClientSelect').val();
+        }
+        if (typeOfPay == 2) {
+            if ($('#Agents').val() == "")
+                return null;
+            return $('#Agents').val();
+        }
+        if (typeOfPay == 3) {
+            if ($('#normalClientSelect2').val() == "")
+                return null;
+            return $('#normalClientSelect2').val();
+        }        
+    }
+
+</script>
