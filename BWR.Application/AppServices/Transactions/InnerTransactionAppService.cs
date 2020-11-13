@@ -5,6 +5,7 @@ using BWR.Application.Dtos.Company;
 using BWR.Application.Dtos.Setting.Attachment;
 using BWR.Application.Dtos.Setting.Coin;
 using BWR.Application.Dtos.Setting.Country;
+using BWR.Application.Dtos.Statement;
 using BWR.Application.Dtos.Transaction.InnerTransaction;
 using BWR.Application.Interfaces.Shared;
 using BWR.Application.Interfaces.Transaction;
@@ -610,47 +611,83 @@ namespace BWR.Application.AppServices.Transactions
             return client;
         }
 
-        public IList<InnerTransactionDto> InnerTransactionStatementDetailed(int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId,int? senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
+        public IList<InnerTransactionStatementDetailedDto> InnerTransactionStatementDetailed(int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId, int? senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
         {
-            var innerTransaction = _unitOfWork.GenericRepository<Transaction>().GetAll();
-            if (reciverCompanyId != null)
+            List<InnerTransactionStatementDetailedDto> innerTransactionDtos = new List<InnerTransactionStatementDetailedDto>();
+            try
             {
-                innerTransaction = innerTransaction.Where(c => c.ReceiverCompanyId == reciverCompanyId);
-            }
-            if (typeOfPay != TypeOfPay.None)
-            {
-                innerTransaction = innerTransaction.Where(c => c.TypeOfPay == typeOfPay);
-                if (typeOfPay == TypeOfPay.Cash || typeOfPay == TypeOfPay.ClientsReceivables)
+                var innerTransaction = _unitOfWork.GenericRepository<Transaction>().GetAll(c=>c.SenderClient,c=>c.ReciverClient,c=>c.ReceiverCompany,c=>c.SenderCompany,c=>c.MoenyActions,c=>c.ReciverClient.ClientPhones);
+                if (reciverCompanyId != null)
                 {
-                    if (reciverId != null)
+                    innerTransaction = innerTransaction.Where(c => c.ReceiverCompanyId == reciverCompanyId);
+                }
+                if (typeOfPay != TypeOfPay.None)
+                {
+                    innerTransaction = innerTransaction.Where(c => c.TypeOfPay == typeOfPay);
+                    if (typeOfPay == TypeOfPay.Cash || typeOfPay == TypeOfPay.ClientsReceivables)
                     {
-                        innerTransaction = innerTransaction.Where(c => c.ReciverClientId == reciverId);
+                        if (reciverId != null)
+                        {
+                            innerTransaction = innerTransaction.Where(c => c.ReciverClientId == reciverId);
+                        }
+                    }
+                    else if (typeOfPay == TypeOfPay.CompaniesReceivables)
+                    {
+                        if (reciverId != null)
+                        {
+                            innerTransaction = innerTransaction.Where(c => c.ReciverClientId == reciverId);
+                        }
+                        if (senderCompanyId != null)
+                        {
+                            innerTransaction = innerTransaction.Where(c => c.SenderCompanyId == senderCompanyId);
+                        }
                     }
                 }
-                else if (typeOfPay == TypeOfPay.CompaniesReceivables)
+                if (senderClientId != null)
+                    innerTransaction = innerTransaction.Where(c => c.SenderClientId == senderClientId);
+                if (coinId != null)
                 {
-                    if (reciverId != null)
+                    innerTransaction = innerTransaction.Where(c => c.CoinId == coinId);
+                }
+                if (transactionStatus != TransactionStatus._0)
+                    innerTransaction = innerTransaction.Where(c => c.TransactionsStatus == transactionStatus);
+                if (from != null)
+                {
+                    innerTransaction = innerTransaction.Where(c => c.MoenyActions.ToList().First().Date>=from);
+                            }
+                if (to != null)
+                {
+                    var dto = ((DateTime)to).AddHours(24);
+                    innerTransaction = innerTransaction.Where(c => c.MoenyActions.ToList().Last().Date<=dto);
+                }
+                var test = innerTransaction.ToList();
+                foreach (var item in test)
+                {
+                    InnerTransactionStatementDetailedDto innerTransactionDto = new InnerTransactionStatementDetailedDto()
                     {
-                        innerTransaction = innerTransaction.Where(c => c.ReciverClientId == reciverId);
-                    }
-                    if (senderCompanyId != null)
-                    {
-                        innerTransaction = innerTransaction.Where(c => c.SenderCompanyId == senderCompanyId);
-                    }
+                        Amount = item.Amount,
+                        CoinName = item.Coin.Name,
+                        Date = item.MoenyActions.First().Date.ToString(),
+                        IsDiliverd = (bool)item.IsDeleted,
+                        TypeOfPay = item.TypeOfPay==TypeOfPay.Cash?"نقدي":item.TypeOfPay==TypeOfPay.ClientsReceivables?"ذمم عملاء":"ذمم شركات",
+                        Id =item.Id,
+                        MoneyActionId= item.MoenyActions.First().Id,
+                        State = item.TransactionsStatus == TransactionStatus.Notified?"مبلغ":item.TransactionsStatus==TransactionStatus.NotNotified?"غير مبلغ":"بلا",
+                        SenderName = item.SenderClient.FullName,
+                        ReciverName = item.ReciverClient.FullName,
+                        ReciverPhone = item.ReciverClient.ClientPhones.FirstOrDefault()!=null? item.ReciverClient.ClientPhones.FirstOrDefault().Phone:"",
+                        SenderCompany= item.ReceiverCompany.Name,
+                         ReciverAddress = item.ReciverClient.Address
+                    };
+                    innerTransactionDtos.Add(innerTransactionDto);
                 }
             }
-            if (senderClientId != null)
-                innerTransaction = innerTransaction.Where(c => c.SenderClientId == senderClientId);
-            if(coinId!=null)
-                innerTransaction = innerTransaction.Where(c => c.CoinId==coinId);
-            if (transactionStatus != TransactionStatus._0)
-                innerTransaction = innerTransaction.Where(c => c.TransactionsStatus == transactionStatus);
-            if (from != null)
+            catch(Exception ex)
             {
-                
+                Tracing.SaveException(ex);
             }
-            
-            return null;
+            return innerTransactionDtos;
+
         }
     }
 }

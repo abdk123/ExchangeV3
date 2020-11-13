@@ -98,7 +98,7 @@ namespace Bwr.WebApp.Controllers.Transaction
         {
             var list = _innerTransactionAppService.InnerTransactionStatementDetailed(reciverCompanyId, typeOfPay, reciverId, senderCompanyId, senderClientId, coinId, transactionStatus, from, to, isDelivered);
             
-            return Json("tttt");
+            return Json(list,JsonRequestBehavior.AllowGet);
         }
 
         private bool CheckTreasury()

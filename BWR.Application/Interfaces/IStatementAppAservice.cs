@@ -10,8 +10,8 @@ namespace BWR.Application.Interfaces
     {
         IList<BalanceStatementDto> GetAllBalances(int coinId, DateTime to);
         ConclusionDto GetConclusion(int coinId, DateTime date);
-        IList<IncomeOutcomeReport> GetPayment(int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? form = null, DateTime? to =null, int? PaymentsTypeEntityId =null);
-        IList<IncomeOutcomeReport> GetIncme(int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? incomeFromEntitiyId);
+        DataTablesDto GetPayment(int draw,int start,int length,int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? form = null, DateTime? to =null, int? PaymentsTypeEntityId =null);
+        DataTablesDto GetIncme(int draw, int start, int length, int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? incomeFromEntitiyId);
         IList<ClearigStatement> GetClearing(int coinId, IncomeOrOutCame incomeOrOutCame, DateTime? from, DateTime? to, ClearingAccountType fromAccountType, int?fromAccountId, ClearingAccountType toAccountType, int? toAccountId);
 
 

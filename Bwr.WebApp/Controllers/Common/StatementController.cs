@@ -12,6 +12,8 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Dynamic;
 using BWR.Domain.Model.Companies;
+using DataTables.Mvc;
+using System.Collections.Generic;
 namespace Bwr.WebApp.Controllers.Common
 {
     public class StatementController : Controller
@@ -124,15 +126,21 @@ namespace Bwr.WebApp.Controllers.Common
             ViewBag.Income = new SelectList(_unitOfWork.GenericRepository<PublicIncome>().GetAll(), "Id", "Name");
             return View();
         }
-        [HttpGet]
-        public ActionResult IncomeOutCome(int generealType, int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? PaymentsTypeEntityId)
+        [HttpPost]
+        public ActionResult IncomeOutCome([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, int generealType, int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? PaymentsTypeEntityId)
         {
+            DataTablesDto dto;
             if (generealType == -1)
             {
-                var info = this._statementAppService.GetPayment(coinId, paymentsTypeEnum, from, to, PaymentsTypeEntityId).ToList();
-                return Json(info, JsonRequestBehavior.AllowGet);
+                dto= this._statementAppService.GetPayment(requestModel.Draw, requestModel.Start, requestModel.Length, coinId, paymentsTypeEnum, from, to, PaymentsTypeEntityId);
             }
-            return Json(null);
+            else
+            {   
+                dto= this._statementAppService.GetIncme(requestModel.Draw, requestModel.Start, requestModel.Length, coinId, paymentsTypeEnum, from, to, PaymentsTypeEntityId);
+                
+            }
+            
+            return Json(dto,JsonRequestBehavior.AllowGet);
         }
         [HttpGet]
         public ActionResult IncomeTransactionStatementDetailed()

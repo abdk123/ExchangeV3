@@ -84,6 +84,7 @@
     <Compile Include="AppServices\Treasuries\TreasuryAppService.cs" />
     <Compile Include="AppServices\Treasuries\TreasuryCashAppService.cs" />
     <Compile Include="AppServices\Treasuries\TreasuryMoneyActionAppService.cs" />
+    <Compile Include="Common\DataTablesDto.cs" />
     <Compile Include="Common\IncomeOrOutCame.cs" />
     <Compile Include="Common\ClearingAccountType.cs" />
     <Compile Include="Common\DtoForDropdown.cs" />

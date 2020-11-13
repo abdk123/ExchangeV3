@@ -61,7 +61,7 @@ namespace Bwr.WebApp.Controllers
                 var clients = _clientAppService.GetAll().AsQueryable();
 
                 var totalCount = clients.Count();
-
+                    
                 // searching and sorting
                 clients = SearchAndSort(requestModel, clients);
                 var filteredCount = clients.Count();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace BWR.ShareKernel.Interfaces
@@ -9,6 +10,7 @@ namespace BWR.ShareKernel.Interfaces
         T First();
         T FirstOrDefualt();
         IEnumerable<T> GetAll();
+        IQueryable<T> GetIQueryable();
         IEnumerable<T> GetAll(params Expression<Func<T, object>>[] propertySelectors);
         T GetById(object id);
         void Insert(T obj);

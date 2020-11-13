@@ -13,7 +13,7 @@ namespace BWR.Domain.Model.Transactions
 {
     public class Transaction: Entity
     {
-        public Transaction()
+            public Transaction()
         {
             MoenyActions = new List<MoneyAction>();
         }
