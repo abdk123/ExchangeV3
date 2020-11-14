@@ -153,3 +153,4 @@ C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infr
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.csproj.CopyComplete
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.dll
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.pdb
+F:\Projects\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.Migrations.dropFK_dboMoneyAction_dboClearing_TransactionIdconstraint.resources
