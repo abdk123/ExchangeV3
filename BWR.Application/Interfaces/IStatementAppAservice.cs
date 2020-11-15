@@ -13,6 +13,7 @@ namespace BWR.Application.Interfaces
         DataTablesDto GetPayment(int draw,int start,int length,int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? form = null, DateTime? to =null, int? PaymentsTypeEntityId =null);
         DataTablesDto GetIncme(int draw, int start, int length, int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? incomeFromEntitiyId);
         IList<ClearigStatement> GetClearing(int coinId, IncomeOrOutCame incomeOrOutCame, DateTime? from, DateTime? to, ClearingAccountType fromAccountType, int?fromAccountId, ClearingAccountType toAccountType, int? toAccountId);
+        DataTablesDto CommissionReport(int draw, int start, int length, int? coinId, DateTime? from, DateTime? to, int? companyId, int? agentId, int? countryId);
 
 
     }

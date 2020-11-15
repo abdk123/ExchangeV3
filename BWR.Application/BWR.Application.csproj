@@ -187,6 +187,7 @@
     <Compile Include="Dtos\Setting\Action\ActionUpdateDto.cs" />
     <Compile Include="Dtos\Statement\BalanceStatementDto.cs" />
     <Compile Include="Dtos\Statement\ClearigStatement.cs" />
+    <Compile Include="Dtos\Statement\CommissionReportDto.cs" />
     <Compile Include="Dtos\Statement\ConclusionDto.cs" />
     <Compile Include="Dtos\Statement\ExpensesDetailDto.cs" />
     <Compile Include="Dtos\Statement\InnerTransactionStatementDetailedDto.cs" />

@@ -124,7 +124,7 @@ namespace BWR.Application.AppServices.Common
             IEnumerable<MoneyAction> moneyActions;
             if (paymentsTypeEnum == PaymentsTypeEnum.Non)
             {
-                
+
                 moneyActions = GetAllPayemnt(coinId, from, to);
             }
             else if (paymentsTypeEnum == PaymentsTypeEnum.Company)
@@ -153,7 +153,7 @@ namespace BWR.Application.AppServices.Common
                 {
                     Date = item.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")),
                     MoneyActionId = item.Id,
-                    Note = item.GetNote(Requester.Branch, null)!=null? item.GetNote(Requester.Branch, null):"",
+                    Note = item.GetNote(Requester.Branch, null) != null ? item.GetNote(Requester.Branch, null) : "",
                     Amount = item.Transaction != null ? item.Transaction.Amount : item.BoxAction.Amount,
                     Type = item.Transaction != null ? "تسليم حولة" : item.BoxAction.GetActionType(),
                     Name = _moneyActionAppService.GetActionName(item)
@@ -168,7 +168,7 @@ namespace BWR.Application.AppServices.Common
 
             Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
                 && c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasury;
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,"BoxAction","PublicMoney.PublicExpense");
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "BoxAction", "PublicMoney.PublicExpense");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);
@@ -191,10 +191,10 @@ namespace BWR.Application.AppServices.Common
         {
             Expression<Func<MoneyAction, bool>> expression = c => (c.BoxAction != null && c.BoxAction.CoinId == coinId &&
             (c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasury || c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToClient || c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToCompany))
-            || (c.Transaction != null && c.Transaction.Deliverd == true && c.Transaction.CoinId == coinId&&c.Transaction.TypeOfPay==Domain.Model.Settings.TypeOfPay.Cash);
+            || (c.Transaction != null && c.Transaction.Deliverd == true && c.Transaction.CoinId == coinId && c.Transaction.TypeOfPay == Domain.Model.Settings.TypeOfPay.Cash);
             var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "Transaction.SenderCompany", "Transaction.ReciverClient", "Transaction.SenderClient", "Transaction.ReceiverCompany", "BoxAction", "CompanyCashFlows.Company", "ClientCashFlows.Client");
             if (from != null)
-            {                
+            {
                 var dfrom = ((DateTime)from);
                 moneyAction = moneyAction.Where(c => c.Date >= dfrom);
             }
@@ -235,7 +235,7 @@ namespace BWR.Application.AppServices.Common
             //{
             Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId &&
              c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToClient;
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,"BoxAction", "ClientCashFlows.Client");
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "BoxAction", "ClientCashFlows.Client");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);
@@ -272,7 +272,7 @@ namespace BWR.Application.AppServices.Common
             //{
             Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
              && c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToCompany;
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,"BoxAction","CompanyCashFlows.Company");
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "BoxAction", "CompanyCashFlows.Company");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);
@@ -314,7 +314,7 @@ namespace BWR.Application.AppServices.Common
             //try
             //{
             Expression<Func<MoneyAction, bool>> expression = c => c.Transaction != null && c.Transaction.Deliverd == true &&
-             c.Transaction.CoinId == coinId&&c.Transaction.TypeOfPay==Domain.Model.Settings.TypeOfPay.Cash;
+             c.Transaction.CoinId == coinId && c.Transaction.TypeOfPay == Domain.Model.Settings.TypeOfPay.Cash;
             var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "Transaction.SenderCompany", "Transaction.ReciverClient", "Transaction.SenderClient", "Transaction.ReceiverCompany", "BoxAction", "CompanyCashFlows.Company", "ClientCashFlows.Client");
             if (from != null)
             {
@@ -451,7 +451,7 @@ namespace BWR.Application.AppServices.Common
             //{
             Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
              && (c.BoxAction.BoxActionType == BoxActionType.ReceiveFromClientToTreasury);
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,"BoxAction", "ClientCashFlows.Client");
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "BoxAction", "ClientCashFlows.Client");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);
@@ -494,7 +494,7 @@ namespace BWR.Application.AppServices.Common
             //{
             Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
              && (c.BoxAction.BoxActionType == BoxActionType.ReceiveFromCompanyToTreasury);
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,"BoxAction","CompanyCashFlows.Company");
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "BoxAction", "CompanyCashFlows.Company");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);
@@ -537,7 +537,7 @@ namespace BWR.Application.AppServices.Common
             //{
             Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
              && (c.BoxAction.BoxActionType == BoxActionType.ReceiveToTreasury);
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,"BoxAction","PublicMoney.PublicIncome");
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "BoxAction", "PublicMoney.PublicIncome");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);
@@ -788,6 +788,83 @@ namespace BWR.Application.AppServices.Common
                 Tracing.SaveException(ex);
             }
             return clearigStatements;
+        }
+
+        public DataTablesDto CommissionReport(int draw, int start, int length, int? coinId, DateTime? from, DateTime? to, int? companyId, int? agentId, int? countryId)
+        {
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(c => c.TransactionId != null, "Transaction.Coin", "Transaction.SenderCompany", " Transaction.ReceiverCompany", "Transaction.SenderClient", "Transaction.ReciverClient");
+            var totalRecords = moneyAction.Count();
+            if (coinId != null)
+                moneyAction = moneyAction.Where(c => c.Transaction.CoinId == coinId);
+
+            if (from != null)
+                moneyAction = moneyAction.Where(c => c.Date >= from);
+
+            if (to != null)
+            {
+                var dto = ((DateTime)to).AddHours(24);
+                moneyAction = moneyAction.Where(c => c.Date >= dto);
+            }
+            if (countryId != null)
+                moneyAction = moneyAction.Where(c => c.Transaction.CountryId == countryId);
+
+            if (companyId != null)
+                moneyAction = moneyAction.Where(c => c.Transaction.ReceiverCompanyId == companyId || c.Transaction.SenderCompanyId == companyId);
+
+            if (agentId != null)
+            {
+                moneyAction = moneyAction.Where(c => c.Transaction.ReciverClientId == agentId || c.Transaction.SenderClientId == agentId);
+            }
+
+            var filteredRepord = moneyAction.Count();
+            moneyAction = moneyAction.Skip(start).Take(length);
+            List<CommissionReportDto> commissionReportDtos = new List<CommissionReportDto>();
+            foreach (var item in moneyAction.ToList())
+            {
+                string senderCompanyName = "";
+                if (item.Transaction.SenderCompany != null)
+                    senderCompanyName = item.Transaction.SenderCompany.Name;
+
+                string secondCompanyName = "";
+                if (item.Transaction.ReceiverCompany != null)
+                    secondCompanyName = item.Transaction.ReceiverCompany.Name;
+
+                string agentName = "";
+                decimal agentCommission = 0;
+                if (item.Transaction.TypeOfPay == Domain.Model.Settings.TypeOfPay.ClientsReceivables)
+                {
+                    if (item.Transaction.IsOuterTransaction())
+                    {
+                        agentName = item.Transaction.SenderClient.FullName;
+                        agentCommission = item.Transaction.SenderCleirntCommission.HasValue ? (decimal)item.Transaction.SenderCleirntCommission : 0;
+
+                    }
+                    else
+                    {
+                        agentName = item.Transaction.ReciverClient.FullName;
+                        agentCommission = item.Transaction.ReciverClientCommission.HasValue ? (decimal)item.Transaction.ReciverClientCommission : 0;
+
+                    }
+                }
+
+                CommissionReportDto commissionReportDto = new CommissionReportDto()
+                {
+                    CoinName = item.Transaction.Coin.Name,
+                    Commission = item.Transaction.OurComission,
+                    Date = item.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")),
+                    MoneActionId = item.Id,
+                    CompanyName = senderCompanyName,
+                    CompanyCommission = item.Transaction.SenderCompanyComission.HasValue ? (decimal)item.Transaction.SenderCompanyComission : 0,
+                    SecondCompanyName = secondCompanyName,
+                    SecondCompanyCommission = item.Transaction.ReceiverCompanyComission.HasValue ? (decimal)item.Transaction.ReceiverCompanyComission : 0,
+                    ReciverName = item.Transaction.ReciverClient.FullName,
+                    AgentName = agentName,
+                    AgentCommission = agentCommission,
+                };
+                commissionReportDto.OurCommission = commissionReportDto.Commission - commissionReportDto.SecondCompanyCommission - commissionReportDto.SecondCompanyCommission - commissionReportDto.AgentCommission- commissionReportDto.CompanyCommission;
+                commissionReportDtos.Add(commissionReportDto);
+            }
+            return new DataTablesDto(draw, commissionReportDtos, filteredRepord, totalRecords);
         }
     }
 }

@@ -14,6 +14,8 @@ using System.Dynamic;
 using BWR.Domain.Model.Companies;
 using DataTables.Mvc;
 using System.Collections.Generic;
+using BWR.Infrastructure.Exceptions;
+
 namespace Bwr.WebApp.Controllers.Common
 {
     public class StatementController : Controller
@@ -156,7 +158,37 @@ namespace Bwr.WebApp.Controllers.Common
         [HttpGet]
         public ActionResult CommissionReport()
         {
+            var company = _unitOfWork.GenericRepository<BWR.Domain.Model.Companies.Company>().GetAll();
+            var agnet = _unitOfWork.GenericRepository<BWR.Domain.Model.Clients.Client>().FindBy(c=>c.ClientType==BWR.Domain.Model.Clients.ClientType.Client);
+            var coins = _unitOfWork.GenericRepository<Coin>().GetAll();
+            var countries = _unitOfWork.GenericRepository<Country>().FindBy(c => c.MainCountryId == null).ToList();
+            var ceities = _unitOfWork.GenericRepository<Country>().FindBy(c => c.MainCountryId != null).ToList();
+            var unionCountries = new List<Country>();
+            foreach (var item in countries)
+            {
+                unionCountries.Add(item);
+                var c= ceities.Where(cc => cc.MainCountryId == item.Id);
+                unionCountries.AddRange(c);
+            }
+            ViewBag.Companies = new SelectList(company, "Id", "Name");
+            ViewBag.Agent = new SelectList(agnet, "Id", "FullName");
+            ViewBag.Coin = new SelectList(coins, "Id", "Name");
+            ViewBag.Countries = new SelectList(unionCountries, "Id", "Name");
             return View();
+        }
+        [HttpPost]
+        public ActionResult CommissionReport([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, int? coinId, DateTime? from, DateTime? to, int? countryId, int? companyId, int? agentId)
+        {
+            try
+            {
+                
+                return Json(_statementAppService.CommissionReport(requestModel.Draw, requestModel.Start, requestModel.Length, coinId, from, to, companyId, agentId, countryId));
+            }
+            catch(Exception ex)
+            {
+                Tracing.SaveException(ex);
+            }
+            return Json("");
         }
 
     }
