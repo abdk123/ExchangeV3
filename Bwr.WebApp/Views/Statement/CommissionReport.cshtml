@@ -1,0 +1,69 @@
+﻿
+@{
+    ViewBag.Title = "CommissionReport";
+    Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
+}
+
+<h2>تقرير عمولات الحوالات</h2>
+<div class="row">
+    <div class="col-lg-4">
+        <label>عميل</label>
+        <select id="agnetSelect"></select>
+    </div>
+    <div class="col-lg-4">
+        <label>شركة </label>
+        <select id="companySelect"></select>
+    </div>
+    <div class="col-lg-4">
+        <select id="countrySelect"></select>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4">
+        <label>
+            العملة
+        </label>
+        <select id="coinSelect"></select>
+    </div>
+    <div class="col-lg-4">
+        <label>من تاريخ:</label>
+        <input type="date" class="form-control" id="from" />
+    </div>
+    <div class="col-lg-4">
+        <label>إلى تاريخخ</label>
+        <input type="date" class="form-control" id="to" />
+    </div>
+</div>
+<table class="table table-bordered" id="table">
+    <thead>
+        <tr>
+            <th>
+                العمولة
+            </th>
+            <th>
+                عمولة الشركة
+            </th>
+            <th>
+                عمولتنا
+            </th>
+            <td>
+                العملة
+            </td>
+            <td>
+                التاريخ
+            </td>
+            <td>
+                اسم المستفيد
+            </td>
+            <td>
+                تفاصيل
+            </td>
+        </tr>
+    </thead>
+</table>
+<script>
+    var table = $('#table');
+    $(function () {
+
+    });
+</script>

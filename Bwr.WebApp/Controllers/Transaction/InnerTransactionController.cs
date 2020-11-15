@@ -1,10 +1,12 @@
 ﻿using Bwr.WebApp.Models.Security;
+using BWR.Application.Common;
 using BWR.Application.Dtos.Transaction.InnerTransaction;
 using BWR.Application.Interfaces.Transaction;
 using BWR.Application.Interfaces.Treasury;
 using BWR.Domain.Model.Settings;
 using BWR.Domain.Model.Transactions;
 using BWR.ShareKernel.Permisions;
+using DataTables.Mvc;
 using System;
 using System.Web.Mvc;
 
@@ -93,12 +95,11 @@ namespace Bwr.WebApp.Controllers.Transaction
                 return Json("error");
             }
         }
-        [HttpGet]
-        public ActionResult InnerTransactionStatementDetailed(int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId,int?senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
+        [HttpPost]
+        public ActionResult InnerTransactionStatementDetailed([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId,int?senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
         {
-            var list = _innerTransactionAppService.InnerTransactionStatementDetailed(reciverCompanyId, typeOfPay, reciverId, senderCompanyId, senderClientId, coinId, transactionStatus, from, to, isDelivered);
-            
-            return Json(list,JsonRequestBehavior.AllowGet);
+            DataTablesDto dto= _innerTransactionAppService.InnerTransactionStatementDetailed(requestModel.Draw,requestModel.Start,requestModel.Length,reciverCompanyId, typeOfPay, reciverId, senderCompanyId, senderClientId, coinId, transactionStatus, from, to, isDelivered);    
+            return Json(dto,JsonRequestBehavior.AllowGet);
         }
 
         private bool CheckTreasury()

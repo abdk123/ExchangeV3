@@ -153,6 +153,11 @@ namespace Bwr.WebApp.Controllers.Common
             ViewBag.Coins = new SelectList(coins, "Id", "Name");
             return View();
         }
+        [HttpGet]
+        public ActionResult CommissionReport()
+        {
+            return View();
+        }
 
     }
 }

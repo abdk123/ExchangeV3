@@ -13,5 +13,6 @@ namespace BWR.Domain.Model.Common
         public int? IncomeId { get; set; }
         [ForeignKey("IncomeId")]
         public virtual PublicIncome PublicIncome { get; set; }
+        
     }
 }

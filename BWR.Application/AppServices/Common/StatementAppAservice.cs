@@ -23,6 +23,7 @@ using BWR.Domain.Model.Enums;
 using BWR.Application.Extensions;
 using BWR.Infrastructure.Exceptions;
 using BWR.Application.Interfaces.Common;
+using System.Globalization;
 
 namespace BWR.Application.AppServices.Common
 {
@@ -123,6 +124,7 @@ namespace BWR.Application.AppServices.Common
             IEnumerable<MoneyAction> moneyActions;
             if (paymentsTypeEnum == PaymentsTypeEnum.Non)
             {
+                
                 moneyActions = GetAllPayemnt(coinId, from, to);
             }
             else if (paymentsTypeEnum == PaymentsTypeEnum.Company)
@@ -149,9 +151,9 @@ namespace BWR.Application.AppServices.Common
             {
                 IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
                 {
-                    Date = item.Date,
+                    Date = item.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")),
                     MoneyActionId = item.Id,
-                    Note = item.GetNote(Requester.Branch, null),
+                    Note = item.GetNote(Requester.Branch, null)!=null? item.GetNote(Requester.Branch, null):"",
                     Amount = item.Transaction != null ? item.Transaction.Amount : item.BoxAction.Amount,
                     Type = item.Transaction != null ? "تسليم حولة" : item.BoxAction.GetActionType(),
                     Name = _moneyActionAppService.GetActionName(item)
@@ -166,7 +168,7 @@ namespace BWR.Application.AppServices.Common
 
             Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
                 && c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasury;
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction);
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,"BoxAction","PublicMoney.PublicExpense");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);
@@ -189,10 +191,10 @@ namespace BWR.Application.AppServices.Common
         {
             Expression<Func<MoneyAction, bool>> expression = c => (c.BoxAction != null && c.BoxAction.CoinId == coinId &&
             (c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasury || c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToClient || c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToCompany))
-            || (c.Transaction != null && c.Transaction.Deliverd == true && c.Transaction.CoinId == coinId);
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction, c => c.Transaction);
+            || (c.Transaction != null && c.Transaction.Deliverd == true && c.Transaction.CoinId == coinId&&c.Transaction.TypeOfPay==Domain.Model.Settings.TypeOfPay.Cash);
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "Transaction.SenderCompany", "Transaction.ReciverClient", "Transaction.SenderClient", "Transaction.ReceiverCompany", "BoxAction", "CompanyCashFlows.Company", "ClientCashFlows.Client");
             if (from != null)
-            {
+            {                
                 var dfrom = ((DateTime)from);
                 moneyAction = moneyAction.Where(c => c.Date >= dfrom);
             }
@@ -233,7 +235,7 @@ namespace BWR.Application.AppServices.Common
             //{
             Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId &&
              c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToClient;
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction, c => c.ClientCashFlows);
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,"BoxAction", "ClientCashFlows.Client");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);
@@ -270,7 +272,7 @@ namespace BWR.Application.AppServices.Common
             //{
             Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
              && c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToCompany;
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction, c => c.CompanyCashFlows);
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,"BoxAction","CompanyCashFlows.Company");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);
@@ -312,8 +314,8 @@ namespace BWR.Application.AppServices.Common
             //try
             //{
             Expression<Func<MoneyAction, bool>> expression = c => c.Transaction != null && c.Transaction.Deliverd == true &&
-             c.Transaction.CoinId == coinId;
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.Transaction);
+             c.Transaction.CoinId == coinId&&c.Transaction.TypeOfPay==Domain.Model.Settings.TypeOfPay.Cash;
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "Transaction.SenderCompany", "Transaction.ReciverClient", "Transaction.SenderClient", "Transaction.ReceiverCompany", "BoxAction", "CompanyCashFlows.Company", "ClientCashFlows.Client");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);
@@ -388,9 +390,9 @@ namespace BWR.Application.AppServices.Common
             {
                 IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
                 {
-                    Date = item.Date,
+                    Date = item.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")),
                     MoneyActionId = item.Id,
-                    Note =item.GetNote(Requester.Branch,null),
+                    Note = item.GetNote(Requester.Branch, null) != null ? item.GetNote(Requester.Branch, null) : "",
                     Amount = item.BoxAction.Amount,
                     Name = _moneyActionAppService.GetActionName(item),
                     Type = item.BoxAction.GetActionType()
@@ -449,7 +451,7 @@ namespace BWR.Application.AppServices.Common
             //{
             Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
              && (c.BoxAction.BoxActionType == BoxActionType.ReceiveFromClientToTreasury);
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction, c => c.ClientCashFlows);
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,"BoxAction", "ClientCashFlows.Client");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);
@@ -492,7 +494,7 @@ namespace BWR.Application.AppServices.Common
             //{
             Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
              && (c.BoxAction.BoxActionType == BoxActionType.ReceiveFromCompanyToTreasury);
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction, c => c.CompanyCashFlows);
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,"BoxAction","CompanyCashFlows.Company");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);
@@ -535,7 +537,7 @@ namespace BWR.Application.AppServices.Common
             //{
             Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
              && (c.BoxAction.BoxActionType == BoxActionType.ReceiveToTreasury);
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction);
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression,"BoxAction","PublicMoney.PublicIncome");
             if (from != null)
             {
                 var dfrom = ((DateTime)from);

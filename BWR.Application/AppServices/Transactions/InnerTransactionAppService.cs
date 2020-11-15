@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BWR.Application.Common;
 using BWR.Application.Dtos.Branch;
 using BWR.Application.Dtos.Client;
 using BWR.Application.Dtos.Company;
@@ -611,12 +612,16 @@ namespace BWR.Application.AppServices.Transactions
             return client;
         }
 
-        public IList<InnerTransactionStatementDetailedDto> InnerTransactionStatementDetailed(int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId, int? senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
+        public DataTablesDto InnerTransactionStatementDetailed(int draw,int start,int length,int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId, int? senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
         {
+            
             List<InnerTransactionStatementDetailedDto> innerTransactionDtos = new List<InnerTransactionStatementDetailedDto>();
+            int total = 0;
+            int filteredRec = 0;
             try
             {
-                var innerTransaction = _unitOfWork.GenericRepository<Transaction>().GetAll(c=>c.SenderClient,c=>c.ReciverClient,c=>c.ReceiverCompany,c=>c.SenderCompany,c=>c.MoenyActions,c=>c.ReciverClient.ClientPhones);
+                var innerTransaction = _unitOfWork.GenericRepository<Transaction>().FindBy(c=>c.TransactionType==TransactionType.ImportTransaction,"SenderClient","ReciverClient","ReceiverCompany","SenderCompany","MoenyActions","ReciverClient.ClientPhones");
+                total = innerTransaction.Count();
                 if (reciverCompanyId != null)
                 {
                     innerTransaction = innerTransaction.Where(c => c.ReceiverCompanyId == reciverCompanyId);
@@ -660,8 +665,10 @@ namespace BWR.Application.AppServices.Transactions
                     var dto = ((DateTime)to).AddHours(24);
                     innerTransaction = innerTransaction.Where(c => c.MoenyActions.ToList().Last().Date<=dto);
                 }
-                var test = innerTransaction.ToList();
-                foreach (var item in test)
+                filteredRec = innerTransaction.Count();
+                innerTransaction = innerTransaction.Skip(start).Take(length);
+
+                foreach (var item in innerTransaction.ToList())
                 {
                     InnerTransactionStatementDetailedDto innerTransactionDto = new InnerTransactionStatementDetailedDto()
                     {
@@ -686,7 +693,8 @@ namespace BWR.Application.AppServices.Transactions
             {
                 Tracing.SaveException(ex);
             }
-            return innerTransactionDtos;
+            DataTablesDto dt = new DataTablesDto(draw, innerTransactionDtos,filteredRec,total);
+            return dt;
 
         }
     }

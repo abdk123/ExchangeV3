@@ -8,7 +8,7 @@
 <div class="row">
     <div class="col-lg-4">
         <label>النوع</label>
-        <select class="form-control" id="generalType">
+        <select class="form-control change" id="generalType">
             <option value="-1">مدفوعات</option>
             <option value="1">مقبوضات</option>
         </select>
@@ -16,19 +16,19 @@
     <div class="col-lg-4">
         <label>العملة</label>
 
-        @Html.DropDownList("Coins", null, "", htmlAttributes: new { @class = "form-control" })
+        @Html.DropDownList("Coins", null, "", htmlAttributes: new { @class = "form-control change" })
     </div>
     <div class="col-lg-4">
         <label>نوع الحساب</label>
 
-        <select class="form-control" id="expensesTypeSelect">
+        <select class="form-control change" id="expensesTypeSelect">
             <option value="0">الكل</option>
             <option value="1">عامة</option>
             <option value="2">عملاء</option>
             <option value="3">حوالة مباشرة</option>
             <option value="4">شركات</option>
         </select>
-        <select class="form-control" id="incomeTypeSelect" style="display:none">
+        <select class="form-control change" id="incomeTypeSelect" style="display:none">
             <option value="0">الكل</option>
             <option value="1">عامة</option>
             <option value="2">عملاء</option>
@@ -39,28 +39,32 @@
 <div class="row">
     <div class="col-lg-4">
         <label>من تاريخ</label>
-        <input type="date" class="form-control" id="fromDate" />
+        <input type="date" class="form-control change" id="fromDate" />
     </div>
     <div class="col-lg-4">
         <label>إلى تاريخ</label>
-        <input type="date" class="form-control" id="toDate" />
+        <input type="date" class="form-control change" id="toDate" />
     </div>
     <div class="col-lg-4">
         <div id="companiesAccount">
             <label>الشركات</label>
-            @Html.DropDownList("Companies", null, "", htmlAttributes: new { @class = "form-control" })
+            @Html.DropDownList("Companies", null, "", htmlAttributes: new { @class = "form-control change" })
         </div>
         <div id="agentsAccount">
             <label>العملاء</label>
-            @Html.DropDownList("Agent", null, "", htmlAttributes: new { @class = "form-control" })
+            @Html.DropDownList("Agent", null, "", htmlAttributes: new { @class = "form-control change" })
         </div>
         <div id="expensesAccount">
             <label>النفقات</label>
-            @Html.DropDownList("Expenses", null, "", htmlAttributes: new { @class = "form-control" })
+            @Html.DropDownList("Expenses", null, "", htmlAttributes: new { @class = "form-control change" })
         </div>
         <div id="incomeAccount">
             <label>واردات</label>
-            @Html.DropDownList("Income", null, "", htmlAttributes: new { @class = "form-control" })
+            @Html.DropDownList("Income", null, "", htmlAttributes: new { @class = "form-control change" })
+        </div>
+        <div id="clientDiv">
+            <label>العملاء</label>
+            <select id="clientSelect" class="change" style="width:100%"></select>
         </div>
     </div>
 </div>
@@ -91,7 +95,6 @@
                     </tr>
                 </thead>
                 <tbody>
-
                 </tbody>
             </table>
         </div>
@@ -99,6 +102,7 @@
 </div>
 
 <script>
+    
     const AccountNoEnum = {
         "All": 0,
         "Public": 1,
@@ -126,6 +130,8 @@
     const Income = $('#Income');
     const from = $('#fromDate');
     const to = $('#toDate');
+    const clientDiv = $('#clientDiv');
+    const clientSelect = $('#clientSelect');
     expensesTypeSelect.change(function () {
 
         showAccount();
@@ -142,12 +148,33 @@
         Expenses.val(0);
         incomeAccount.hide();
         Income.val(0);
+        clientDiv.hide();
+        clientSelect.val(0);
+
     }
     function makAllSelect2() {
-        Companies.select2();
-        Agent.select2();
-        Expenses.select2();
-        Income.select2();
+        Companies.select2({
+            placeholder: "---اختياري---",
+            allowClear: true
+        });
+        Agent.select2({
+            placeholder: "---اختياري---",
+            allowClear: true
+        });
+        Expenses.select2({
+            placeholder: "---اختياري---",
+            allowClear: true
+        });
+        Income.select2({
+            placeholder: "---اختياري---",
+            allowClear: true
+        });
+        clientSelect.select2({
+            //Select2ClientAjaxObject exist in Layout
+            ajax: Select2ClientAjaxObject.ajax,
+            placeholder: "---اختياري---",
+            allowClear: true,
+        });
     }
 
     generalType.change(function () {
@@ -161,7 +188,6 @@
     }
     function showAccount() {
         let accountNo = incomeTypeSelect.val() > 0 ? incomeTypeSelect.val() : expensesTypeSelect.val();
-        console.log(accountNo);
         hidAllAccount();
         if (accountNo == 0)
             return;
@@ -178,6 +204,7 @@
             companiesAccount.show();
         }
         else if (accountNo == AccountNoEnum.DirectTransaction) {
+            clientDiv.show();
         }
     }
     //$.fn.dataTable.ext.errMode = 'none';
@@ -186,35 +213,80 @@
         if (!$.fn.DataTable.isDataTable(table)) {
             table.dataTable({
                 'language': dataTableLocalizationArValue(),
-                "searching": false,
                 "serverSide": true,
                 "processing": true,
                 "ajax": {
                     "url": "@Url.Action("IncomeOutCome","Statement")",
-
                     "type": "POST",
-                    "datatype": "json",
                     "data": function (d) {
-                        d.generealType = generalType.val();
-                        d.coinId = Coins.val();
-                        d.paymentsTypeEnum = incomeTypeSelect.val() > 0 ? incomeTypeSelect.val() : expensesTypeSelect.val();
+
+                        d.generealType = $('#generalType').val();
+                        d.coinId = $('#Coins').val();
+                        d.paymentsTypeEnum = $('#incomeTypeSelect').val() > 0 ? $('#incomeTypeSelect').val() : $('#expensesTypeSelect').val();
                         d.from = from.val();
                         d.to = to.val();
-                        d.PaymentsTypeEntityId = null;
+                        d.PaymentsTypeEntityId = paymentsTypeEntityId();
+                        console.log(paymentsTypeEntityId());
+                        console.log(d);
                         return d;
                     },
-                    'columns': [
-                        { "data": "amount" },
-                        {"data":"name"}
-                    ]
+                    "dataFilter": function (data) {
+                        var json = jQuery.parseJSON(data);
+                        json.recordsTotal = json.recordsTotal;
+                        json.recordsFiltered = json.recordsFiltered;
+                        json.data = json.data;
+                        return JSON.stringify(json);
+                    },
 
-                    
                 },
+                "columns": [
+                    { "data": "Amount"},
+                    { "data": "Type" },
+                    { "data": "Name" },
+                    { "data": "Date" },
+                    { "data": "Note" },
+                    { "data": "MoneyActionId" },
+                ]
+
             });
         }
         else {
             table.DataTable().ajax.reload();
         }
     }
-    //table.dataTable().ajax.reload();
-</script>
+    function paymentsTypeEntityId() {
+        if ($('#generalType').val() == -1) {
+            var expensesType = $('#expensesTypeSelect').val();
+            if (expensesType == 0) {
+                return null;
+            }
+            if (expensesType == 1) {
+                return $('#Expenses').val();
+            }
+            if (expensesType == 2) {
+                return $('#Agent').val();
+            }
+            if (expensesType == 3) {
+                return clientSelect.val();
+            }
+            if (expensesType == 4) {
+                return $('#Companies').val();
+            }
+        }
+        else {
+            var incomeType = $('#incomeTypeSelect').val();
+            if (incomeType == 0)
+                return null;
+            if (incomeType == 1) {
+                return $('#Income').val();
+            }
+            if (incomeType == 2) {
+                return $('#Agent').val();
+            }
+            if (incomeType == 4) {
+                return $('#Companies').val();
+            }
+        }
+    }
+    $('.change').change(tableAsDataTable);
+</script>       
