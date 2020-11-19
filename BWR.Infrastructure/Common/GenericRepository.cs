@@ -80,6 +80,18 @@ namespace BWR.Infrastructure.Common
             }
             return entities;
         }
+        public IEnumerable<T> GetAll(params string[] propertySelectors)
+        {
+            IQueryable<T> entities = Entities;
+            if (propertySelectors != null)
+            {
+                foreach (var item in propertySelectors)
+                {
+                    entities = entities.Include(item);
+                }
+            }
+            return entities;
+        }
 
         public IEnumerable<T> FindBy(Expression<Func<T, bool>> predicate, params string[] propertySelectors)
         {

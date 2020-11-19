@@ -191,11 +191,13 @@
     <Compile Include="Dtos\Statement\ConclusionDto.cs" />
     <Compile Include="Dtos\Statement\ExpensesDetailDto.cs" />
     <Compile Include="Dtos\Statement\InnerTransactionStatementDetailedDto.cs" />
+    <Compile Include="Dtos\Transaction\InnerTransaction\IncomeTransactionCollectionDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertInitialDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertListDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionUpdateDto.cs" />
+    <Compile Include="Dtos\Transaction\InnerTransaction\TransactionDontDelivered.cs" />
     <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionInsertDto.cs" />
     <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionInputDto.cs" />
     <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionDto.cs" />

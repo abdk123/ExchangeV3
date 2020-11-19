@@ -866,5 +866,7 @@ namespace BWR.Application.AppServices.Common
             }
             return new DataTablesDto(draw, commissionReportDtos, filteredRepord, totalRecords);
         }
+
+        
     }
 }

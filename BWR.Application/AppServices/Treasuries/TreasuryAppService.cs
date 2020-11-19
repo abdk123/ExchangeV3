@@ -50,7 +50,7 @@ namespace BWR.Application.AppServices.Treasuries
             var treasuriesDtos = new List<TreasurysDto>();
             try
             {
-                var treasuries = _unitOfWork.GenericRepository<Treasury>().GetAll().ToList();
+                var treasuries = _unitOfWork.GenericRepository<Treasury>().FindBy(c=>c.IsMainTreasury==false).ToList();
                 if (treasuries.Any())
                 {
                     treasuriesDtos = (from t in treasuries

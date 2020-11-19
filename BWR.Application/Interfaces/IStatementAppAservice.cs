@@ -15,6 +15,5 @@ namespace BWR.Application.Interfaces
         IList<ClearigStatement> GetClearing(int coinId, IncomeOrOutCame incomeOrOutCame, DateTime? from, DateTime? to, ClearingAccountType fromAccountType, int?fromAccountId, ClearingAccountType toAccountType, int? toAccountId);
         DataTablesDto CommissionReport(int draw, int start, int length, int? coinId, DateTime? from, DateTime? to, int? companyId, int? agentId, int? countryId);
 
-
     }
 }

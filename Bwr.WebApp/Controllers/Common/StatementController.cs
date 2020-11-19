@@ -15,6 +15,7 @@ using BWR.Domain.Model.Companies;
 using DataTables.Mvc;
 using System.Collections.Generic;
 using BWR.Infrastructure.Exceptions;
+using BWR.Application.Interfaces.Transaction;
 
 namespace Bwr.WebApp.Controllers.Common
 {
@@ -27,6 +28,7 @@ namespace Bwr.WebApp.Controllers.Common
         private readonly IStatementAppService _statementAppService;
         private readonly IClientCashFlowAppService _clientCashFlowAppService;
         private readonly IUnitOfWork<MainContext> _unitOfWork;
+        private readonly IInnerTransactionAppService _innerTransactionAppService;
 
         public StatementController(
             ICompanyAppService companyAppService,
@@ -35,6 +37,7 @@ namespace Bwr.WebApp.Controllers.Common
             ICountryAppService countryAppService,
             IStatementAppService statementAppService,
             IClientCashFlowAppService clientCashFlowAppService,
+            IInnerTransactionAppService innerTransactionAppService,
             IUnitOfWork<MainContext> unitOfWork)
         {
             _clientAppService = clientAppService;
@@ -44,6 +47,7 @@ namespace Bwr.WebApp.Controllers.Common
             _statementAppService = statementAppService;
             _clientCashFlowAppService = clientCashFlowAppService;
             _unitOfWork = unitOfWork;
+            _innerTransactionAppService = innerTransactionAppService;
         }
 
         // GET: Statement
@@ -189,6 +193,19 @@ namespace Bwr.WebApp.Controllers.Common
                 Tracing.SaveException(ex);
             }
             return Json("");
+        }
+        [HttpGet]
+        public ActionResult IncmoeTransactionGross()
+        {
+            var companies = _unitOfWork.GenericRepository<BWR.Domain.Model.Companies.Company>().GetAll();
+            ViewBag.companyies = new SelectList(companies, "Id", "Name");
+            return View();
+        }
+        [HttpPost]
+        public ActionResult IncmoeTransactionGross([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, int?companyId,DateTime? from , DateTime? to)
+        {
+
+            return Json(_innerTransactionAppService.IncmoeTransactionGross(requestModel.Draw,requestModel.Start,requestModel.Length,companyId,from,to));
         }
 
     }

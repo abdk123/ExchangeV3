@@ -1,0 +1,147 @@
+﻿
+@{
+    ViewBag.Title = "TransactionDontDileverd";
+    Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
+}
+
+<h2>كشف الحوالات الغير مسلمة</h2>
+<div class="row">
+    <div class="col-lg-4">
+        <label>من شركة</label>
+        @Html.DropDownList("companies", null, "---اختياري---", htmlAttributes: new { @class = "form-control" })
+    </div>
+    <div class="col-lg-4">
+        <label>العملة</label>
+        @Html.DropDownList("coins", null, "---اختياري---", htmlAttributes: new { @class = "form-control" })
+    </div>
+    <div class="col-lg-4">
+        <label>الحالة</label>
+        <select class="form-control" id="transactionStatus">
+            <option value="0">الكل</option>
+            <option value="3">بلا</option>
+            <option value="1">مبلغ</option>
+            <option value="2">غير مبلغ</option>
+        </select>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4">
+        <label>عميل</label>
+        <select id="agentSelect" class="form-control"></select>
+    </div>
+    <div class="col-lg-4">
+        <label>من تاريخ:</label>
+        <input type="date" class="form-control" />
+    </div>
+    <div class="col-lg-4">
+        <label>إلى تاريخ</label>
+        <input type="date" class="form-control" />
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <table class="table table-bordered" id="table">
+            <thead>
+                <tr>
+                    <th>
+                        المبلغ
+                    <th>
+                        العملة
+                    </th>
+                    <th>
+                        المرسل
+                    </th>
+                    <th>
+                        المستفيد
+                    </th>
+                    <th>
+                        العنوان
+                    </th>
+                    <th>
+                        الحالة
+                    </th>
+                    <th>
+                        التاريخ
+                    </th>
+                    <th>
+                        الفرع المرسل
+                    </th>
+                    <th>
+                        ملاحظات
+                    </th>
+                    <th>
+                        تفاصيل
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<script>
+    const companies = $('#companies');
+    const coins = $('#coins');
+    const table = $('#table');
+    const agentSelect = $('#agentSelect')
+    $(function () {
+        agentSelect.select2({
+            ajax: Select2ClientAjaxObject.ajax,
+            placeholder: "---اختياري---",
+            allowClear: true
+        });
+        FillTable();
+    })
+    function FillTable() {
+        if (!$.fn.DataTable.isDataTable(table)) {
+            table.dataTable({
+                'language': dataTableLocalizationArValue(),
+                "serverSide": true,
+                "processing": true,
+                "ajax": {
+                    "url": "@Url.Action("TransactionDontDileverd", "InnerTransaction")",
+                    "type": "POST",
+                    "data": function (d) {
+                        d.clientId = $('#agentSelect').val();
+                        d.companyId = $('#companies').val();
+                        d.coinId = $('#coins').val();
+                        d.transactionStatus = $('#transactionStatus').val();
+                        d.from = $('#from').val();
+                        d.to = $('#to').val();
+                        return d;
+                    },
+                    "dataFilter": function (data) {
+                        var json = jQuery.parseJSON(data);
+                        json.recordsTotal = json.recordsTotal;
+                        json.recordsFiltered = json.recordsFiltered;
+                        json.data = json.data;
+                        console.log(json);
+                        return JSON.stringify(json);
+                    },
+                },
+                "columns": [
+                    { "data": "Amount"},
+                    { "data": "Coin" },
+                    { "data": "SenderName" },
+                    { "data": "ReciverName" },
+                    { "data": "Address" },
+                    { "data": "TransactionStatus" },
+                    { "data": "Company" },
+                    { "data": "Note" },
+                    { "data": "Date" },
+                    {
+                        "data": "Id", render: function (data, type, row, meta) {
+                            //Transaction/DileverdTransaction?transactionId=1003
+                            return "<a href=\"@Url.Action("DileverdTransaction", "Transaction")?transactionId="+data+"\" class=\"btn btn-primary\">تسليم</a>"
+                        }
+                                },
+
+                ]
+            });
+        }
+        else {
+            table.DataTable().ajax.reload();
+        }
+    }
+    $('.form-control').change(FillTable);
+</script>

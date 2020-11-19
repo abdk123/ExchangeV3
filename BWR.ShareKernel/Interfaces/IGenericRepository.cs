@@ -12,6 +12,7 @@ namespace BWR.ShareKernel.Interfaces
         IEnumerable<T> GetAll();
         IQueryable<T> GetIQueryable();
         IEnumerable<T> GetAll(params Expression<Func<T, object>>[] propertySelectors);
+        IEnumerable<T> GetAll(params string[] propertySelectors);
         T GetById(object id);
         void Insert(T obj);
         void Update(T obj);

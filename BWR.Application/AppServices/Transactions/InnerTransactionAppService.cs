@@ -23,6 +23,7 @@ using BWR.ShareKernel.Exceptions;
 using BWR.ShareKernel.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using Attachment = BWR.Domain.Model.Settings.Attachment;
@@ -612,15 +613,15 @@ namespace BWR.Application.AppServices.Transactions
             return client;
         }
 
-        public DataTablesDto InnerTransactionStatementDetailed(int draw,int start,int length,int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId, int? senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
+        public DataTablesDto InnerTransactionStatementDetailed(int draw, int start, int length, int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId, int? senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
         {
-            
+
             List<InnerTransactionStatementDetailedDto> innerTransactionDtos = new List<InnerTransactionStatementDetailedDto>();
             int total = 0;
             int filteredRec = 0;
             try
             {
-                var innerTransaction = _unitOfWork.GenericRepository<Transaction>().FindBy(c=>c.TransactionType==TransactionType.ImportTransaction,"SenderClient","ReciverClient","ReceiverCompany","SenderCompany","MoenyActions","ReciverClient.ClientPhones");
+                var innerTransaction = _unitOfWork.GenericRepository<Transaction>().FindBy(c => c.TransactionType == TransactionType.ImportTransaction, "SenderClient", "ReciverClient", "ReceiverCompany", "SenderCompany", "MoenyActions", "ReciverClient.ClientPhones");
                 total = innerTransaction.Count();
                 if (reciverCompanyId != null)
                 {
@@ -658,12 +659,12 @@ namespace BWR.Application.AppServices.Transactions
                     innerTransaction = innerTransaction.Where(c => c.TransactionsStatus == transactionStatus);
                 if (from != null)
                 {
-                    innerTransaction = innerTransaction.Where(c => c.MoenyActions.ToList().First().Date>=from);
-                            }
+                    innerTransaction = innerTransaction.Where(c => c.MoenyActions.ToList().First().Date >= from);
+                }
                 if (to != null)
                 {
                     var dto = ((DateTime)to).AddHours(24);
-                    innerTransaction = innerTransaction.Where(c => c.MoenyActions.ToList().Last().Date<=dto);
+                    innerTransaction = innerTransaction.Where(c => c.MoenyActions.ToList().Last().Date <= dto);
                 }
                 filteredRec = innerTransaction.Count();
                 innerTransaction = innerTransaction.Skip(start).Take(length);
@@ -676,26 +677,132 @@ namespace BWR.Application.AppServices.Transactions
                         CoinName = item.Coin.Name,
                         Date = item.MoenyActions.First().Date.ToString(),
                         IsDiliverd = (bool)item.IsDeleted,
-                        TypeOfPay = item.TypeOfPay==TypeOfPay.Cash?"نقدي":item.TypeOfPay==TypeOfPay.ClientsReceivables?"ذمم عملاء":"ذمم شركات",
-                        Id =item.Id,
-                        MoneyActionId= item.MoenyActions.First().Id,
-                        State = item.TransactionsStatus == TransactionStatus.Notified?"مبلغ":item.TransactionsStatus==TransactionStatus.NotNotified?"غير مبلغ":"بلا",
+                        TypeOfPay = item.TypeOfPay == TypeOfPay.Cash ? "نقدي" : item.TypeOfPay == TypeOfPay.ClientsReceivables ? "ذمم عملاء" : "ذمم شركات",
+                        Id = item.Id,
+                        MoneyActionId = item.MoenyActions.First().Id,
+                        State = item.TransactionsStatus == TransactionStatus.Notified ? "مبلغ" : item.TransactionsStatus == TransactionStatus.NotNotified ? "غير مبلغ" : "بلا",
                         SenderName = item.SenderClient.FullName,
                         ReciverName = item.ReciverClient.FullName,
-                        ReciverPhone = item.ReciverClient.ClientPhones.FirstOrDefault()!=null? item.ReciverClient.ClientPhones.FirstOrDefault().Phone:"",
-                        SenderCompany= item.ReceiverCompany.Name,
-                         ReciverAddress = item.ReciverClient.Address
+                        ReciverPhone = item.ReciverClient.ClientPhones.FirstOrDefault() != null ? item.ReciverClient.ClientPhones.FirstOrDefault().Phone : "",
+                        SenderCompany = item.ReceiverCompany.Name,
+                        ReciverAddress = item.ReciverClient.Address
                     };
                     innerTransactionDtos.Add(innerTransactionDto);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Tracing.SaveException(ex);
             }
-            DataTablesDto dt = new DataTablesDto(draw, innerTransactionDtos,filteredRec,total);
+            DataTablesDto dt = new DataTablesDto(draw, innerTransactionDtos, filteredRec, total);
             return dt;
 
+        }
+        public DataTablesDto IncmoeTransactionGross(int draw, int start, int length, int? companyId, DateTime? from, DateTime? to)
+        {
+            int totalRecords = 0;
+            int filteredRecords = 0;
+            List<IncomeTransactionCollectionDto> incomeTransactionCollectionDtos = new List<IncomeTransactionCollectionDto>();
+            try
+            {
+                var incomeTransactionCollection = _unitOfWork.GenericRepository<IncomeTransactionCollection>().GetAll("Transactions.MoenyActions", "Transactions.Coin", "Company");
+                totalRecords = incomeTransactionCollection.Count();
+                if (from != null)
+                    incomeTransactionCollection = incomeTransactionCollection.Where(ic => ic.Transactions.Any(t => t.MoenyActions.Any(m => m.Date >= from)));
+                if (to != null)
+                {
+                    var dto = ((DateTime)to).AddHours(24);
+                    incomeTransactionCollection = incomeTransactionCollection.Where(ic => ic.Transactions.Any(t => t.MoenyActions.Any(m => m.Date <= dto)));
+                }
+                if (companyId != null)
+                {
+                    incomeTransactionCollection = incomeTransactionCollection.Where(c => c.CompnayId == companyId);
+                }
+                filteredRecords = incomeTransactionCollection.Count();
+                incomeTransactionCollection = incomeTransactionCollection.Skip(start).Take(length);
+                foreach (var item in incomeTransactionCollection)
+                {
+                    var transactions = item.Transactions.GroupBy(c => c.Coin);
+                    string amount = "";
+                    foreach (var coinsandAmount in transactions)
+                    {
+                        amount += coinsandAmount.Key.Name + " :" + coinsandAmount.Sum(c => c.Amount);
+                        amount += "<br>";
+                    }
+
+                    IncomeTransactionCollectionDto incomeTransactionCollectionDto = new IncomeTransactionCollectionDto()
+                    {
+                        Id = item.Id,
+                        Company = item.Company.Name,
+                        Date = item.GetDate.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")),
+                        Amount = amount,
+                        TransactionCount = item.Transactions.Count()
+                    };
+                    incomeTransactionCollectionDtos.Add(incomeTransactionCollectionDto);
+                }
+            }
+            catch (Exception ex)
+            {
+                Tracing.SaveException(ex);
+            }
+            return new DataTablesDto(draw, incomeTransactionCollectionDtos, filteredRecords, totalRecords);
+        }
+
+        public DataTablesDto TransactionDontDileverd(int draw, int start, int length, TransactionStatus transactionStatus, int? clientId, int? companyId, int? coinId, DateTime? from, DateTime? to)
+        {
+            List<TransactionDontDelivered> transactionDontDelivereds = new List<TransactionDontDelivered>();
+            int total = 0;
+            int filtedCount = 0;
+            try
+            {
+                var incomeTransaction = _unitOfWork.GenericRepository<Transaction>().FindBy(c => c.Deliverd == false && c.TransactionType == TransactionType.ImportTransaction, "MoenyActions", "Coin", "ReceiverCompany", "SenderClient", "ReciverClient");
+                total = incomeTransaction.Count();
+                if (transactionStatus != TransactionStatus._0)
+                    incomeTransaction = incomeTransaction.Where(c => c.TransactionsStatus == transactionStatus);
+
+                if (companyId != null)
+                    incomeTransaction = incomeTransaction.Where(c => c.ReceiverCompanyId == companyId);
+                if (from != null)
+                    incomeTransaction = incomeTransaction.Where(c => c.MoenyActions.ToList().First().Date >= from);
+
+                if (to != null)
+                {
+                    var dto = ((DateTime)to).AddHours(24);
+                    incomeTransaction = incomeTransaction.Where(c => c.MoenyActions.ToList().First().Date <= dto);
+                }
+                if (coinId != null)
+                    incomeTransaction = incomeTransaction.Where(c => c.CoinId == coinId);
+                if (clientId != null)
+                    incomeTransaction = incomeTransaction.Where(c => c.ReciverClientId == clientId);
+                filtedCount = incomeTransaction.Count();
+                incomeTransaction = incomeTransaction.Skip(start).Take(length);
+                var incomeTransactionlist = incomeTransaction.ToList();
+                foreach (var item in incomeTransactionlist)
+                {
+                    TransactionDontDelivered transactionDontDelivered = new TransactionDontDelivered()
+                    {
+                        Id = item.Id,
+                        MoneyActionId = item.MoenyActions.First().Id,
+                        Date = item.MoenyActions.First().Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")),
+                        Amount = item.Amount,
+                        Coin = item.Coin.Name,
+                        
+                        Company = item.ReceiverCompany.Name,
+                        TransactionStatus = item.TransactionsStatus == TransactionStatus.Notified ? "مبلغ" : item.TransactionsStatus == TransactionStatus.NotNotified ? "غير مبلغ" : "بلا",
+                        SenderName = item.SenderClient.FullName,
+                        ReciverName = item.ReciverClient.FullName,
+
+                        Address = item.ReciverClient.Address,
+                        Note = item.Note
+                    };
+                    transactionDontDelivereds.Add(transactionDontDelivered);
+                }
+            }
+            catch (Exception ex)
+            {
+                Tracing.SaveException(ex);
+            }
+            return new DataTablesDto(draw, transactionDontDelivereds, filtedCount, total);
         }
     }
 }

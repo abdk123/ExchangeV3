@@ -1,5 +1,6 @@
 ﻿using BWR.Domain.Model.Companies;
 using BWR.ShareKernel.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,5 +20,12 @@ namespace BWR.Domain.Model.Transactions
         public virtual Company Company { get; set; }
         
         public virtual IList<Transaction> Transactions { get; set; }
+        public DateTime GetDate
+        {
+            get
+            {
+                return this.Transactions[0].MoenyActions[0].Date;
+            }
+        }
     }
 }
