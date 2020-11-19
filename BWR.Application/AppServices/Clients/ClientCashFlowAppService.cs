@@ -69,7 +69,8 @@ namespace BWR.Application.AppServices.Companies
                             new ClientCashFlowOutputDto()
                             {
                                 Balance = lastBalance,
-                                Type = "رصيد سابق"
+                                Type = "رصيد سابق",
+                                Amount = lastBalance
                             });
 
 
@@ -103,13 +104,13 @@ namespace BWR.Application.AppServices.Companies
                             Commission = clientCashFlow.MoenyAction.OurCommission(),
                             Type = clientCashFlow.MoenyAction.GetTypeName(Requester.Agent, clientCashFlow.ClientId),
                             Number = clientCashFlow.MoenyAction.GetActionId(),
-                            Date = clientCashFlow.Created != null ? clientCashFlow.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
+                            Date = clientCashFlow.MoenyAction.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")),
                             Note = clientCashFlow.MoenyAction.GetNote(Requester.Agent, clientCashFlow.ClientId),
                             MoneyActionId = clientCashFlow.MoenyActionId,
                             Matched = clientCashFlow.Matched
                         };
                         temp.Balance += temp.SecondCommission;
-                        temp.Balance -= temp.Commission;
+                        temp.Balance -= temp.Commission??0;
                         
                         clientCashFlowsDtos.Add(temp);
                     }

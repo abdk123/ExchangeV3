@@ -59,7 +59,7 @@ namespace BWR.Application.AppServices.Treasuries
                                           Id = t.Id,
                                           IsAvilable = t.IsAvilable,
                                           IsEnabled = t.IsEnabled,
-                                          Name = t.Name,
+                                          Name = t.Name,            
                                           Balances = GetTreasuryCashesForDto(t.TreasuryCashes),
                                       }).ToList();
                 }
