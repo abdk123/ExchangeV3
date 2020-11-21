@@ -31,7 +31,7 @@
         </div>
     </div>
     <div class="row">
-        <div id="agentDiv" name="acountDiv" >
+        <div id="agentDiv" name="acountDiv">
             <div class="col-lg-6">
                 <label>اختر العميل</label>
                 @Html.DropDownList("Agents", new SelectList(Model.Agents, "Id", "FullName"), "", htmlAttributes: new { @class = "form-control", id = "agents" })
@@ -59,7 +59,7 @@
             <label>الإرادات</label>
             @Html.DropDownList("PublicIncomes", new SelectList(Model.PublicIncomes, "Id", "Name"), "", htmlAttributes: new { @class = "form-control", id = "publicIncomes" })
         </div>
-        <div id="companyDiv" name="acountDiv" >
+        <div id="companyDiv" name="acountDiv">
             <div class="col-lg-6">
                 <label>الشركات</label>
                 @Html.DropDownList("Companies", new SelectList(Model.Companies, "Id", "Name"), "", htmlAttributes: new { @class = "form-control", id = "companies" })
@@ -100,13 +100,13 @@
             </select>
         </div>
         <div class="col-lg-8" id="secounAcountDetials">
-            <div id="secoundCompanyDiv" >
+            <div id="secoundCompanyDiv">
                 <div class="col-lg-8">
                     <label> اختر الشركة</label>
                     <select id="secoundCompanySelect"></select>
                 </div>
             </div>
-            <div id="secoundAgentDiv" >
+            <div id="secoundAgentDiv">
                 <div class="col-lg-8">
                     <label> اختر العميل</label>
                     <select id="secoundAgentSelect"></select>
@@ -703,9 +703,7 @@
     }
 
     function fromCompanyToCompany(companyId, secondCompanyId, coinId, amount, note) {
-        if (secondCompanyId == undefined)
-            return;
-        if (secondCompanyId == "")
+        if (secondCompanyId == undefined || secondCompanyId=="")
             return;
                 $.post(
                     '@Url.Action("EditFromCompanyToCompany", "BoxAction")', {
@@ -791,7 +789,7 @@
     }
 
     function fromCompanyToPublicIncome(coinId, companyId, publicIncomeId, amount, note) {
-        console.log(publicIncomeId);
+
         $.post(
             '@Url.Action("EditFromCompanyToPublicIncome", "BoxAction")', {
                 CoinId: coinId,
@@ -827,7 +825,6 @@
     }
 
     function initialElement() {
-        console.log('initialElement (FirstClientId):' + $boxActionDto.FirstClientId);
 
         switch ($boxActionDto.BoxActionType) {
             case 'ExpenseFromTreasury': {
@@ -862,12 +859,12 @@
             } break;
 
             case 'None': {
-                
+
                 if ($boxActionDto.FirstClientId != null && $boxActionDto.SecondClientId != null) {
                     displayAndHideElements({ firstAccount: 3, secoundAccount: 2, agent: 'block', expence: 'none', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
                     $('#agents').val($boxActionDto.FirstClientId).trigger("change");
                     fillSecoundSelect();
-                    
+
                     setTimeout(function () {
                         $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
                     }, 1000);
@@ -876,7 +873,7 @@
                     displayAndHideElements({ firstAccount: 3, secoundAccount: 3, agent: 'block', expence: 'none', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'block', secondClient: 'none' });
                     $('#agents').val($boxActionDto.FirstClientId).trigger("change");
                     fillSecoundSelect();
-                    
+
                     setTimeout(function () {
                         $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
                     }, 1000);
@@ -885,7 +882,7 @@
                     displayAndHideElements({ firstAccount: 4, secoundAccount: 3, agent: 'none', expence: 'none', income: 'none', company: 'block', secondAccountDetial: 'block', secoundCompany: 'block', secondClient: 'none' });
                     $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
                     fillSecoundSelect();
-                    
+
                     setTimeout(function () {
                         $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
                     }, 1000);
@@ -893,7 +890,7 @@
                     displayAndHideElements({ firstAccount: 4, secoundAccount: 2, agent: 'none', expence: 'none', income: 'none', company: 'block', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
                     $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
                     fillSecoundSelect();
-                    
+
                     setTimeout(function () {
                         $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
                     }, 1000);
@@ -940,7 +937,7 @@
     }
 
     function displayAndHideElements(data) {
-        
+
         $boxActionDto.Amount = Math.abs($boxActionDto.Amount);
         $('#coins').val($boxActionDto.CoinId);
         $('#firstAcountSelect').val(data.firstAccount);
@@ -960,7 +957,7 @@
     }
 
     function displayAndHideElementsForCleaning() {
-        
+
         $('#coins').val($boxActionDto.CoinId);
         var typeOfAction = $boxActionDto.IsIncome ? 1 : -1;
         $('#typeOfAction').val(typeOfAction);
@@ -981,7 +978,7 @@
             $('#agentDiv').css('display', 'none');
             $('#companyDiv').css('display', 'block');
         }
-        
+
         if ($boxActionDto.SecondCompanyId != null) {
             $('#secoundAcount').val(3);
             $('#secoundCompanyDiv').css('display', 'block');

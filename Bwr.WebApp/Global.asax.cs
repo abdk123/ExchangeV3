@@ -50,21 +50,21 @@ namespace Bwr.WebApp
                 _firstOne = true;
                 var unitOfWork = new UnitOfWork<MainContext>();
                 var branchRepository = new GenericRepository<Branch>(unitOfWork);
-                var treasuryRepository = new GenericRepository<Treasury>(unitOfWork);
-                var treasuryCashRepository = new GenericRepository<TreasuryCash>(unitOfWork);
-                var coinRepository = new GenericRepository<Coin>(unitOfWork);
+                //var treasuryRepository = new GenericRepository<Treasury>(unitOfWork);
+                //var treasuryCashRepository = new GenericRepository<TreasuryCash>(unitOfWork);
+                //var coinRepository = new GenericRepository<Coin>(unitOfWork);
 
-                if (!branchRepository.GetAll().Any())
-                {
-                    var newBranch = new Branch()
-                    {
-                        Name = "الفرع الرئيسي",
-                        Address = "Address"
-                    };
+                //if (!branchRepository.GetAll().Any())
+                //{
+                //    var newBranch = new Branch()
+                //    {
+                //        Name = "الفرع الرئيسي",
+                //        Address = "Address"
+                //    };
 
-                    branchRepository.Insert(newBranch);
-                    branchRepository.Save();
-                }
+                //    branchRepository.Insert(newBranch);
+                //    branchRepository.Save();
+                //}
 
                         
                 var branch = branchRepository.GetAll().FirstOrDefault();

@@ -4,6 +4,7 @@
     using BWR.Domain.Model.Security;
     using BWR.Domain.Model.Settings;
     using BWR.Infrastructure.Context;
+    using BWR.Domain.Model.Treasures;
     using BWR.ShareKernel.Interfaces;
     using BWR.ShareKernel.Permisions;
     using System;
@@ -73,7 +74,7 @@
                 };
                 admin.Roles.Add(adminRole);
 
-                context.Users.Add(admin);
+                context.Users.Add(admin); 
                 context.SaveChanges();
             }
             #endregion
@@ -126,7 +127,7 @@
                 };
                 context.Coins.AddRange(new[] { dollar, irDinar });
                 context.SaveChanges();
-                var total = 100000;
+                var total = 1000000;
                 var brancheId = context.Branchs.First().Id;
                 var sBranchCash = new BranchCash()
                 {
@@ -144,6 +145,40 @@
                 };
                 context.BranchCashs.AddRange(new[] { iBranchCash, sBranchCash });
                 context.SaveChanges();
+                var trusery = new Treasury()
+                {
+                    Name = "الصندوق الرئيسي",
+                    IsMainTreasury = true,
+                    IsAvilable = false,
+                    BranchId = brancheId,
+                    IsEnabled = true,
+                };
+                context.Treasurys.Add(trusery);
+                var itruseryCash = new TreasuryCash()
+                {
+                    CoinId = dollar.Id,
+                    Total = total,
+                    IsEnabled = true,
+                    IsDeleted = false,
+                };
+                var struseryCash = new TreasuryCash()
+                {
+                    CoinId = irDinar.Id,
+                    Total = total,
+                    IsEnabled = true,
+                    IsDeleted = false,
+                };
+                context.TreasuryCashs.Add(itruseryCash);
+                context.TreasuryCashs.Add(struseryCash);
+                var userTreusery = new UserTreasuery()
+                {
+                    TreasuryId = trusery.Id,
+                    UserId = context.Users.First().UserId,
+                    IsDeleted = false,
+                    CreatedBy = "النظام",
+                    Created = DateTime.Now,
+                };
+                context.UserTreasueries.Add(userTreusery);
             }
             #endregion
         }

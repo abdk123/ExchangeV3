@@ -51,6 +51,7 @@ namespace BWR.Infrastructure.Context
                 if (entry.State == EntityState.Modified)
                 {
                     entry.Property("Modified").CurrentValue = DateTime.Now;
+                    
                 }
             }
             return base.SaveChanges();

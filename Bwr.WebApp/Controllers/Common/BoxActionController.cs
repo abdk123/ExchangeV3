@@ -39,6 +39,7 @@ namespace Bwr.WebApp.Controllers
         [Authorize]
         public ActionResult BoxActionDetails(int moneyActionId)
         {
+
             //if (PermissionHelper.CheckPermission(AppPermision.Action_BoxAction_EditBoxAction))
             return RedirectToAction("EditBoxAction", "BoxAction", new { moneyActionId = moneyActionId });
         }

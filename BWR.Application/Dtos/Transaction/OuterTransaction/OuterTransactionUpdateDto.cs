@@ -21,7 +21,7 @@ namespace BWR.Application.Dtos.Transaction.OuterTransaction
         }
         public string Note { get; set; }
         public string Reason { get; set; }
-        public decimal Amount { get; set; }
+        public decimal Amount { get; set; } 
         public decimal OurComission { get; set; }
         public bool? Deliverd { get; set; }
         public decimal? RecivingAmount { get; set; }

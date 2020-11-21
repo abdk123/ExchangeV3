@@ -118,7 +118,7 @@ namespace BWR.Application.AppServices.Transactions
             }
             catch (Exception ex)
             {
-                Infrastructure.Exceptions.Tracing.SaveException(ex);
+                Tracing.SaveException(ex);
             }
             return outerTransactionUpdateDto;
         }
@@ -565,18 +565,8 @@ namespace BWR.Application.AppServices.Transactions
                 int oldTreasuryId = outerTransaction.TreaseryId;
                 var oldSenderCompanyId = outerTransaction.SenderCompanyId;
                 var oldSenderClientId = outerTransaction.SenderClientId != null ? outerTransaction.SenderClientId.Value : 0;
-
-                //outerTransaction.ReceiverBranchId = BranchHelper.Id;
-                //outerTransaction.ReciverClientId = dto.ReciverClientId;
-                //outerTransaction.TreaseryId = treasuryId;
-                //outerTransaction.Amount = dto.Amount;
-                //outerTransaction.ReciverClientId = dto.ReciverClientId;
-                //outerTransaction.SenderCompanyId = dto.SenderCompanyId;
-                //outerTransaction.SenderCompanyComission = dto.SenderCompanyComission;
-                //outerTransaction.OurComission = dto.OurComission;
-                //outerTransaction.CountryId = dto.CountryId;
-                //outerTransaction.Reason = dto.Reason;
-                //outerTransaction.Note = dto.Note;
+                var oldCreated = outerTransaction.Created;
+                var oldCreatedBy = outerTransaction.CreatedBy;
 
                 Mapper.Map<OuterTransactionUpdateDto, Transaction>(dto, outerTransaction);
 
@@ -586,6 +576,9 @@ namespace BWR.Application.AppServices.Transactions
                 outerTransaction.TransactionType = TransactionType.ExportTransaction;
                 outerTransaction.TypeOfPay = TypeOfPay.Cash;
                 outerTransaction.ModifiedBy = _appSession.GetUserName();
+                outerTransaction.Created = oldCreated;
+                outerTransaction.CreatedBy = oldCreatedBy;
+
                 
                 _unitOfWork.GenericRepository<Transaction>().Update(outerTransaction);
 
@@ -595,6 +588,23 @@ namespace BWR.Application.AppServices.Transactions
                 {
                     _unitOfWork.Rollback();
                     return false;
+                }
+                ///
+                ///
+                ///
+                ///هون المشكلة عم تصير
+                ///
+                var moneyActionWithBoxActionDto = dto.MoenyActions.FirstOrDefault(x => x.BoxActionsId != null);
+                if (moneyActionWithBoxActionDto != null)
+                {
+                    //هاد ما فيني امسحو إلا إذا مسحت قصص بتخص الصندوق ف شو اعمل ؟ 
+
+                    var fmoneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(c => c.Id == moneyActionWithBoxActionDto.Id).First();
+                    _unitOfWork.GenericRepository<MoneyAction>().Delete(fmoneyAction);
+                    _unitOfWork.Save();
+
+                    _unitOfWork.GenericRepository<BoxAction>().Delete(_unitOfWork.GenericRepository<BoxAction>().FindBy(c => c.Id == moneyActionWithBoxActionDto.BoxActionsId).First());
+                    _unitOfWork.Save();
                 }
 
                 var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().GetById(moneyActionDto.Id);
