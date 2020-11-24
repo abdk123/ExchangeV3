@@ -24,3 +24,16 @@ F:\Projects\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.csproj.CoreCompileInput
 F:\Projects\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.csproj.CopyComplete
 F:\Projects\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.dll
 F:\Projects\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.pdb
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\bin\Release\BWR.Domain.dll
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\bin\Release\BWR.Domain.pdb
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\bin\Release\BWR.ShareKernel.dll
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\bin\Release\EntityFramework.dll
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\bin\Release\EntityFramework.SqlServer.dll
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\bin\Release\BWR.ShareKernel.pdb
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\bin\Release\EntityFramework.xml
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\bin\Release\EntityFramework.SqlServer.xml
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.csprojAssemblyReference.cache
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.csproj.CopyComplete
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.dll
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Domain\obj\Release\BWR.Domain.pdb

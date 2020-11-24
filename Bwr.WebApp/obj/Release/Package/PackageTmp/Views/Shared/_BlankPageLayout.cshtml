@@ -1,5 +1,6 @@
 ﻿@using Bwr.WebApp.Models.Security
 @using BWR.ShareKernel.Permisions
+
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
@@ -227,7 +228,7 @@
                         @if (PermissionHelper.CheckPermission(AppPermision.Action_Transaction_TransactionDontDileverd))
                         {
                             <li class="nav-item start ">
-                                <a href="@Url.Action("TransactionDontDileverd","Transaction")" class="nav-link nav-toggle">
+                                <a href="@Url.Action("TransactionDontDileverd","InnerTransaction")" class="nav-link nav-toggle">
                                     <i class="fa fa-line-chart"></i>
                                     <span class="title">كشف الحوالات الغير مسلمة</span>
                                 </a>
@@ -251,6 +252,7 @@
                                 </a>
                             </li>
                         }
+
                         <li class="nav-item">
                             <a href="javascript:;" class="nav-link nav-toggle">
                                 <i class="icon-docs"></i>
@@ -259,42 +261,66 @@
                             </a>
                             <ul class="sub-menu">
                                 <li class="nav-item">
-                                    <a data-toggle="modal" href="#PaymentsAnalysisStatementModel" class="nav-link ">
+                                    <a href="@Url.Action("IncmeOuteComeView","Statement")" class="nav-link ">
                                         <span class="title">
-                                            كشف تحليل المدفوعات
-                                        </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item ">
-                                    <a href="#" class="nav-link ">
-                                        <span class="title">
-                                            كشف تحليل المقبوضات
+                                            كشف تحليل المدفوعات و المقبوضات
                                         </span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a data-toggle="modal" id="allBalancesStatement" href="@Url.Action("ClientsAndCompaniesBalances","Statement")" class="nav-link nav-toggle">
+                                    <a data-toggle="modal" id="allBalancesStatement" href="@Url.Action("ClientsAndCompaniesBalances","Statement")" class="nav-link nav-toggle Statement">
                                         <span class="title">
                                             ارصدة العملاء و الشركات
                                         </span>
                                     </a>
                                 </li>
                                 <li class="nav-item  ">
-                                    <a id="outerTransactionsStatment" href="@Url.Action("OuterTransactions","Statement")" class="nav-link nav-toggle">
+                                    <a href="@Url.Action("ClientStoped","Statement")" class="nav-link nav-toggle">
+                                        @*<i class="fa fa-line-chart"></i>*@
+                                        <span class="title">تقرير بالمعلاء متقوفي الحركة</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+
+                                    <a id="outerTransactionsStatment" href="@Url.Action("OuterTransactions","Statement")" class="nav-link nav-toggle Statement">
                                         @*<i class="fa fa-line-chart"></i>*@
                                         <span class="title">كشف الحوالات الصادرة</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a id="innerTransactionsStatment" href="@Url.Action("DileveredTransactions","Statement")" class="navbar-link nav-toggle">
+                                    <a href="@Url.Action("IncmoeTransactionGross","Statement")" class="nav-link">كشف الحوالات الواردة إجمالي</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a data-toggle="modal" id="innerTransactionsStatment" href="@Url.Action("DileveredTransactions","Statement")" class="navbar-link nav-toggle Statement">
                                         <span class="title">كشف الحوالات المسلمة</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a id="conclusionStatement" href="@Url.Action("Conclusion","Statement")" class="navbar-link nav-toggle">
+                                    <a data-toggle="modal" href="@Url.Action("Clering","Statement")" class="navbar-link nav-toggle Statement">
+                                        <span class="title">كشف المقاصة</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="conclusionStatement" href="@Url.Action("Conclusion","Statement")" class="navbar-link nav-toggle Statement">
                                         <span class="ticket-title">
                                             الخلاصة
                                         </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("ClientStoped","Statement")">
+
+                                        <span class="title">كشف العملاء متوقفي الحركة</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("IncomeTransactionStatementDetailed","Statement")">
+                                        <span class="title">كشف الحوالات الواردة مفصل</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("CommissionReport","Statement")">
+                                        <span class="title">تقرير عمولات الحوالات</span>
                                     </a>
                                 </li>
                             </ul>
@@ -362,32 +388,8 @@
 
 
 
-    @*<div class="modal fade draggable-modal ui-draggable" id="clientCashFlow" role="dialog" aria-hidden="true" style="display: none;" aria-labelledby="myModalLabel">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header ui-draggable-handle">
-                    <button type="butto n" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                    <h4 class="modal-title">اختر العميل</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <label>العميل</label>
-                            <select id="layoutModalClientCashAgentSelect" style="width:100%"> </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn dark btn-outline" data-dismiss="modal">إلغاء</button>
-                    <button type="button" class="btn green" id="layoutModalClientCashViewBtn">عرض</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>*@
 
-    
+
     <div class="modal fade draggable-modal ui-draggable" id="LayoutCompanyCashFlowModal" role="dialog" aria-hidden="true" style="display: none;" aria-labelledby="myModalLabel">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -474,10 +476,7 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    <div class="modal fade draggable-modal ui-draggable" id="outerTransactionModel" role="basic" aria-hidden="true" style="display: none;"></div>
-    <div class="modal fade draggable-modal ui-draggable" id="dileveredTransactionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none;"></div>
-    <div class="modal fade draggable-modal ui-draggable" id="allBalancesModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">    </div>
-    <div class="modal fade draggable-modal ui-draggable" id="conclusionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none;"></div>
+    <div class="modal fade draggable-modal ui-draggable" id="GenderalModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none;"></div>
     <script>
 
 
@@ -497,63 +496,17 @@
             $('#clickmewow').click(function () {
                 $('#radio1003').attr('checked', 'checked');
             });
-
-            $("#outerTransactionsStatment").on('click', function (e) {
-
-                e.preventDefault();
-
-                var url = $(this).attr('href');
-
-                $.get(url, function (data) {
-                    $('#outerTransactionModel').html(data);
-
-                    $('#outerTransactionModel').modal('show');
-                });
-
-            });
-
-            $("#innerTransactionsStatment").on('click', function (e) {
+            $(".Statement").on('click', function (e) {
 
                 e.preventDefault();
 
                 var url = $(this).attr('href');
 
                 $.get(url, function (data) {
-                    $('#dileveredTransactionModel').html(data);
 
-                    $('#dileveredTransactionModel').modal('show');
+                    $('#GenderalModel').html(data);
+                    $('#GenderalModel').modal('show');
                 });
-
-            });
-
-            $("#allBalancesStatement").on('click', function (e) {
-
-                e.preventDefault();
-
-                var url = $(this).attr('href');
-
-                $.get(url, function (data) {
-                    console.log(data);
-                    $('#allBalancesModel').html(data);
-
-                    $('#allBalancesModel').modal('show');
-                });
-
-            });
-
-            $("#conclusionStatement").on('click', function (e) {
-
-                e.preventDefault();
-
-                var url = $(this).attr('href');
-
-                $.get(url, function (data) {
-                    console.log(data);
-                    $('#conclusionModel').html(data);
-
-                    $('#conclusionModel').modal('show');
-                });
-
             });
 
             var divThanHideNavBar = document.getElementById('divThanHideNavBar');
@@ -645,11 +598,9 @@
         }
 
         function fillCompanyModelSelect() {
-            console.log('xxx');
             $.get(
                 '@Url.Action("GetCompanyForSelect2", "Company")',
                 function (companies) {
-                    console.log(companies);
                     for (var i = 0; i < companies.length; i++) {
                         $('#layoutModalCompanyCashSelect').append(new Option(companies[i].text, companies[i].id));
                     }
@@ -669,7 +620,38 @@
                     }
                 )
 
-            }
+        }
+
+        function convertJsonToDate(jsonDate) {
+            var dateObj = new Date(parseInt(jsonDate.substr(6)));
+            var month = dateObj.getMonth() + 1;
+            var day = dateObj.getDate();
+            var year = dateObj.getFullYear();
+            if (month < 10)
+                month = '0' + month;
+
+            if (day < 10)
+                day = '0' + day;
+
+            return year + "-" + month + "-" + day;
+        }
+
+        function convertJsonToRealDate(jsonDate) {
+            var dateObj = new Date(parseInt(jsonDate.substr(6)));
+            var month = dateObj.getMonth() + 1;
+            var day = dateObj.getDate();
+            var year = dateObj.getFullYear();
+            //var hours = dateObj.getHours();
+            //var minutes = dateObj.getMinutes();
+            if (month < 10)
+                month = '0' + month;
+
+            if (day < 10)
+                day = '0' + day;
+
+            return day + "/" + month + "/" + year;
+            //return day + "/" + month + "/" + year + " " + hours + ":" + minutes;
+        }
 
         $('#layoutModalClientCashViewBtn').click(function () {
             window.location.href = '@Url.Action("Detail", "Client")?id=' + $('#layoutModalClientCashAgentSelect').val() +"#cashFlowbtn";
@@ -677,7 +659,29 @@
         $('#layoutModalCompanyCashViewBtn').click(function () {
             window.location.href = '@Url.Action("Detail", "Company")?id=' + $('#layoutModalCompanyCashSelect').val() +"#cashFlowbtn";
         });
+
+
+    </script>
+    <script>
+        var Select2ClientAjaxObject = {
+            ajax: {
+                url: '@Url.Action("GetClientsByName", "Client")',
+                dataType: 'json',
+                data: function (params) {
+                    var query = { FullName: params.term };
+                    return query;
+                },
+                processResults: function (data) {
+
+                    console.log(data);
+                    return {
+                        results: data
+                    };
+                }
+            }
+        };
     </script>
     @RenderSection("ScriptPath", required: false)
+
 </body>
 </html>

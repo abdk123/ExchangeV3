@@ -45,16 +45,15 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3" for="ClientCountries">اختر المنطقة<span class="text-danger">*</span></label>
+                                    <label class="control-label col-md-3" for="ClientCountries">اختر المنطقة</label>
                                     <div class="col-md-9">
                                         @Html.DropDownListFor(model => model.CountryId, new List<SelectListItem>(), new { @class = "form-control", id = "a-client-countryId" })
                                         <span class="text-danger field-validation-error" data-valmsg-for="CountryId" data-valmsg-replace="true"></span>
                                     </div>
-
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3" for="Name">العنوان التفصيلي <span class="text-danger">*</span></label>
+                                    <label class="control-label col-md-3" for="Name">العنوان التفصيلي</label>
                                     <div class="col-md-9">
                                         @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control", id = "a-client-address" } })
 
@@ -132,7 +131,9 @@
     var aTable;
     var oldData;
     $(function () {
-
+        //divChecked.hasClass('checked')
+        var divChecked = $('#IsEnabled').parent();
+        
         $('input.flat').iCheck({
             checkboxClass: 'icheckbox_flat-green',
             radioClass: 'iradio_flat-green'
@@ -232,7 +233,7 @@
                 $('#a-client-countryId').append(option);
             }
 
-             $('#a-client-countryId').select2({ width: null, placeholder: "اختر منطقة" });
+             $('#a-client-countryId').select2({ width: null, placeholder: "اختر منطقة", allowClear: true });
 
              //$("#a-client-countryId").select2("val", "");
              $('#a-client-countryId').val('').trigger('change')
