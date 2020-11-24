@@ -143,7 +143,7 @@
                                     foreach (var item in Agent)
                                     {
                                         <option value="@item.Id" @if (!item.IsEnabled) { Write("disabled"); }>
-                                            @item.FullName;
+                                            @item.FullName
                                         </option>
                                     }
                                 }

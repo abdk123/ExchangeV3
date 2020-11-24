@@ -23,6 +23,7 @@ using BWR.Domain.Model.Enums;
 using BWR.Application.Extensions;
 using BWR.Infrastructure.Exceptions;
 using BWR.Application.Interfaces.Common;
+using System.Globalization;
 
 namespace BWR.Application.AppServices.Common
 {
@@ -113,438 +114,464 @@ namespace BWR.Application.AppServices.Common
             return dto;
         }
 
-        public IList<IncomeOutcomeReport> GetPayment(int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? PaymentsEntitiyId)
+        public DataTablesDto GetPayment(int draw, int start, int length, int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? PaymentsEntitiyId)
         {
+            //total count
+            Expression<Func<MoneyAction, bool>> expression = c => (c.BoxAction != null && c.BoxAction.CoinId == coinId &&
+            (c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasury || c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToClient || c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToCompany))
+            || (c.Transaction != null && c.Transaction.Deliverd == true && c.Transaction.CoinId == coinId);
+            var totalCount = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression).Count();
+            IEnumerable<MoneyAction> moneyActions;
             if (paymentsTypeEnum == PaymentsTypeEnum.Non)
             {
-                return this.GetAllPayemnt(coinId, from, to);
+
+                moneyActions = GetAllPayemnt(coinId, from, to);
             }
-            if (paymentsTypeEnum == PaymentsTypeEnum.Company)
+            else if (paymentsTypeEnum == PaymentsTypeEnum.Company)
             {
-                return GetCompanyPaymet(coinId, from, to, PaymentsEntitiyId);
+                moneyActions = GetCompanyPaymet(coinId, from, to, PaymentsEntitiyId);
             }
-            if (paymentsTypeEnum == PaymentsTypeEnum.Agent)
+            else if (paymentsTypeEnum == PaymentsTypeEnum.Agent)
             {
-                return GetAgentPayment(coinId, from, to, PaymentsEntitiyId);
+                moneyActions = GetAgentPayment(coinId, from, to, PaymentsEntitiyId);
             }
-            if (paymentsTypeEnum == PaymentsTypeEnum.DirectTransaction)
+            else if (paymentsTypeEnum == PaymentsTypeEnum.DirectTransaction)
             {
-                return this.GetDilverdTransaction(coinId, from, to, PaymentsEntitiyId);
+                moneyActions = this.GetDilverdTransaction(coinId, from, to, PaymentsEntitiyId);
             }
-            if (paymentsTypeEnum == PaymentsTypeEnum.Public)
+            else
             {
-                return GetPublicPayment(coinId, from, to, PaymentsEntitiyId);
+                moneyActions = GetPublicPayment(coinId, from, to, PaymentsEntitiyId);
             }
-            throw new Exception("Payment Type Not Exist");
-        }
-        private IList<IncomeOutcomeReport> GetPublicPayment(int coinId, DateTime? from, DateTime? to, int? publicExId)
-        {
+
+            var filterCount = moneyActions.Count();
+            moneyActions = moneyActions.Skip(start).Take(length);
             List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
-            try
+            foreach (var item in moneyActions)
             {
-                Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
+                IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
+                {
+                    Date = item.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")),
+                    MoneyActionId = item.Id,
+                    Note = item.GetNote(Requester.Branch, null) != null ? item.GetNote(Requester.Branch, null) : "",
+                    Amount = item.Transaction != null ? item.Transaction.Amount : item.BoxAction.Amount,
+                    Type = item.Transaction != null ? "تسليم حولة" : item.BoxAction.GetActionType(),
+                    Name = _moneyActionAppService.GetActionName(item)
+                };
+                incomeOutcomeReports.Add(incomeOutcomeReport);
+            }
+            DataTablesDto dt = new DataTablesDto(draw, incomeOutcomeReports, filterCount, totalCount);
+            return dt;
+        }
+        private IEnumerable<MoneyAction> GetPublicPayment(int coinId, DateTime? from, DateTime? to, int? publicExId)
+        {
+
+            Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
                 && c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasury;
-                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction);
-                if (from != null)
-                {
-                    var dfrom = ((DateTime)from);
-                    moneyAction = moneyAction.Where(c => c.Date >= dfrom);
-                }
-                if (to != null)
-                {
-                    var dto = ((DateTime)to).AddHours(24);
-                    moneyAction = moneyAction.Where(c => c.Date <= to);
-                }
-                if (publicExId != null)
-                {
-                    moneyAction = moneyAction.Where(c => c.PubLicMoneyId == publicExId);
-                }
-                foreach (var item in moneyAction)
-                {
-                    var incomeOutComeReport = new IncomeOutcomeReport()
-                    {
-                        MoneyActionId = item.Id,
-                        Date = item.Date,
-                        Amount = item.BoxAction.Amount,
-                        Note = item.BoxAction.Note,
-                        Type = item.BoxAction.GetActionType(),
-                        Name = _moneyActionAppService.GetActionName(item)
-                    };
-                    incomeOutcomeReports.Add(incomeOutComeReport);
-                }
-            }
-            catch (Exception ex)
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "BoxAction", "PublicMoney.PublicExpense");
+            if (from != null)
             {
-                Tracing.SaveException(ex);
+                var dfrom = ((DateTime)from);
+                moneyAction = moneyAction.Where(c => c.Date >= dfrom);
             }
-            return incomeOutcomeReports;
-        }
-        private IList<IncomeOutcomeReport> GetAllPayemnt(int coinId, DateTime? from, DateTime? to)
-        {
-            List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
-            try
+            if (to != null)
             {
+                var dto = ((DateTime)to).AddHours(24);
+                moneyAction = moneyAction.Where(c => c.Date <= to);
+            }
+            if (publicExId != null)
+            {
+                moneyAction = moneyAction.Where(c => c.PubLicMoneyId == publicExId);
+            }
+            return moneyAction;
 
-                Expression<Func<MoneyAction, bool>> expression = c => (c.BoxAction != null && c.BoxAction.CoinId == coinId &&
-                (c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasury || c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToClient || c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToCompany))
-                || (c.Transaction != null && c.Transaction.Deliverd == true && c.Transaction.CoinId == coinId);
-                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction, c => c.Transaction);
-                if (from != null)
-                {
-                    var dfrom = ((DateTime)from);
-                    moneyAction = moneyAction.Where(c => c.Date >= dfrom);
-                }
-                if (to != null)
-                {
-                    var dto = ((DateTime)to);
-                    moneyAction = moneyAction.Where(c => c.Date <= to);
-                }
-                foreach (var item in moneyAction)
-                {
-                    var incomeOutComeReport = new IncomeOutcomeReport()
-                    {
-                        MoneyActionId = item.Id,
-                        Date = item.Date,
-                        Name = _moneyActionAppService.GetActionName(item)
-                    };
-                    if (item.Transaction != null)
-                    {
-                        incomeOutComeReport.Amount = item.Transaction.Amount;
-                        incomeOutComeReport.Note = item.Transaction.Note;
-                        incomeOutComeReport.Type = "حوالة مباشرة";
-                    }
-                    else
-                    {
-                        incomeOutComeReport.Amount = item.BoxAction.Amount;
-                        incomeOutComeReport.Note = item.BoxAction.Note;
-                        incomeOutComeReport.Type = item.BoxAction.GetActionType();
-                    }
-                    incomeOutcomeReports.Add(incomeOutComeReport);
-                }
-            }
-            catch (Exception ex)
-            {
-                Tracing.SaveException(ex);
-            }
-            return incomeOutcomeReports;
-        }
-        private IList<IncomeOutcomeReport> GetAgentPayment(int coinId, DateTime? from, DateTime? to, int? agentId)
-        {
-            List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
-            try
-            {
-                Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId &&
-                 c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToClient;
-                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction, c => c.ClientCashFlows);
-                if (from != null)
-                {
-                    var dfrom = ((DateTime)from);
-                    moneyAction = moneyAction.Where(c => c.Date >= dfrom);
-                }
-                if (to != null)
-                {
-                    var dto = ((DateTime)to).AddHours(24);
-                    moneyAction = moneyAction.Where(c => c.Date <= to);
-                }
-                if (agentId != null)
-                {
-                    moneyAction = moneyAction.Where(c => c.ClientCashFlows.First().Id == (int)agentId);
-                }
-                foreach (var item in moneyAction)
-                {
-                    var incomeOutComeReport = new IncomeOutcomeReport()
-                    {
-                        MoneyActionId = item.Id,
-                        Date = item.Date,
-                        Amount = item.BoxAction.Amount,
-                        Note = item.BoxAction.Note,
-                        Type = item.BoxAction.GetActionType(),
-                        Name = _moneyActionAppService.GetActionName(item)
-                    };
-                    incomeOutcomeReports.Add(incomeOutComeReport);
-                }
 
-            }
-            catch (Exception ex)
-            {
-                Tracing.SaveException(ex);
-            }
-            return incomeOutcomeReports;
         }
-        private IList<IncomeOutcomeReport> GetCompanyPaymet(int coinId, DateTime? from, DateTime? to, int? companyId)
+        private IEnumerable<MoneyAction> GetAllPayemnt(int coinId, DateTime? from, DateTime? to)
         {
-            List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
-            try
+            Expression<Func<MoneyAction, bool>> expression = c => (c.BoxAction != null && c.BoxAction.CoinId == coinId &&
+            (c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasury || c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToClient || c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToCompany))
+            || (c.Transaction != null && c.Transaction.Deliverd == true && c.Transaction.CoinId == coinId && c.Transaction.TypeOfPay == Domain.Model.Settings.TypeOfPay.Cash);
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "Transaction.SenderCompany", "Transaction.ReciverClient", "Transaction.SenderClient", "Transaction.ReceiverCompany", "BoxAction", "CompanyCashFlows.Company", "ClientCashFlows.Client");
+            if (from != null)
             {
-                Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
-                 && c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToCompany;
-                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction, c => c.CompanyCashFlows);
-                if (from != null)
-                {
-                    var dfrom = ((DateTime)from);
-                    moneyAction = moneyAction.Where(c => c.Date >= dfrom);
-                }
-                if (to != null)
-                {
-                    var dto = ((DateTime)to).AddHours(24);
-                    moneyAction = moneyAction.Where(c => c.Date <= to);
-                }
-                if (companyId != null)
-                {
-                    moneyAction = moneyAction.Where(c => c.CompanyCashFlows.First().Id == (int)companyId);
-                }
-                foreach (var item in moneyAction)
-                {
-                    var incomeOutComeReport = new IncomeOutcomeReport()
-                    {
-                        MoneyActionId = item.Id,
-                        Date = item.Date,
-                        Amount = item.BoxAction.Amount,
-                        Note = item.BoxAction.Note,
-                        Type = item.BoxAction.GetActionType(),
-                        Name = _moneyActionAppService.GetActionName(item)
-                    };
-                    incomeOutcomeReports.Add(incomeOutComeReport);
-                }
+                var dfrom = ((DateTime)from);
+                moneyAction = moneyAction.Where(c => c.Date >= dfrom);
+            }
+            if (to != null)
+            {
+                var dto = ((DateTime)to);
+                moneyAction = moneyAction.Where(c => c.Date <= to);
+            }
+            //foreach (var item in moneyAction)
+            //{
+            //    var incomeOutComeReport = new IncomeOutcomeReport()
+            //    {
+            //        MoneyActionId = item.Id,
+            //        Date = item.Date,
+            //        Name = _moneyActionAppService.GetActionName(item)
+            //    };
+            //    if (item.Transaction != null)
+            //    {
+            //        incomeOutComeReport.Amount = item.Transaction.Amount;
+            //        incomeOutComeReport.Note = item.Transaction.Note;
+            //        incomeOutComeReport.Type = "حوالة مباشرة";
+            //    }
+            //    else
+            //    {
+            //        incomeOutComeReport.Amount = item.BoxAction.Amount;
+            //        incomeOutComeReport.Note = item.BoxAction.Note;
+            //        incomeOutComeReport.Type = item.BoxAction.GetActionType();
+            //    }
+            //    incomeOutcomeReports.Add(incomeOutComeReport);
+            //}
+            return moneyAction;
 
-            }
-            catch (Exception ex)
-            {
-                Tracing.SaveException(ex);
-            }
-            return incomeOutcomeReports;
         }
-        private IList<IncomeOutcomeReport> GetDilverdTransaction(int coinId, DateTime? from, DateTime? to, int? clientId)
+        private IEnumerable<MoneyAction> GetAgentPayment(int coinId, DateTime? from, DateTime? to, int? agentId)
         {
-            List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
-            try
+            //List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
+            //try
+            //{
+            Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId &&
+             c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToClient;
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "BoxAction", "ClientCashFlows.Client");
+            if (from != null)
             {
-                Expression<Func<MoneyAction, bool>> expression = c => c.Transaction != null && c.Transaction.Deliverd == true &&
-                 c.Transaction.CoinId == coinId;
-                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.Transaction);
-                if (from != null)
-                {
-                    var dfrom = ((DateTime)from);
-                    moneyAction = moneyAction.Where(c => c.Date >= dfrom);
-                }
-                if (to != null)
-                {
-                    var dto = ((DateTime)to).AddHours(24);
-                    moneyAction = moneyAction.Where(c => c.Date <= to);
-                }
-                if (clientId != null)
-                {
-                    moneyAction = moneyAction.Where(c => c.Transaction.ReciverClientId == (int)clientId);
-                }
-                foreach (var item in moneyAction)
-                {
-                    IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
-                    {
-                        Amount = item.Transaction.Amount,
-                        Date = item.Date,
-                        MoneyActionId = item.Id,
-                        Name = _moneyActionAppService.GetActionName(item),
-                        Note = item.Transaction.Note,
-                        Type = "تسليم حوالة",
-                    };
-                    incomeOutcomeReports.Add(incomeOutcomeReport);
-                }
+                var dfrom = ((DateTime)from);
+                moneyAction = moneyAction.Where(c => c.Date >= dfrom);
             }
-            catch (Exception ex)
+            if (to != null)
             {
-                Tracing.SaveException(ex);
+                var dto = ((DateTime)to).AddHours(24);
+                moneyAction = moneyAction.Where(c => c.Date <= to);
             }
-            return incomeOutcomeReports;
+            if (agentId != null)
+            {
+                moneyAction = moneyAction.Where(c => c.ClientCashFlows.First().Id == (int)agentId);
+            }
+            //foreach (var item in moneyAction)
+            //{
+            //    var incomeOutComeReport = new IncomeOutcomeReport()
+            //    {
+            //        MoneyActionId = item.Id,
+            //        Date = item.Date,
+            //        Amount = item.BoxAction.Amount,
+            //        Note = item.BoxAction.Note,
+            //        Type = item.BoxAction.GetActionType(),
+            //        Name = _moneyActionAppService.GetActionName(item)
+            //    };
+            //    incomeOutcomeReports.Add(incomeOutComeReport);
+            //}
+            return moneyAction;
         }
-        public IList<IncomeOutcomeReport> GetIncme(int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? incomeFromEntitiyId)
+        private IEnumerable<MoneyAction> GetCompanyPaymet(int coinId, DateTime? from, DateTime? to, int? companyId)
         {
-            if (paymentsTypeEnum == PaymentsTypeEnum.DirectTransaction)
+            //List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
+            //try
+            //{
+            Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
+             && c.BoxAction.BoxActionType == BoxActionType.ExpenseFromTreasuryToCompany;
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "BoxAction", "CompanyCashFlows.Company");
+            if (from != null)
             {
-                return new List<IncomeOutcomeReport>();
+                var dfrom = ((DateTime)from);
+                moneyAction = moneyAction.Where(c => c.Date >= dfrom);
             }
-            if (paymentsTypeEnum == PaymentsTypeEnum.Non)
+            if (to != null)
             {
-                return GetAllIncome(coinId, from, to);
+                var dto = ((DateTime)to).AddHours(24);
+                moneyAction = moneyAction.Where(c => c.Date <= to);
             }
-            if (paymentsTypeEnum == PaymentsTypeEnum.Agent)
+            if (companyId != null)
             {
-                return this.GetAgentInome(coinId, from, to, incomeFromEntitiyId);
+                moneyAction = moneyAction.Where(c => c.CompanyCashFlows.First().Id == (int)companyId);
             }
-            if (paymentsTypeEnum == PaymentsTypeEnum.Company)
-            {
-                return this.GetCompanyIncome(coinId, from, to, incomeFromEntitiyId);
-            }
-            if (paymentsTypeEnum == PaymentsTypeEnum.Public)
-            {
-                return this.GetPublicIncome(coinId, from, to, incomeFromEntitiyId);
-            }
-            throw new Exception("Income Type Not Exist");
+            //foreach (var item in moneyAction)
+            //{
+            //    var incomeOutComeReport = new IncomeOutcomeReport()
+            //    {
+            //        MoneyActionId = item.Id,
+            //        Date = item.Date,
+            //        Amount = item.BoxAction.Amount,
+            //        Note = item.BoxAction.Note,
+            //        Type = item.BoxAction.GetActionType(),
+            //        Name = _moneyActionAppService.GetActionName(item)
+            //    };
+            //    incomeOutcomeReports.Add(incomeOutComeReport);
+            //}
+            //}
+            //catch (Exception ex)
+            //{
+            //    Tracing.SaveException(ex);
+            //}
+            //return incomeOutcomeReports;
+            return moneyAction;
         }
-        private IList<IncomeOutcomeReport> GetAllIncome(int coinId, DateTime? from, DateTime? to)
+        private IEnumerable<MoneyAction> GetDilverdTransaction(int coinId, DateTime? from, DateTime? to, int? clientId)
         {
-            List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
-            try
+            //List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
+            //try
+            //{
+            Expression<Func<MoneyAction, bool>> expression = c => c.Transaction != null && c.Transaction.Deliverd == true &&
+             c.Transaction.CoinId == coinId && c.Transaction.TypeOfPay == Domain.Model.Settings.TypeOfPay.Cash;
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "Transaction.SenderCompany", "Transaction.ReciverClient", "Transaction.SenderClient", "Transaction.ReceiverCompany", "BoxAction", "CompanyCashFlows.Company", "ClientCashFlows.Client");
+            if (from != null)
             {
-                Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
+                var dfrom = ((DateTime)from);
+                moneyAction = moneyAction.Where(c => c.Date >= dfrom);
+            }
+            if (to != null)
+            {
+                var dto = ((DateTime)to).AddHours(24);
+                moneyAction = moneyAction.Where(c => c.Date <= to);
+            }
+            if (clientId != null)
+            {
+                moneyAction = moneyAction.Where(c => c.Transaction.ReciverClientId == (int)clientId);
+            }
+            //    foreach (var item in moneyAction)
+            //    {
+            //        IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
+            //        {
+            //            Amount = item.Transaction.Amount,
+            //            Date = item.Date,
+            //            MoneyActionId = item.Id,
+            //            Name = _moneyActionAppService.GetActionName(item),
+            //            Note = item.Transaction.Note,
+            //            Type = "تسليم حوالة",
+            //        };
+            //        incomeOutcomeReports.Add(incomeOutcomeReport);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Tracing.SaveException(ex);
+            //}
+            //return incomeOutcomeReports;
+            return moneyAction;
+        }
+        public DataTablesDto GetIncme(int draw, int start, int length, int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? incomeFromEntitiyId)
+        {
+
+            IEnumerable<MoneyAction> moneyActions;
+            Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
                  && (c.BoxAction.BoxActionType == BoxActionType.ReceiveFromClientToTreasury
                  || c.BoxAction.BoxActionType == BoxActionType.ReceiveFromCompanyToTreasury
                  || c.BoxAction.BoxActionType == BoxActionType.ReceiveToTreasury);
-                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction);
-                if (from != null)
-                {
-                    var dfrom = ((DateTime)from);
-                    moneyAction = moneyAction.Where(c => c.Date >= from);
-                }
-                if (to != null)
-                {
-                    var dto = ((DateTime)to).AddHours(24);
-                    moneyAction = moneyAction.Where(c => c.Date <= to);
-                }
-                foreach (var item in moneyAction)
-                {
-                    IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
-                    {
-                        Amount = item.BoxAction.Amount,
-                        Date = item.Date,
-                        MoneyActionId = item.Id,
-                        Note = item.BoxAction.Note,
-                        Name = _moneyActionAppService.GetActionName(item),
-                        Type = item.BoxAction.GetActionType()
-                    };
-                    incomeOutcomeReports.Add(incomeOutcomeReport);
-                }
-            }
-            catch (Exception ex)
+            var total = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction).Count();
+
+
+            //if (paymentsTypeEnum == PaymentsTypeEnum.DirectTransaction)
+            //{
+            //    //return new List<IncomeOutcomeReport>();
+            //}
+            if (paymentsTypeEnum == PaymentsTypeEnum.Non)
             {
-                Tracing.SaveException(ex);
+                moneyActions = GetAllIncome(coinId, from, to);
             }
-            return incomeOutcomeReports;
-        }
-        private IList<IncomeOutcomeReport> GetAgentInome(int coinId, DateTime? from, DateTime? to, int? agentId)
-        {
+            else if (paymentsTypeEnum == PaymentsTypeEnum.Agent)
+            {
+                moneyActions = GetAgentInome(coinId, from, to, incomeFromEntitiyId);
+            }
+            else if (paymentsTypeEnum == PaymentsTypeEnum.Company)
+            {
+                moneyActions = GetCompanyIncome(coinId, from, to, incomeFromEntitiyId);
+            }
+            //if (paymentsTypeEnum == PaymentsTypeEnum.Public)
+            else
+            {
+                moneyActions = GetPublicIncome(coinId, from, to, incomeFromEntitiyId);
+            }
+            var filterCount = moneyActions.Count();
+            moneyActions = moneyActions.Skip(start).Take(length);
             List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
-            try
+            foreach (var item in moneyActions.ToList())
             {
-                Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
-                 && (c.BoxAction.BoxActionType == BoxActionType.ReceiveFromClientToTreasury);
-                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction, c => c.ClientCashFlows);
-                if (from != null)
+                IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
                 {
-                    var dfrom = ((DateTime)from);
-                    moneyAction = moneyAction.Where(c => c.Date >= from);
-                }
-                if (to != null)
-                {
-                    var dto = ((DateTime)to).AddHours(24);
-                    moneyAction = moneyAction.Where(c => c.Date <= to);
-                }
-                if (agentId != null)
-                {
-                    moneyAction = moneyAction.Where(c => c.ClientCashFlows.Any(a => a.Id == (int)agentId));
-                }
-                foreach (var item in moneyAction)
-                {
-                    IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
-                    {
-                        Amount = item.BoxAction.Amount,
-                        Date = item.Date,
-                        MoneyActionId = item.Id,
-                        Note = item.BoxAction.Note,
-                        Name = _moneyActionAppService.GetActionName(item),
-                        Type = item.BoxAction.GetActionType()
-                    };
-                    incomeOutcomeReports.Add(incomeOutcomeReport);
-                }
+                    Date = item.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")),
+                    MoneyActionId = item.Id,
+                    Note = item.GetNote(Requester.Branch, null) != null ? item.GetNote(Requester.Branch, null) : "",
+                    Amount = item.BoxAction.Amount,
+                    Name = _moneyActionAppService.GetActionName(item),
+                    Type = item.BoxAction.GetActionType()
+                };
+                incomeOutcomeReports.Add(incomeOutcomeReport);
             }
-            catch (Exception ex)
-            {
-                Tracing.SaveException(ex);
-            }
-            return incomeOutcomeReports;
+            DataTablesDto dt = new DataTablesDto(draw, incomeOutcomeReports, filterCount, total);
+            return dt;
+            //throw new Exception();
         }
-        private IList<IncomeOutcomeReport> GetCompanyIncome(int coinId, DateTime? from, DateTime? to, int? companyId)
+        private IEnumerable<MoneyAction> GetAllIncome(int coinId, DateTime? from, DateTime? to)
         {
-            List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
-            try
+            //List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
+            //try
+            //{
+            Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
+             && (c.BoxAction.BoxActionType == BoxActionType.ReceiveFromClientToTreasury
+             || c.BoxAction.BoxActionType == BoxActionType.ReceiveFromCompanyToTreasury
+             || c.BoxAction.BoxActionType == BoxActionType.ReceiveToTreasury);
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction);
+            if (from != null)
             {
-                Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
-                 && (c.BoxAction.BoxActionType == BoxActionType.ReceiveFromCompanyToTreasury);
-                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction, c => c.CompanyCashFlows);
-                if (from != null)
-                {
-                    var dfrom = ((DateTime)from);
-                    moneyAction = moneyAction.Where(c => c.Date >= from);
-                }
-                if (to != null)
-                {
-                    var dto = ((DateTime)to).AddHours(24);
-                    moneyAction = moneyAction.Where(c => c.Date <= to);
-                }
-                if (companyId != null)
-                {
-                    moneyAction = moneyAction.Where(c => c.CompanyCashFlows.Any(a => a.Id == (int)companyId));
-                }
-                foreach (var item in moneyAction)
-                {
-                    IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
-                    {
-                        Amount = item.BoxAction.Amount,
-                        Date = item.Date,
-                        MoneyActionId = item.Id,
-                        Note = item.BoxAction.Note,
-                        Name = _moneyActionAppService.GetActionName(item),
-                        Type = item.BoxAction.GetActionType()
-                    };
-                    incomeOutcomeReports.Add(incomeOutcomeReport);
-                }
+                var dfrom = ((DateTime)from);
+                moneyAction = moneyAction.Where(c => c.Date >= from);
             }
-            catch (Exception ex)
+            if (to != null)
             {
-                Tracing.SaveException(ex);
+                var dto = ((DateTime)to).AddHours(24);
+                moneyAction = moneyAction.Where(c => c.Date <= to);
             }
-            return incomeOutcomeReports;
+            //foreach (var item in moneyAction)
+            //{
+            //    IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
+            //    {
+            //        Amount = item.BoxAction.Amount,
+            //        Date = item.Date,
+            //        MoneyActionId = item.Id,
+            //        Note = item.BoxAction.Note,
+            //        Name = _moneyActionAppService.GetActionName(item),
+            //        Type = item.BoxAction.GetActionType()
+            //    };
+            //    incomeOutcomeReports.Add(incomeOutcomeReport);
+            //}
+            //}
+            //catch (Exception ex)
+            //{
+            //    Tracing.SaveException(ex);
+            //}
+            //return incomeOutcomeReports;
+            return moneyAction;
         }
-        private IList<IncomeOutcomeReport> GetPublicIncome(int coinId, DateTime? from, DateTime? to, int? publicId)
+        private IEnumerable<MoneyAction> GetAgentInome(int coinId, DateTime? from, DateTime? to, int? agentId)
         {
-            List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
-            try
+            //List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
+            //try
+            //{
+            Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
+             && (c.BoxAction.BoxActionType == BoxActionType.ReceiveFromClientToTreasury);
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "BoxAction", "ClientCashFlows.Client");
+            if (from != null)
             {
-                Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
-                 && (c.BoxAction.BoxActionType == BoxActionType.ReceiveToTreasury);
-                var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, c => c.BoxAction);
-                if (from != null)
-                {
-                    var dfrom = ((DateTime)from);
-                    moneyAction = moneyAction.Where(c => c.Date >= from);
-                }
-                if (to != null)
-                {
-                    var dto = ((DateTime)to).AddHours(24);
-                    moneyAction = moneyAction.Where(c => c.Date <= to);
-                }
-                if (publicId != null)
-                {
-                    moneyAction = moneyAction.Where(c => c.PubLicMoneyId == publicId);
-                }
-                foreach (var item in moneyAction)
-                {
-                    IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
-                    {
-                        Amount = item.BoxAction.Amount,
-                        Date = item.Date,
-                        MoneyActionId = item.Id,
-                        Note = item.BoxAction.Note,
-                        Name = _moneyActionAppService.GetActionName(item),
-                        Type = item.BoxAction.GetActionType()
-                    };
-                    incomeOutcomeReports.Add(incomeOutcomeReport);
-                }
+                var dfrom = ((DateTime)from);
+                moneyAction = moneyAction.Where(c => c.Date >= from);
             }
-            catch (Exception ex)
+            if (to != null)
             {
-                Tracing.SaveException(ex);
+                var dto = ((DateTime)to).AddHours(24);
+                moneyAction = moneyAction.Where(c => c.Date <= to);
             }
-            return incomeOutcomeReports;
+            if (agentId != null)
+            {
+                moneyAction = moneyAction.Where(c => c.ClientCashFlows.Any(a => a.Id == (int)agentId));
+            }
+            //    foreach (var item in moneyAction)
+            //    {
+            //        IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
+            //        {
+            //            Amount = item.BoxAction.Amount,
+            //            Date = item.Date,
+            //            MoneyActionId = item.Id,
+            //            Note = item.BoxAction.Note,
+            //            Name = _moneyActionAppService.GetActionName(item),
+            //            Type = item.BoxAction.GetActionType()
+            //        };
+            //        incomeOutcomeReports.Add(incomeOutcomeReport);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Tracing.SaveException(ex);
+            //}
+            //return incomeOutcomeReports;
+            return moneyAction;
+        }
+        private IEnumerable<MoneyAction> GetCompanyIncome(int coinId, DateTime? from, DateTime? to, int? companyId)
+        {
+            //List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
+            //try
+            //{
+            Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
+             && (c.BoxAction.BoxActionType == BoxActionType.ReceiveFromCompanyToTreasury);
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "BoxAction", "CompanyCashFlows.Company");
+            if (from != null)
+            {
+                var dfrom = ((DateTime)from);
+                moneyAction = moneyAction.Where(c => c.Date >= from);
+            }
+            if (to != null)
+            {
+                var dto = ((DateTime)to).AddHours(24);
+                moneyAction = moneyAction.Where(c => c.Date <= to);
+            }
+            if (companyId != null)
+            {
+                moneyAction = moneyAction.Where(c => c.CompanyCashFlows.Any(a => a.Id == (int)companyId));
+            }
+            //    foreach (var item in moneyAction)
+            //    {
+            //        IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
+            //        {
+            //            Amount = item.BoxAction.Amount,
+            //            Date = item.Date,
+            //            MoneyActionId = item.Id,
+            //            Note = item.BoxAction.Note,
+            //            Name = _moneyActionAppService.GetActionName(item),
+            //            Type = item.BoxAction.GetActionType()
+            //        };
+            //        incomeOutcomeReports.Add(incomeOutcomeReport);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Tracing.SaveException(ex);
+            //}
+            //return incomeOutcomeReports;
+            return moneyAction;
+        }
+        private IEnumerable<MoneyAction> GetPublicIncome(int coinId, DateTime? from, DateTime? to, int? publicId)
+        {
+            //List<IncomeOutcomeReport> incomeOutcomeReports = new List<IncomeOutcomeReport>();
+            //try
+            //{
+            Expression<Func<MoneyAction, bool>> expression = c => c.BoxAction != null && c.BoxAction.CoinId == coinId
+             && (c.BoxAction.BoxActionType == BoxActionType.ReceiveToTreasury);
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(expression, "BoxAction", "PublicMoney.PublicIncome");
+            if (from != null)
+            {
+                var dfrom = ((DateTime)from);
+                moneyAction = moneyAction.Where(c => c.Date >= from);
+            }
+            if (to != null)
+            {
+                var dto = ((DateTime)to).AddHours(24);
+                moneyAction = moneyAction.Where(c => c.Date <= to);
+            }
+            if (publicId != null)
+            {
+                moneyAction = moneyAction.Where(c => c.PubLicMoneyId == publicId);
+            }
+            //    foreach (var item in moneyAction)
+            //    {
+            //        IncomeOutcomeReport incomeOutcomeReport = new IncomeOutcomeReport()
+            //        {
+            //            Amount = item.BoxAction.Amount,
+            //            Date = item.Date,
+            //            MoneyActionId = item.Id,
+            //            Note = item.BoxAction.Note,
+            //            Name = _moneyActionAppService.GetActionName(item),
+            //            Type = item.BoxAction.GetActionType()
+            //        };
+            //        incomeOutcomeReports.Add(incomeOutcomeReport);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Tracing.SaveException(ex);
+            //}
+            //return incomeOutcomeReports;
+            return moneyAction;
         }
 
         public IList<ClearigStatement> GetClearing(int coinId, IncomeOrOutCame incomeOrOutCame, DateTime? from, DateTime? to, ClearingAccountType fromAccountType, int? fromAccountId, ClearingAccountType toAccountType, int? toAccountId)
@@ -672,14 +699,14 @@ namespace BWR.Application.AppServices.Common
                         }
                         else
                         {
-                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.FromClientId !=null);
+                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.FromClientId != null);
                         }
                     }
                     else
                     {
                         if (fromAccountId != null)
                         {
-                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.FromCompanyId== fromAccountId);
+                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.FromCompanyId == fromAccountId);
                         }
                         else
                         {
@@ -708,7 +735,7 @@ namespace BWR.Application.AppServices.Common
                         }
                         else
                         {
-                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.ToCompanyId !=null);
+                            clearingMoneyAction = clearingMoneyAction.Where(c => c.Clearing.ToCompanyId != null);
                         }
                     }
                 }
@@ -762,5 +789,84 @@ namespace BWR.Application.AppServices.Common
             }
             return clearigStatements;
         }
+
+        public DataTablesDto CommissionReport(int draw, int start, int length, int? coinId, DateTime? from, DateTime? to, int? companyId, int? agentId, int? countryId)
+        {
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(c => c.TransactionId != null, "Transaction.Coin", "Transaction.SenderCompany", " Transaction.ReceiverCompany", "Transaction.SenderClient", "Transaction.ReciverClient");
+            var totalRecords = moneyAction.Count();
+            if (coinId != null)
+                moneyAction = moneyAction.Where(c => c.Transaction.CoinId == coinId);
+
+            if (from != null)
+                moneyAction = moneyAction.Where(c => c.Date >= from);
+
+            if (to != null)
+            {
+                var dto = ((DateTime)to).AddHours(24);
+                moneyAction = moneyAction.Where(c => c.Date >= dto);
+            }
+            if (countryId != null)
+                moneyAction = moneyAction.Where(c => c.Transaction.CountryId == countryId);
+
+            if (companyId != null)
+                moneyAction = moneyAction.Where(c => c.Transaction.ReceiverCompanyId == companyId || c.Transaction.SenderCompanyId == companyId);
+
+            if (agentId != null)
+            {
+                moneyAction = moneyAction.Where(c => c.Transaction.ReciverClientId == agentId || c.Transaction.SenderClientId == agentId);
+            }
+
+            var filteredRepord = moneyAction.Count();
+            moneyAction = moneyAction.Skip(start).Take(length);
+            List<CommissionReportDto> commissionReportDtos = new List<CommissionReportDto>();
+            foreach (var item in moneyAction.ToList())
+            {
+                string senderCompanyName = "";
+                if (item.Transaction.SenderCompany != null)
+                    senderCompanyName = item.Transaction.SenderCompany.Name;
+
+                string secondCompanyName = "";
+                if (item.Transaction.ReceiverCompany != null)
+                    secondCompanyName = item.Transaction.ReceiverCompany.Name;
+
+                string agentName = "";
+                decimal agentCommission = 0;
+                if (item.Transaction.TypeOfPay == Domain.Model.Settings.TypeOfPay.ClientsReceivables)
+                {
+                    if (item.Transaction.IsOuterTransaction())
+                    {
+                        agentName = item.Transaction.SenderClient.FullName;
+                        agentCommission = item.Transaction.SenderCleirntCommission.HasValue ? (decimal)item.Transaction.SenderCleirntCommission : 0;
+
+                    }
+                    else
+                    {
+                        agentName = item.Transaction.ReciverClient.FullName;
+                        agentCommission = item.Transaction.ReciverClientCommission.HasValue ? (decimal)item.Transaction.ReciverClientCommission : 0;
+
+                    }
+                }
+
+                CommissionReportDto commissionReportDto = new CommissionReportDto()
+                {
+                    CoinName = item.Transaction.Coin.Name,
+                    Commission = item.Transaction.OurComission,
+                    Date = item.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")),
+                    MoneActionId = item.Id,
+                    CompanyName = senderCompanyName,
+                    CompanyCommission = item.Transaction.SenderCompanyComission.HasValue ? (decimal)item.Transaction.SenderCompanyComission : 0,
+                    SecondCompanyName = secondCompanyName,
+                    SecondCompanyCommission = item.Transaction.ReceiverCompanyComission.HasValue ? (decimal)item.Transaction.ReceiverCompanyComission : 0,
+                    ReciverName = item.Transaction.ReciverClient.FullName,
+                    AgentName = agentName,
+                    AgentCommission = agentCommission,
+                };
+                commissionReportDto.OurCommission = commissionReportDto.Commission - commissionReportDto.SecondCompanyCommission - commissionReportDto.SecondCompanyCommission - commissionReportDto.AgentCommission- commissionReportDto.CompanyCommission;
+                commissionReportDtos.Add(commissionReportDto);
+            }
+            return new DataTablesDto(draw, commissionReportDtos, filteredRepord, totalRecords);
+        }
+
+        
     }
 }

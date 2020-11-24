@@ -118,7 +118,7 @@ namespace BWR.Application.AppServices.Transactions
             }
             catch (Exception ex)
             {
-                Infrastructure.Exceptions.Tracing.SaveException(ex);
+                Tracing.SaveException(ex);
             }
             return outerTransactionUpdateDto;
         }
@@ -506,7 +506,7 @@ namespace BWR.Application.AppServices.Transactions
                     CompanyId = dto.ReceiverCompanyId.Value,
                     MoenyAction = moneyAction,
                     CoinId = dto.CoinId,
-                    Amount = (dto.Amount + dto.OurComission) * -1,
+                    Amount = (dto.Amount) * -1,
                     Total = receiverCompanyCash.Total,
                     Matched = false
                 };
@@ -565,18 +565,8 @@ namespace BWR.Application.AppServices.Transactions
                 int oldTreasuryId = outerTransaction.TreaseryId;
                 var oldSenderCompanyId = outerTransaction.SenderCompanyId;
                 var oldSenderClientId = outerTransaction.SenderClientId != null ? outerTransaction.SenderClientId.Value : 0;
-
-                //outerTransaction.ReceiverBranchId = BranchHelper.Id;
-                //outerTransaction.ReciverClientId = dto.ReciverClientId;
-                //outerTransaction.TreaseryId = treasuryId;
-                //outerTransaction.Amount = dto.Amount;
-                //outerTransaction.ReciverClientId = dto.ReciverClientId;
-                //outerTransaction.SenderCompanyId = dto.SenderCompanyId;
-                //outerTransaction.SenderCompanyComission = dto.SenderCompanyComission;
-                //outerTransaction.OurComission = dto.OurComission;
-                //outerTransaction.CountryId = dto.CountryId;
-                //outerTransaction.Reason = dto.Reason;
-                //outerTransaction.Note = dto.Note;
+                var oldCreated = outerTransaction.Created;
+                var oldCreatedBy = outerTransaction.CreatedBy;
 
                 Mapper.Map<OuterTransactionUpdateDto, Transaction>(dto, outerTransaction);
 
@@ -586,6 +576,9 @@ namespace BWR.Application.AppServices.Transactions
                 outerTransaction.TransactionType = TransactionType.ExportTransaction;
                 outerTransaction.TypeOfPay = TypeOfPay.Cash;
                 outerTransaction.ModifiedBy = _appSession.GetUserName();
+                outerTransaction.Created = oldCreated;
+                outerTransaction.CreatedBy = oldCreatedBy;
+
                 
                 _unitOfWork.GenericRepository<Transaction>().Update(outerTransaction);
 
@@ -643,7 +636,7 @@ namespace BWR.Application.AppServices.Transactions
                 if (moneyActionContainBoxActionDto != null)
                 {
                     var moneyActionContainBoxAction = _unitOfWork.GenericRepository<MoneyAction>()
-                        .FindBy(x => x.Id == moneyActionContainBoxActionDto.Id).FirstOrDefault();
+                        .FindBy(x => x.Id == moneyActionContainBoxActionDto.Id, "ClientCashFlows", "CompanyCashFlows", "BranchCashFlows.TreasuryMoneyActions").FirstOrDefault();
 
                     DeleteIncomeBoxAction(moneyActionContainBoxAction);
                 }
@@ -1003,7 +996,8 @@ namespace BWR.Application.AppServices.Transactions
                     CompanyId = dto.ReceiverCompanyId.Value,
                     MoenyAction = moneyAction,
                     CoinId = dto.CoinId,
-                    Amount = (dto.Amount + dto.OurComission) * -1,
+                    //Amount = (dto.Amount + dto.OurComission) * -1,
+                    Amount = dto.Amount*-1,
                     Matched = false
                 };
 
@@ -1516,38 +1510,37 @@ namespace BWR.Application.AppServices.Transactions
         private void DeleteIncomeBoxAction(MoneyAction moneyAction)
         {
             //Old Company Cash Flows
-            var oldCompanyCashFlows = moneyAction.CompanyCashFlows.ToList();
-            foreach (var oldCompanyCashFlow in oldCompanyCashFlows)
+            var oldCompanyCashFlows = moneyAction.CompanyCashFlows.ToArray();
+            for (int i = 0; i < oldCompanyCashFlows.Length; i++)
             {
-                _unitOfWork.GenericRepository<CompanyCashFlow>().Delete(oldCompanyCashFlow);
+                _unitOfWork.GenericRepository<CompanyCashFlow>().Delete(oldCompanyCashFlows[i]);
             }
 
             //Old Client Cash Flows
-            var oldClientCashFlows = moneyAction.ClientCashFlows.ToList();
-            foreach (var oldClientCashFlow in oldClientCashFlows)
+            var oldClientCashFlows = moneyAction.ClientCashFlows.ToArray();
+            for (int i = 0; i < oldClientCashFlows.Length; i++)
             {
-                _unitOfWork.GenericRepository<ClientCashFlow>().Delete(oldClientCashFlow);
+                _unitOfWork.GenericRepository<ClientCashFlow>().Delete(oldClientCashFlows[i]);
             }
+                
 
             //Old Branch Cash Flows
-            var oldBranchCashFlows = moneyAction.BranchCashFlows.ToList();
+            var oldBranchCashFlows = moneyAction.BranchCashFlows.ToArray();
             var oldBranchCashFlowsIds = oldBranchCashFlows.Select(b => b.Id).ToList();
             if (oldBranchCashFlows.Any())
             {
                 var oldTreasuryMoneyActions = _unitOfWork.GenericRepository<TreasuryMoneyAction>()
-                .FindBy(x => oldBranchCashFlowsIds.Contains((int)x.BranchCashFlowId)).ToList();
+                .FindBy(x => oldBranchCashFlowsIds.Contains((int)x.BranchCashFlowId)).ToArray();
 
-                foreach (var oldTreasuryMoneyAction in oldTreasuryMoneyActions)
+                for (int i = 0; i < oldTreasuryMoneyActions.Length; i++)
                 {
-                    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Delete(oldTreasuryMoneyAction);
+                    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Delete(oldTreasuryMoneyActions[i]);
                 }
-
-                foreach (var oldBranchCashFlow in oldBranchCashFlows)
+                for (int i = 0; i < oldBranchCashFlows.Length; i++)
                 {
-                    _unitOfWork.GenericRepository<BranchCashFlow>().Delete(oldBranchCashFlow);
+                    _unitOfWork.GenericRepository<BranchCashFlow>().Delete(oldBranchCashFlows[i]);
                 }
             }
-
             var oldBoxAction = moneyAction.BoxAction;
             _unitOfWork.GenericRepository<BoxAction>().Delete(oldBoxAction);
 

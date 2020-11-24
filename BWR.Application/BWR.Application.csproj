@@ -84,6 +84,7 @@
     <Compile Include="AppServices\Treasuries\TreasuryAppService.cs" />
     <Compile Include="AppServices\Treasuries\TreasuryCashAppService.cs" />
     <Compile Include="AppServices\Treasuries\TreasuryMoneyActionAppService.cs" />
+    <Compile Include="Common\DataTablesDto.cs" />
     <Compile Include="Common\IncomeOrOutCame.cs" />
     <Compile Include="Common\ClearingAccountType.cs" />
     <Compile Include="Common\DtoForDropdown.cs" />
@@ -186,14 +187,17 @@
     <Compile Include="Dtos\Setting\Action\ActionUpdateDto.cs" />
     <Compile Include="Dtos\Statement\BalanceStatementDto.cs" />
     <Compile Include="Dtos\Statement\ClearigStatement.cs" />
+    <Compile Include="Dtos\Statement\CommissionReportDto.cs" />
     <Compile Include="Dtos\Statement\ConclusionDto.cs" />
     <Compile Include="Dtos\Statement\ExpensesDetailDto.cs" />
     <Compile Include="Dtos\Statement\InnerTransactionStatementDetailedDto.cs" />
+    <Compile Include="Dtos\Transaction\InnerTransaction\IncomeTransactionCollectionDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertInitialDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertListDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionUpdateDto.cs" />
+    <Compile Include="Dtos\Transaction\InnerTransaction\TransactionDontDelivered.cs" />
     <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionInsertDto.cs" />
     <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionInputDto.cs" />
     <Compile Include="Dtos\Transaction\OuterTransaction\OuterTransactionDto.cs" />

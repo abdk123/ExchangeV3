@@ -160,18 +160,18 @@
                         <!-- END SIDEBAR TOGGLER BUTTON -->
                         <!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
                         @*<li class="nav-item start ">
-            <a href="javascript:;" class="nav-link nav-toggle">
-                <i class="icon-home"></i>
-                <span class="title">الرئيسية</span>
-                <span class="arrow"></span>
-            </a>
-        </li>*@
+                                <a href="javascript:;" class="nav-link nav-toggle">
+                                    <i class="icon-home"></i>
+                                    <span class="title">الرئيسية</span>
+                                    <span class="arrow"></span>
+                                </a>
+                            </li>*@
                         @*<li class="nav-item start ">
-            <a data-toggle="modal" href="#OuterTransactionModel" onclick="modelSetting();" class="nav-link nav-toggle">
-                <i class="fa fa-line-chart"></i>
-                <span class="title">كشف الحوالات الصادرة</span>
-            </a>
-        </li>*@
+                                <a data-toggle="modal" href="#OuterTransactionModel" onclick="modelSetting();" class="nav-link nav-toggle">
+                                    <i class="fa fa-line-chart"></i>
+                                    <span class="title">كشف الحوالات الصادرة</span>
+                                </a>
+                            </li>*@
                         @if (PermissionHelper.CheckPermission(AppPermision.Action_OuterTransaction_CreateOuterTransaction))
                         {
 
@@ -184,11 +184,11 @@
                         }
 
                         @*<li class="nav-item start ">
-            <a href="/system/index" id="exchangehref" class="nav-link nav-toggle">
-                <i class="fa fa-arrows-v"></i>
-                <span class="title" id="exchangeSpan">الصيرفة</span>
-            </a>
-        </li>*@
+                                <a href="/system/index" id="exchangehref" class="nav-link nav-toggle">
+                                    <i class="fa fa-arrows-v"></i>
+                                    <span class="title" id="exchangeSpan">الصيرفة</span>
+                                </a>
+                            </li>*@
                         @if (PermissionHelper.CheckPermission(AppPermision.Action_InnerTransaction_Index))
                         {
                             <li class="nav-item start ">
@@ -228,7 +228,7 @@
                         @if (PermissionHelper.CheckPermission(AppPermision.Action_Transaction_TransactionDontDileverd))
                         {
                             <li class="nav-item start ">
-                                <a href="@Url.Action("TransactionDontDileverd","Transaction")" class="nav-link nav-toggle">
+                                <a href="@Url.Action("TransactionDontDileverd","InnerTransaction")" class="nav-link nav-toggle">
                                     <i class="fa fa-line-chart"></i>
                                     <span class="title">كشف الحوالات الغير مسلمة</span>
                                 </a>
@@ -288,6 +288,9 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="@Url.Action("IncmoeTransactionGross","Statement")" class="nav-link">كشف الحوالات الواردة إجمالي</a>
+                                </li>
+                                <li class="nav-item">
                                     <a data-toggle="modal" id="innerTransactionsStatment" href="@Url.Action("DileveredTransactions","Statement")" class="navbar-link nav-toggle Statement">
                                         <span class="title">كشف الحوالات المسلمة</span>
                                     </a>
@@ -306,13 +309,18 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="@Url.Action("ClientStoped","Statement")">
-                                        
+
                                         <span class="title">كشف العملاء متوقفي الحركة</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="@Url.Action("IncomeTransactionStatementDetailed","Statement")">
                                         <span class="title">كشف الحوالات الواردة مفصل</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("CommissionReport","Statement")">
+                                        <span class="title">تقرير عمولات الحوالات</span>
                                     </a>
                                 </li>
                             </ul>
@@ -329,7 +337,6 @@
                                 <span class="title">كشف حساب الشركات</span>
                             </a>
                         </li>
-                        
                     </ul>
                     <!-- END SIDEBAR MENU -->
                     <!-- END SIDEBAR MENU -->
@@ -381,32 +388,8 @@
 
 
 
-    @*<div class="modal fade draggable-modal ui-draggable" id="clientCashFlow" role="dialog" aria-hidden="true" style="display: none;" aria-labelledby="myModalLabel">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header ui-draggable-handle">
-                    <button type="butto n" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                    <h4 class="modal-title">اختر العميل</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <label>العميل</label>
-                            <select id="layoutModalClientCashAgentSelect" style="width:100%"> </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn dark btn-outline" data-dismiss="modal">إلغاء</button>
-                    <button type="button" class="btn green" id="layoutModalClientCashViewBtn">عرض</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>*@
 
-    
+
     <div class="modal fade draggable-modal ui-draggable" id="LayoutCompanyCashFlowModal" role="dialog" aria-hidden="true" style="display: none;" aria-labelledby="myModalLabel">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -696,7 +679,7 @@
                     };
                 }
             }
-        };      
+        };
     </script>
     @RenderSection("ScriptPath", required: false)
 

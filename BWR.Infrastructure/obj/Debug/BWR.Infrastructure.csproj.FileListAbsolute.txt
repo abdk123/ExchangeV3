@@ -131,6 +131,7 @@ F:\Projects\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.dll
 F:\Projects\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.pdb
 F:\Projects\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.Migrations.Test.resources
 F:\Projects\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.Migrations.Add_Box_Action_Type.resources
+F:\Projects\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.Migrations.dropFK_dboMoneyAction_dboClearing_TransactionIdconstraint.resources
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\bin\Debug\BWR.Infrastructure.dll.config
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\bin\Debug\BWR.Infrastructure.dll
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\bin\Debug\BWR.Infrastructure.pdb
@@ -153,4 +154,3 @@ C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infr
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.csproj.CopyComplete
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.dll
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.pdb
-F:\Projects\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.Migrations.dropFK_dboMoneyAction_dboClearing_TransactionIdconstraint.resources

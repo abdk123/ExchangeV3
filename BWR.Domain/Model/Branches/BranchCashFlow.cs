@@ -2,6 +2,7 @@
 using BWR.Domain.Model.Settings;
 using BWR.Domain.Model.Treasures;
 using BWR.ShareKernel.Common;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BWR.Domain.Model.Branches
@@ -26,5 +27,6 @@ namespace BWR.Domain.Model.Branches
         public int TreasuryId { get; set; }
         [ForeignKey("TreasuryId")]
         public virtual Treasury Treasury { get; set; }
+        public virtual IList<TreasuryMoneyAction> TreasuryMoneyActions { set; get; }
     }
 }

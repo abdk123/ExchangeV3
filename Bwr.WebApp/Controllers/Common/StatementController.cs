@@ -12,6 +12,11 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Dynamic;
 using BWR.Domain.Model.Companies;
+using DataTables.Mvc;
+using System.Collections.Generic;
+using BWR.Infrastructure.Exceptions;
+using BWR.Application.Interfaces.Transaction;
+
 namespace Bwr.WebApp.Controllers.Common
 {
     public class StatementController : Controller
@@ -23,6 +28,7 @@ namespace Bwr.WebApp.Controllers.Common
         private readonly IStatementAppService _statementAppService;
         private readonly IClientCashFlowAppService _clientCashFlowAppService;
         private readonly IUnitOfWork<MainContext> _unitOfWork;
+        private readonly IInnerTransactionAppService _innerTransactionAppService;
 
         public StatementController(
             ICompanyAppService companyAppService,
@@ -31,6 +37,7 @@ namespace Bwr.WebApp.Controllers.Common
             ICountryAppService countryAppService,
             IStatementAppService statementAppService,
             IClientCashFlowAppService clientCashFlowAppService,
+            IInnerTransactionAppService innerTransactionAppService,
             IUnitOfWork<MainContext> unitOfWork)
         {
             _clientAppService = clientAppService;
@@ -40,6 +47,7 @@ namespace Bwr.WebApp.Controllers.Common
             _statementAppService = statementAppService;
             _clientCashFlowAppService = clientCashFlowAppService;
             _unitOfWork = unitOfWork;
+            _innerTransactionAppService = innerTransactionAppService;
         }
 
         // GET: Statement
@@ -124,15 +132,21 @@ namespace Bwr.WebApp.Controllers.Common
             ViewBag.Income = new SelectList(_unitOfWork.GenericRepository<PublicIncome>().GetAll(), "Id", "Name");
             return View();
         }
-        [HttpGet]
-        public ActionResult IncomeOutCome(int generealType, int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? PaymentsTypeEntityId)
+        [HttpPost]
+        public ActionResult IncomeOutCome([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, int generealType, int coinId, PaymentsTypeEnum paymentsTypeEnum, DateTime? from, DateTime? to, int? PaymentsTypeEntityId)
         {
+            DataTablesDto dto;
             if (generealType == -1)
             {
-                var info = this._statementAppService.GetPayment(coinId, paymentsTypeEnum, from, to, PaymentsTypeEntityId).ToList();
-                return Json(info, JsonRequestBehavior.AllowGet);
+                dto= this._statementAppService.GetPayment(requestModel.Draw, requestModel.Start, requestModel.Length, coinId, paymentsTypeEnum, from, to, PaymentsTypeEntityId);
             }
-            return Json(null);
+            else
+            {   
+                dto= this._statementAppService.GetIncme(requestModel.Draw, requestModel.Start, requestModel.Length, coinId, paymentsTypeEnum, from, to, PaymentsTypeEntityId);
+                
+            }
+            
+            return Json(dto,JsonRequestBehavior.AllowGet);
         }
         [HttpGet]
         public ActionResult IncomeTransactionStatementDetailed()
@@ -144,6 +158,54 @@ namespace Bwr.WebApp.Controllers.Common
             ViewBag.Agents = new SelectList(agents, "Id", "FullName");
             ViewBag.Coins = new SelectList(coins, "Id", "Name");
             return View();
+        }
+        [HttpGet]
+        public ActionResult CommissionReport()
+        {
+            var company = _unitOfWork.GenericRepository<BWR.Domain.Model.Companies.Company>().GetAll();
+            var agnet = _unitOfWork.GenericRepository<BWR.Domain.Model.Clients.Client>().FindBy(c=>c.ClientType==BWR.Domain.Model.Clients.ClientType.Client);
+            var coins = _unitOfWork.GenericRepository<Coin>().GetAll();
+            var countries = _unitOfWork.GenericRepository<Country>().FindBy(c => c.MainCountryId == null).ToList();
+            var ceities = _unitOfWork.GenericRepository<Country>().FindBy(c => c.MainCountryId != null).ToList();
+            var unionCountries = new List<Country>();
+            foreach (var item in countries)
+            {
+                unionCountries.Add(item);
+                var c= ceities.Where(cc => cc.MainCountryId == item.Id);
+                unionCountries.AddRange(c);
+            }
+            ViewBag.Companies = new SelectList(company, "Id", "Name");
+            ViewBag.Agent = new SelectList(agnet, "Id", "FullName");
+            ViewBag.Coin = new SelectList(coins, "Id", "Name");
+            ViewBag.Countries = new SelectList(unionCountries, "Id", "Name");
+            return View();
+        }
+        [HttpPost]
+        public ActionResult CommissionReport([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, int? coinId, DateTime? from, DateTime? to, int? countryId, int? companyId, int? agentId)
+        {
+            try
+            {
+                
+                return Json(_statementAppService.CommissionReport(requestModel.Draw, requestModel.Start, requestModel.Length, coinId, from, to, companyId, agentId, countryId));
+            }
+            catch(Exception ex)
+            {
+                Tracing.SaveException(ex);
+            }
+            return Json("");
+        }
+        [HttpGet]
+        public ActionResult IncmoeTransactionGross()
+        {
+            var companies = _unitOfWork.GenericRepository<BWR.Domain.Model.Companies.Company>().GetAll();
+            ViewBag.companyies = new SelectList(companies, "Id", "Name");
+            return View();
+        }
+        [HttpPost]
+        public ActionResult IncmoeTransactionGross([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, int?companyId,DateTime? from , DateTime? to)
+        {
+
+            return Json(_innerTransactionAppService.IncmoeTransactionGross(requestModel.Draw,requestModel.Start,requestModel.Length,companyId,from,to));
         }
 
     }

@@ -1,0 +1,168 @@
+﻿
+@{
+    ViewBag.Title = "CommissionReport";
+    Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
+}
+
+<h2>تقرير عمولات الحوالات</h2>
+<div class="row">
+    <div class="col-lg-4">
+        <label>عميل</label>
+        @Html.DropDownList("Agent", null, "---اختياري---", htmlAttributes: new { @class = "form-control change" })
+    </div>
+    <div class="col-lg-4">
+        <label>شركة </label>
+        @Html.DropDownList("Companies", null, "---اختياري---", htmlAttributes: new { @class = "form-control change" })
+    </div>
+    <div class="col-lg-4">
+        <label>الجهة</label>
+        @Html.DropDownList("Countries", null, "---اختياري---", htmlAttributes: new { @class = "form-control change" })
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4">
+        <label>
+            العملة
+        </label>
+        @Html.DropDownList("Coin", null, "---اختياري---", htmlAttributes: new { @class = "form-control change" })
+
+    </div>
+    <div class="col-lg-4">
+        <label>من تاريخ:</label>
+        <input type="date" class="form-control change" id="from" />
+    </div>
+    <div class="col-lg-4">
+        <label>إلى تاريخخ</label>
+        <input type="date" class="form-control change" id="to" />
+    </div>
+</div>
+<table class="table table-bordered" id="table">
+    <thead>
+        <tr>
+            <th>
+                العملة
+            </th>
+            <th>
+                العمولة
+            </th>
+            <th>
+                الشركة
+            </th>
+            <th>
+                عمولة الشركة
+            </th>
+            <th>
+                الشركة الثانية
+            </th>
+            <th>
+                عمولة الشركة الثانية
+            </th>
+            <th>
+                اسم العميل
+            </th>
+            <th>
+                عمولة العميل
+            </th>
+            <th>
+                عمولتنا
+            </th>
+            <td>
+                التاريخ
+            </td>
+            <td>
+                اسم المستفيد
+            </td>
+            <td>
+                تفاصيل
+            </td>
+        </tr>
+    </thead>
+</table>
+<script>
+
+    const table = $('#table');
+    const Agent = $('#Agent');
+
+    const Companies = $('#Companies');
+    const Countries = $('#Countries');
+    const Coin = $('#Coin');
+    function MakSelect2() {
+        Agent.select2({
+            placeholder: "---اختياري---",
+            allowClear: true,
+            width: 'resolve'
+        });
+        Companies.select2({
+            placeholder: "---اختياري---",
+            allowClear: true,
+            width: 'resolve'
+        });
+        Countries.select2({
+            placeholder: "---اختياري---",
+            allowClear: true,
+            width: 'resolve'
+        });
+        Coin.select2({
+            placeholder: "---اختياري---",
+            allowClear: true,
+            width: 'resolve'
+        });
+    }
+
+    $(function () {
+        MakSelect2();
+        FillTable();
+    });
+    function FillTable() {
+        if (!$.fn.DataTable.isDataTable(table)) {
+            table.dataTable({
+                'language': dataTableLocalizationArValue(),
+                "serverSide": true,
+                "processing": true,
+                "ajax": {
+                    "url": "@Url.Action("CommissionReport", "Statement")",
+
+                    "type": "POST",
+
+                    "data": function (d) {
+                        d.coinId = $('#Coins').val();
+                        d.from = $('#from').val();
+                        d.to = $('#to').val();
+                        d.coinId = $('#Coin').val();
+                        d.countryId = $('#Countries').val();
+                        d.companyId = $('#Companies').val();
+                        d.agentId = $('#Agent').val();
+                        return d;
+                    },
+                    "dataFilter": function (data) {
+                        var json = jQuery.parseJSON(data);
+                        json.recordsTotal = json.recordsTotal;
+                        json.recordsFiltered = json.recordsFiltered;
+                        json.data = json.data;
+                        console.log(json);
+                        return JSON.stringify(json);
+                    },
+                },
+                "columns": [
+                    { "data": "CoinName"},
+                    { "data": "Commission" },
+                    { "data": "CompanyName" },
+                    { "data": "CompanyCommission" },
+                    { "data": "SecondCompanyName" },
+                    { "data": "SecondCompanyCommission" },
+                    { "data": "AgentName" },
+                    { "data": "AgentCommission" },
+                    { "data": "OurCommission" },
+                    { "data": "Date" },
+                    { "data": "ReciverName" },
+                    { "data": "MoneActionId" },
+
+                ]
+            });
+        }
+        else {
+            table.DataTable().ajax.reload();
+        }
+    }
+    $('.change').change(FillTable);
+</script>

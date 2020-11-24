@@ -305,14 +305,14 @@ namespace BWR.Application.AppServices.BoxActions
                     CoinId = input.CoinId,
                     Note = input.Note,
                     BoxActionType = BoxActionType.ExpenseFromTreasuryToClient,
-                    CreatedBy = _appSession.GetUserName()
+                    CreatedBy = _appSession.GetUserName(),
                 };
                 _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
                 var moneyAction = new MoneyAction()
                 {
                     BoxAction = boxAction,
                     Date = DateTime.Now,
-                    CreatedBy = _appSession.GetUserName()
+                    CreatedBy = _appSession.GetUserName(),
                 };
 
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);

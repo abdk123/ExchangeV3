@@ -6462,6 +6462,9 @@
     <Content Include="Views\Statement\Clearing.cshtml" />
     <Content Include="Views\Statement\ClientStoped.cshtml" />
     <Content Include="Views\Statement\IncomeTransactionStatementDetailed.cshtml" />
+    <Content Include="Views\Statement\CommissionReport.cshtml" />
+    <Content Include="Views\Statement\IncmoeTransactionGross.cshtml" />
+    <Content Include="Views\InnerTransaction\TransactionDontDileverd.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,104 @@
+﻿
+@{
+    ViewBag.Title = "IncmoeTransactionGross";
+    Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
+}
+
+<h2>كشف الحوالات الواردة إجمالي</h2>
+<div class="row">
+    <div class="col-lg-4">
+        <div class="form-group">
+            <label>الشركة</label>
+            @Html.DropDownList("companyies", null, "---اختياري---", htmlAttributes: new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="form-group">
+            <label>من تاريخ:</label>
+            <input type="date" class="form-control" id="from" />
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="form-group">
+            <label>إلى تاريخ : </label>
+            <input type="date" class="form-control" id="to" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <table class="table table-bordered" id="table" >
+            <thead>
+                <tr>
+                    <th>
+                        الشركة
+                    </th>
+                    <th>
+                     تاريخ
+                    </th>
+                    <th>
+                        المبلغ
+                    </th>
+                    <th>
+                        عدد القيود
+                    </th>
+                    <th>
+                        تفاصيل
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script>
+    const table = $('#table');
+    $(function () {
+        fillTable();
+    }
+    )
+    function fillTable() {
+        if (!$.fn.DataTable.isDataTable(table)) {
+            table.dataTable({
+                'language': dataTableLocalizationArValue(),
+                "serverSide": true,
+                "processing": true,
+                "ajax": {
+                    "url": "@Url.Action("IncmoeTransactionGross", "Statement")",
+                    "type": "POST",
+                    "data": function (d) {
+                        d.companyId = $('#companyies').val();
+                        d.from = $('#from').val();
+                        d.to = $('#to').val();
+                        return d;
+                    },
+                    "dataFilter": function (data) {
+                        var json = jQuery.parseJSON(data);
+                        json.recordsTotal = json.recordsTotal;
+                        json.recordsFiltered = json.recordsFiltered;
+                        json.data = json.data;
+                        console.log(json.data);
+                        return JSON.stringify(json);
+                    },
+
+                },
+                "columns": [
+                    { "data": "Company"},
+                    { "data": "Date" },
+                    { "data": "Amount" },
+                    { "data": "TransactionCount" },
+                    { "data": "Id" },
+                ]
+
+            });
+        }
+        else {
+            table.DataTable().ajax.reload();
+        }
+    }
+    $('.form-control').change(fillTable);
+</script>

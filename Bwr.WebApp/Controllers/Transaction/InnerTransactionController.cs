@@ -1,10 +1,14 @@
 ﻿using Bwr.WebApp.Models.Security;
+using BWR.Application.Common;
 using BWR.Application.Dtos.Transaction.InnerTransaction;
 using BWR.Application.Interfaces.Transaction;
 using BWR.Application.Interfaces.Treasury;
 using BWR.Domain.Model.Settings;
 using BWR.Domain.Model.Transactions;
+using BWR.Infrastructure.Context;
+using BWR.ShareKernel.Interfaces;
 using BWR.ShareKernel.Permisions;
+using DataTables.Mvc;
 using System;
 using System.Web.Mvc;
 
@@ -15,13 +19,17 @@ namespace Bwr.WebApp.Controllers.Transaction
     {
         private readonly IInnerTransactionAppService _innerTransactionAppService;
         private readonly ITreasuryAppService _treasuryAppService;
+        private readonly IUnitOfWork<MainContext> _unitOfWork;
 
-        public InnerTransactionController(IInnerTransactionAppService innerTransactionAppService
+        public InnerTransactionController(IInnerTransactionAppService innerTransactionAppService,
+            IUnitOfWork<MainContext> _unitOfWork
             , ITreasuryAppService treasuryAppService)
         {
             _innerTransactionAppService = innerTransactionAppService;
             _treasuryAppService = treasuryAppService;
+            this._unitOfWork = _unitOfWork;
         }
+
         // GET: InnerTransaction
         public ActionResult Index()
         {
@@ -93,12 +101,25 @@ namespace Bwr.WebApp.Controllers.Transaction
                 return Json("error");
             }
         }
-        [HttpGet]
-        public ActionResult InnerTransactionStatementDetailed(int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId,int?senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
+        [HttpPost]
+        public ActionResult InnerTransactionStatementDetailed([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, int? reciverCompanyId, TypeOfPay typeOfPay, int? reciverId, int? senderCompanyId, int? senderClientId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to, bool? isDelivered)
         {
-            var list = _innerTransactionAppService.InnerTransactionStatementDetailed(reciverCompanyId, typeOfPay, reciverId, senderCompanyId, senderClientId, coinId, transactionStatus, from, to, isDelivered);
-            
-            return Json("tttt");
+            DataTablesDto dto = _innerTransactionAppService.InnerTransactionStatementDetailed(requestModel.Draw, requestModel.Start, requestModel.Length, reciverCompanyId, typeOfPay, reciverId, senderCompanyId, senderClientId, coinId, transactionStatus, from, to, isDelivered);
+            return Json(dto, JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        public ActionResult TransactionDontDileverd()
+        {
+            var companies = _unitOfWork.GenericRepository<BWR.Domain.Model.Companies.Company>().GetAll();
+            var coins = _unitOfWork.GenericRepository<Coin>().GetAll();
+            ViewBag.companies = new SelectList(companies, "Id", "Name");
+            ViewBag.coins = new SelectList(coins, "Id", "Name");
+            return View();
+        }
+        [HttpPost]
+        public ActionResult TransactionDontDileverd([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest requestModel, int? clientId, int? companyId, int? coinId, TransactionStatus transactionStatus, DateTime? from, DateTime? to)
+        {
+            return Json(_innerTransactionAppService.TransactionDontDileverd(requestModel.Draw, requestModel.Start, requestModel.Length, transactionStatus, clientId, companyId, coinId, from, to));
         }
 
         private bool CheckTreasury()
@@ -118,6 +139,7 @@ namespace Bwr.WebApp.Controllers.Transaction
 
             return false;
         }
+
 
     }
 }

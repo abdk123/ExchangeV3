@@ -12,7 +12,7 @@ namespace BWR.Application.Dtos.ReportsDto
         public decimal Amount { get; set; }
         public string Type { get; set; }
         public string Name { get; set; }
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
         public string Note { get; set; }
     }
 }

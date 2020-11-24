@@ -24,7 +24,7 @@ namespace BWR.Application.Extensions
                 {
                     return "حوالة له";
                 }
-                else if(transaction.SenderClientId!=null && transaction.SenderClientId == (int)objectId)
+                else if (transaction.SenderClientId != null && transaction.SenderClientId == (int)objectId)
                 {
                     return "حوالة منه";
                 }
@@ -58,7 +58,7 @@ namespace BWR.Application.Extensions
                     return (decimal)transaction.SenderCompanyComission;
             else if (transaction.ReceiverCompanyId == companyId)
             {
-                return transaction.OurComission;
+                return -1 * transaction.OurComission;
             }
             return 0;
         }

@@ -64,12 +64,11 @@ namespace BWR.Application.AppServices.Branch
             BranchCashUpdateDto branchCashDto = null;
             try
             {
+                _unitOfWork.CreateTransaction();
                 var branchCash = _unitOfWork.GenericRepository<BranchCash>().GetById(id);
-                if (branchCash != null)
                 {
                     branchCashDto = Mapper.Map<BranchCash, BranchCashUpdateDto>(branchCash);
                 }
-
             }
             catch (Exception ex)
             {
@@ -188,7 +187,11 @@ namespace BWR.Application.AppServices.Branch
                
                 _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
                 _unitOfWork.Save();
-
+                var mainTreasury = _appSession.GetMainTreasury();
+                var treasuryCash = _unitOfWork.GenericRepository<TreasuryCash>().FindBy(c => c.TreasuryId == mainTreasury&&c.CoinId== branchCash.CoinId).First();
+                treasuryCash.Total = branchCash.InitialBalance;
+                _unitOfWork.GenericRepository<TreasuryCash>().Update(treasuryCash);
+                _unitOfWork.Save();
                 _unitOfWork.Commit();
 
                 branchCashDto = Mapper.Map<BranchCash, BranchCashDto>(branchCash);

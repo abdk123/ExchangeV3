@@ -9,13 +9,13 @@
     <div class="col-lg-4">
         <div class="form-group">
             <label>الفرع المرسل</label>
-            @Html.DropDownList("Companies", null, "---اخياري---", htmlAttributes: new { @class = "form-control", @id = "reciverCompanyId" })
+            @Html.DropDownList("Companies", null, "---اخياري---", htmlAttributes: new { @class = "form-control change", @id = "reciverCompanyId" })
         </div>
     </div>
     <div class="col-lg-4">
         <div class="form-group">
             <label>نوع الدفع</label>
-            <select class="form-control" id="TypeOfPay">
+            <select class="form-control change" id="TypeOfPay">
                 <option value="0">الكل</option>
                 <option value="1">نقدي</option>
                 <option value="2">
@@ -33,22 +33,22 @@
             <div class="row">
                 <div class="col-lg-6">
                     <label>الشركات</label>
-                    @Html.DropDownList("Companies", null, "---اختياري---", htmlAttributes: new { @class = "form-control", @id = "senderCompanyId", @style = "width:100%" })
+                    @Html.DropDownList("Companies", null, "---اختياري---", htmlAttributes: new { @class = "form-control change", @id = "senderCompanyId", @style = "width:100%" })
                 </div>
                 <div class="col-lg-6">
                     <label>المستفيد</label>
-                    <select id="normalClientSelect2">
+                    <select id="normalClientSelect2" class="change" >
                     </select>
                 </div>
             </div>
         </div>
         <div class="form-group" id="asgentsDiv" style="display:none">
             <label>العملاء</label>
-            @Html.DropDownList("Agents", null, "---اختياري---", htmlAttributes: new { @class = "form-control", @style = "width:100%" })
+            @Html.DropDownList("Agents", null, "---اختياري---", htmlAttributes: new { @class = "form-control change", @style = "width:100%" })
         </div>
         <div class="form-group" id="normaClientDiv" style="display:none">
             <label>المستفيد</label>
-            <select id="normalClientSelect">
+            <select id="normalClientSelect" class="change">
             </select>
         </div>
     </div>
@@ -57,7 +57,7 @@
     <div class="col-lg-4">
         <div class="form-group">
             <label>المرسل</label>
-            <select id="senderSelect" style="width:86%">
+            <select id="senderSelect" class="form-control change">
                 <option value="">اختياري</option>
             </select>
         </div>
@@ -65,13 +65,13 @@
     <div class="col-lg-4">
         <div class="form-group">
             <label>العملة</label>
-            @Html.DropDownList("Coins", null, "---اختياري---", htmlAttributes: new { @class = "form-control" })
+            @Html.DropDownList("Coins", null, "---اختياري---", htmlAttributes: new { @class = "form-control change" })
         </div>
     </div>
     <div class="col-lg-4">
         <div class="form-group">
             <label>الحالة</label>
-            <select class="form-control" id="TransactionStatus">
+            <select class="form-control change" id="TransactionStatus">
                 <option value="0">---اختياري---</option>
                 <option value="1">مبلغ</option>
                 <option value="2">غير مبلغ</option>
@@ -84,14 +84,14 @@
     <div class="col-lg-4">
         <div class="form-group">
             <label>من تاريخ:</label>
-            <input type="date" class="form-control" id="from" />
+            <input type="date" class="form-control change" id="from" />
         </div>
     </div>
 
     <div class="col-lg-4">
         <div class="form-group">
             <label>إلى تاريخ:</label>
-            <input type="date" class="form-control" id="to" />
+            <input type="date" class="form-control change" id="to" />
         </div>
     </div>
     <div class="col-lg-4">
@@ -99,7 +99,7 @@
             <label>
                 حالة التسليم
             </label>
-            <select class="form-control" id="isDelivered">
+            <select class="form-control change" id="isDelivered">
                 <option value="">---اختياري---</option>
                 <option value="1">مسلمة</option>
                 <option value="0">غير مسلمة</option>
@@ -108,7 +108,7 @@
     </div>
 </div>
 <div class="row">
-    <table class="table table-bordered">
+    <table class="table table-bordered" id="table">
         <thead>
             <tr>
                 <td>
@@ -149,12 +149,12 @@
                 </td>
             </tr>
         </thead>
-        <tbody id="tbody">
+        <tbody>
         </tbody>
     </table>
 </div>
 <script>
-
+    let table = $('#table');
     $('#TypeOfPay').change(function () {
         hidAllReciver();
         var value = $(this).val();
@@ -198,36 +198,81 @@
             ajax: Select2ClientAjaxObject.ajax,
             placeholder: "---اختياري---",
             allowClear: true
-        })
+        });
+        FillTable();
     });
-    let tbody = $('#tbody');
+    
     function FillTable() {
-        let reciverCompanyId = $('#reciverCompanyId').val();
-        let typeOfPay = $('#TypeOfPay').val();
-        let reciverId = getReciverId();
-        let senderClientId = $('#senderSelect').val();
-        let coinId = $('#Coins').val();
-        let transactionStatus = $('#TransactionStatus').val();
-        let from = $('#form').val();
-        let to = $('#to').val();
-        let isDelivered = $('#isDelivered').val();
-        let senderCompanyId = $('#senderCompanyId').val();
-        $.get('@Url.Action("InnerTransactionStatementDetailed", "InnerTransaction")',
-            {
-                reciverCompanyId: reciverCompanyId,
-                typeOfPay: typeOfPay,
-                reciverId: reciverId,
-                senderCompanyId: senderCompanyId,
-                senderClientId: senderClientId,
-                coinId: coinId,
-                transactionStatus: transactionStatus,
-                from: from,
-                to: to,
-                isDelivered: isDelivered
-            }
-            , function (data) {
-                console.log(data);
+        //let reciverCompanyId = $('#reciverCompanyId').val();
+        //let typeOfPay = $('#TypeOfPay').val();
+        //let reciverId = getReciverId();
+        //let senderClientId = $('#senderSelect').val();
+        //let coinId = $('#Coins').val();
+        //let transactionStatus = $('#TransactionStatus').val();
+        //let from = $('#from').val();
+        //let to = $('#to').val();
+        //let isDelivered = $('#isDelivered').val();
+        //let senderCompanyId = $('#senderCompanyId').val();
+        if (!$.fn.DataTable.isDataTable(table)) {
+            table.dataTable({
+                'language': dataTableLocalizationArValue(),
+                "serverSide": true,
+                "processing": true,
+                "ajax": {
+                    "url": "@Url.Action("InnerTransactionStatementDetailed", "InnerTransaction")",
+
+                    "type": "POST",
+
+                    "data": function (d) {
+                        d.coinId = $('#Coins').val();
+                        d.reciverCompanyId = $('#reciverCompanyId').val();
+                        d.typeOfPay = $('#TypeOfPay').val();
+                        d.reciverId = getReciverId();
+                        d.senderCompanyId = $('#senderCompanyId').val();
+                        d.senderClientId = $('#senderSelect').val();
+                        
+                        d.transactionStatus = $('#TransactionStatus').val();
+                        d.from = $('#from').val();
+                        d.to = $('#to').val();
+                        d.isDelivered = $('#isDelivered').val();
+                        console.log(d);
+                        return d;
+                    },
+                    "dataFilter": function (data) {
+                        var json = jQuery.parseJSON(data);
+                        json.recordsTotal = json.recordsTotal;
+                        json.recordsFiltered = json.recordsFiltered;
+                        json.data = json.data;
+                        return JSON.stringify(json);
+                    },
+                },
+                "columns": [
+                    { "data": "CoinName",},
+                    { "data": "Amount" },
+                    { "data": "TypeOfPay" },
+                    { "data": "ReciverName" },
+                    { "data": "ReciverAddress" },
+                    { "data": "ReciverPhone" },
+                    { "data": "State" },
+                    { "data": "SenderName" },
+                    { "data": "Date" },
+                    {
+                        "data": "SenderCompany"
+                    },
+                    {
+                        "data": "IsDiliverd", 'render': function (data, type, full, meta) {
+                            if (data == false)
+                                return "غير مسلمة";
+                            return "مسلمة";
+                        }},
+                    { 'data': 'Id'}
+
+                    
+                ]
             });
+        } else {
+            table.DataTable().ajax.reload();
+        }
     }
     function getReciverId() {
         let typeOfPay = $('#TypeOfPay').val();
@@ -246,7 +291,10 @@
             if ($('#normalClientSelect2').val() == "")
                 return null;
             return $('#normalClientSelect2').val();
-        }        
+        }
     }
+    $('.change').change(function () {
+        FillTable();
+    })
 
 </script>
