@@ -221,6 +221,59 @@ namespace BWR.Application.AppServices.Transactions
                     }
                     MaiCompanyBalanceArbitrage(mainCompnayCashe.Where(c => c.CoinId == innerTransacrion.CoinId).First(), innerTransacrion, mainCompanyId, moneyAction);
                 }
+                var date = innerTransacrions.Date;
+                var coinIdCollection = innerTransacrions.Transactions.Select(c => c.CoinId).Distinct().ToList();
+                foreach (var coinId in coinIdCollection)
+                {
+                    var mainCompanyCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == coinId && c.Matched == true && c.CompanyId == mainCompanyId && c.MoenyAction.Date > date).ToList();
+                    foreach (var item in mainCompanyCashFlows)
+                    {
+                        item.Matched = false;
+                        item.UserMatched = null;
+                        item.CompanyUserMatched = null;
+                        _unitOfWork.GenericRepository<CompanyCashFlow>().Update(item);
+                    }
+                }
+                /// delete matching for clients
+                {
+                    var clientTransaction = incomeTransactionCollection.Transactions.Where(c => c.TypeOfPay == TypeOfPay.ClientsReceivables);
+                    var transactionsGroupByCoin = clientTransaction.GroupBy(c => c.CoinId);
+                    foreach (var groupByCoin in transactionsGroupByCoin)
+                    {
+
+                        var transactionsGroupByCoinAndAgent = groupByCoin.GroupBy(c => c.ReciverClientId);
+
+                        foreach (var agentKey in transactionsGroupByCoinAndAgent)
+                        {
+                            var matchedCashFlows = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.Matched == true && c.CoinId == groupByCoin.Key && c.ClientId == agentKey.Key && c.MoenyAction.Date >= innerTransacrions.Date);
+                            foreach (var item in matchedCashFlows)
+                            {
+                                item.Matched = false;
+                                _unitOfWork.GenericRepository<ClientCashFlow>().Update(item);
+                            }
+                        }
+                    }
+                }
+                {
+                    var companyTrasaction = incomeTransactionCollection.Transactions.Where(c => c.TypeOfPay == TypeOfPay.CompaniesReceivables);
+                    var transactionsGroupByCoin = companyTrasaction.GroupBy(c => c.CoinId);
+                    foreach (var groupByCoin in transactionsGroupByCoin)
+                    {
+                        var trnsactionsGroupByCoinandCompany = groupByCoin.GroupBy(c => c.ReceiverCompanyId);
+                        foreach (var companyGroup in trnsactionsGroupByCoinandCompany)
+                        {
+                            var mathcingCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.Matched == true && c.CoinId == groupByCoin.Key && c.CompanyId == companyGroup.Key && c.MoenyAction.Date >= innerTransacrions.Date);
+                            foreach (var item in mathcingCashFlow)
+                            {
+                                item.Matched = false;
+                                item.UserMatched = null;
+                                item.CompanyUserMatched = null;
+                                _unitOfWork.GenericRepository<CompanyCashFlow>().Update(item);
+                            }
+                        }
+                    }
+                }
+
 
                 _unitOfWork.Save();
                 _unitOfWork.Commit();
@@ -368,6 +421,7 @@ namespace BWR.Application.AppServices.Transactions
         {
             try
             {
+
                 _unitOfWork.CreateTransaction();
 
                 var moneyAction = EditTransaction(dto);
@@ -412,17 +466,17 @@ namespace BWR.Application.AppServices.Transactions
         private void DeleteOldCashFlow(MoneyAction moneyAction)
         {
             //Old Company Cash Flows
-            var oldCompanyCashFlows = moneyAction.CompanyCashFlows.ToList();
-            foreach (var oldCompanyCashFlow in oldCompanyCashFlows)
+            var oldCompanyCashFlows = moneyAction.CompanyCashFlows.ToArray();
+            for (int i = 0; i < oldCompanyCashFlows.Length; i++)
             {
-                _unitOfWork.GenericRepository<CompanyCashFlow>().Delete(oldCompanyCashFlow);
+                _unitOfWork.GenericRepository<CompanyCashFlow>().Delete(oldCompanyCashFlows[i]);
             }
 
             //Old Client Cash Flows
-            var oldClientCashFlows = moneyAction.ClientCashFlows.ToList();
-            foreach (var oldClientCashFlow in oldClientCashFlows)
+            var oldClientCashFlows = moneyAction.ClientCashFlows.ToArray();
+            for (int i = 0; i < oldClientCashFlows.Length; i++)
             {
-                _unitOfWork.GenericRepository<ClientCashFlow>().Delete(oldClientCashFlow);
+                _unitOfWork.GenericRepository<ClientCashFlow>().Delete(oldClientCashFlows[i]);
             }
 
             //Old Branch Cash Flows
@@ -786,7 +840,7 @@ namespace BWR.Application.AppServices.Transactions
                         Date = item.MoenyActions.First().Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")),
                         Amount = item.Amount,
                         Coin = item.Coin.Name,
-                        
+
                         Company = item.ReceiverCompany.Name,
                         TransactionStatus = item.TransactionsStatus == TransactionStatus.Notified ? "مبلغ" : item.TransactionsStatus == TransactionStatus.NotNotified ? "غير مبلغ" : "بلا",
                         SenderName = item.SenderClient.FullName,
