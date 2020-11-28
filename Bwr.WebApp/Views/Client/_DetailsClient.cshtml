@@ -121,8 +121,14 @@
                         'columns': [
                             { 'title': 'معرف العملة', 'data': 'CoinId', "visible": false},
                             { 'title': 'العملة', 'data': 'CoinName', "width": "20%", 'searchable': true },
-                            { 'title': 'له', 'data': 'ForHim', "width": "20%", 'searchable': true },
-                            { 'title': 'عليه', 'data': 'OnHim', "width": "20%", 'searchable': true },
+                            {
+                                'title': 'له', 'data': 'ForHim', "width": "20%", 'searchable': true, render: function (data) {
+                                    return Math.abs( data);
+                                }    },
+                            {
+                                'title': 'عليه', 'data': 'OnHim', "width": "20%", 'searchable': true, render: function (data) {
+                                    return Math.abs(data);
+                                }    },
                             { 'title': 'أكبر قيمة دائن', 'data': 'MaxCreditor', "width": "20%", 'searchable': true },
                             { 'title': 'أكبر قيمة مدين', 'data': 'MaxDebit', "width": "20%",'searchable': true },
 

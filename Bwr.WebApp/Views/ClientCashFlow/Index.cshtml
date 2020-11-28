@@ -1,7 +1,7 @@
 ﻿
 @model BWR.Application.Dtos.Client.ClientCashFlow.ClientCashFlowInputDto
 @{
-
+    
     Layout = "";
 }
 <div class="row">
@@ -11,10 +11,11 @@
             @Html.DropDownListFor(model => model.CoinId, new List<SelectListItem>(), new { @class = "form-control", id = "a-flow-coinId" })
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4" >
         <div class="form-group">
             <label class="control-label" for="a-flow-from">من </label>
-            <input type="date" class="form-control" id="a-flow-from" onchange="onChangeDate();" />
+            
+            <input type="date" class="form-control " style="direction:rtl" id="a-flow-from" onchange="onChangeDate();"   placeholder="YYYY-MM-DD"/>
         </div>
     </div>
     <div class="col-md-4">
