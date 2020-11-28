@@ -170,6 +170,7 @@
                     init: function () {
                         dt = $('#treasuryMoneyActionDataTable').DataTable({
                             'language': dataTableLocalizationArValue(),
+                            "ordering": false,
                             'ajax': {
                                 'url': '@Url.Action("Get","TreasuryMoneyAction")',
                                 'method': 'POST',
@@ -183,8 +184,8 @@
 
                                 {'title': 'له','data': "Amount",'searchable': true,
                                     render: function (data, type, row) {
-                                        if (data > 0) {
-                                            return data;
+                                        if (data < 0) {
+                                            return Math.abs(Number(data));
                                         } else {
                                             return '';
                                         }
@@ -192,8 +193,8 @@
                                 },
                                 {'title': 'عليه','data': "Amount",'searchable': true,
                                     render: function (data, type, row) {
-                                        if (data < 0) {
-                                            return data * -1;
+                                        if (data > 0) {
+                                            return data ;
                                         } else {
                                             return '';
                                         }

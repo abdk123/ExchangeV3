@@ -243,6 +243,14 @@ namespace BWR.Application.AppServices.Transactions
 
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(companyCashFlow);
                 _unitOfWork.Save();
+                var matchedCompanyCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == companyCashFlow.CompanyId && c.CoinId == companyCashFlow.CoinId && c.Matched == true && c.MoenyAction.Date > companyCashFlow.MoenyAction.Date);
+                foreach (var item in matchedCompanyCashFlow)
+                {
+                    item.Matched = false;
+                    item.UserMatched = null;
+                    _unitOfWork.GenericRepository<CompanyCashFlow>().Update(item);
+                    _unitOfWork.Save();
+                }
                 #endregion
 
                 #region Treasury Cash
@@ -256,7 +264,7 @@ namespace BWR.Application.AppServices.Transactions
                 #endregion
 
                 #region Treasury Money Action
-                
+
                 var truseryMoneyAction = new TreasuryMoneyAction()
                 {
                     Total = treasuryCash.Total,
@@ -324,34 +332,10 @@ namespace BWR.Application.AppServices.Transactions
                     CreatedBy = _appSession.GetUserName()
                 };
 
+
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
                 #endregion
 
-                #region Branch Cash
-                //var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(x => x.BranchId == BranchHelper.Id && x.CoinId == dto.CoinId).FirstOrDefault();
-                //if (branchCash != null)
-                //{
-                //    branchCash.Total += dto.Amount + dto.OurComission;
-                //    branchCash.ModifiedBy = _appSession.GetUserName();
-                //    _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
-                //}
-
-                #endregion
-
-                #region Branch Cash Flow
-                //var branchCashFlow = new BranchCashFlow()
-                //{
-                //    BranchId = BranchHelper.Id,
-                //    CreatedBy = _appSession.GetUserName(),
-                //    MoenyAction = moneyAction,
-                //    TreasuryId = treasuryId,
-                //    CoinId = dto.CoinId,
-                //    Amount = dto.Amount + dto.OurComission,
-                //    Total = branchCash.Total
-                //};
-
-                //_unitOfWork.GenericRepository<BranchCashFlow>().Insert(branchCashFlow);
-                #endregion
 
                 #region Company Cash
                 var companyCash = _unitOfWork.GenericRepository<CompanyCash>().FindBy(x => x.CompanyId == dto.SenderCompanyId && x.CoinId == dto.CoinId).FirstOrDefault();
@@ -377,6 +361,17 @@ namespace BWR.Application.AppServices.Transactions
                 };
 
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(companyCashFlow);
+                _unitOfWork.Save();
+
+                var matchedCompanyCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == companyCashFlow.CompanyId && c.CoinId == companyCashFlow.CoinId && c.Matched == true && c.MoenyAction.Date > companyCashFlow.MoenyAction.Date);
+                foreach (var item in matchedCompanyCashFlow)
+                {
+                    item.Matched = false;
+                    item.UserMatched = null;
+                    item.CompanyUserMatched = null;
+                    _unitOfWork.GenericRepository<CompanyCashFlow>().Update(item);
+                    _unitOfWork.Save();
+                }
                 #endregion
 
                 #region Client Cash
@@ -407,8 +402,16 @@ namespace BWR.Application.AppServices.Transactions
                 //{
                 //    clientCashFlow.Amount -= dto.SenderCleirntCommission.Value;
                 //}
-                _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlow);
 
+                _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlow);
+                _unitOfWork.GenericRepository<ClientCashFlow>().Save();
+                var matchadCashFlows = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.MoenyAction.Date > moneyAction.Date && c.Matched == true).ToList();
+                foreach (var item in matchadCashFlows)
+                {
+                    item.Matched = false;
+                    _unitOfWork.GenericRepository<ClientCashFlow>().Update(item);
+                    _unitOfWork.Save();
+                }
                 #endregion
 
                 _unitOfWork.Save();
@@ -422,6 +425,7 @@ namespace BWR.Application.AppServices.Transactions
                         return false;
                     }
                 }
+
 
                 return true;
             }
@@ -437,6 +441,7 @@ namespace BWR.Application.AppServices.Transactions
         {
             try
             {
+
                 _unitOfWork.CreateTransaction();
                 var treasuryId = _appSession.GetCurrentTreasuryId();
                 var outerTransaction = Mapper.Map<OuterTransactionInsertDto, Transaction>(dto);
@@ -484,6 +489,16 @@ namespace BWR.Application.AppServices.Transactions
                 };
 
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(senderCompanyCashFlow);
+                _unitOfWork.Save();
+                var senderCompanyMatchedCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == senderCompanyCashFlow.CompanyId && c.CoinId == senderCompanyCashFlow.CoinId && c.Matched == true && c.MoenyAction.Date > moneyAction.Date);
+                foreach (var item in senderCompanyMatchedCashFlows)
+                {
+                    item.Matched = false;
+                    item.UserMatched = null;
+                    item.CompanyUserMatched = null;
+                    _unitOfWork.GenericRepository<CompanyCashFlow>().Update(item);
+                    _unitOfWork.Save();
+                }
                 #endregion
 
                 #region Receiver Company Cash
@@ -513,7 +528,19 @@ namespace BWR.Application.AppServices.Transactions
 
                 receiverCompanyCashFlow.Amount += dto.ReceiverCompanyComission.Value;
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(receiverCompanyCashFlow);
+
+                var reciverCompanyMatchedCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == receiverCompanyCashFlow.CompanyId && c.CoinId == receiverCompanyCash.CoinId && c.Matched == true && c.MoenyAction.Date > moneyAction.Date);
+                foreach (var item in reciverCompanyMatchedCashFlows)
+                {
+                    item.Matched = false;
+                    item.UserMatched = null;
+                    item.CompanyUserMatched = null;
+                    _unitOfWork.GenericRepository<CompanyCashFlow>().Update(item);
+                    _unitOfWork.Save();
+                }
+
                 #endregion
+
 
                 _unitOfWork.Save();
                 _unitOfWork.Commit();
@@ -579,7 +606,7 @@ namespace BWR.Application.AppServices.Transactions
                 outerTransaction.Created = oldCreated;
                 outerTransaction.CreatedBy = oldCreatedBy;
 
-                
+
                 _unitOfWork.GenericRepository<Transaction>().Update(outerTransaction);
 
                 #region Money Action
@@ -592,9 +619,14 @@ namespace BWR.Application.AppServices.Transactions
 
                 var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().GetById(moneyActionDto.Id);
                 moneyAction.ModifiedBy = _appSession.GetUserName();
+                DateTime lesserDate = moneyAction.Date;
                 if (moneyActionDto.Date != null)
                 {
                     moneyAction.Date = moneyActionDto.Date.Value;
+                    if (moneyAction.Date < lesserDate)
+                    {
+                        lesserDate = moneyAction.Date;
+                    }
                 }
 
                 //Old Company Cash Flows
@@ -671,7 +703,17 @@ namespace BWR.Application.AppServices.Transactions
                 };
 
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(newCompanyCashFlow);
+                _unitOfWork.Save();
 
+                var matchedCompanyCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == newCompanyCashFlow.CompanyId && c.CoinId == newCompanyCashFlow.CoinId && c.Matched == true && c.MoenyAction.Date >= lesserDate);
+                foreach (var item in matchedCompanyCashFlow)
+                {
+                    item.Matched = false;
+                    item.UserMatched = null;
+                    item.CompanyUserMatched = null;
+                    _unitOfWork.GenericRepository<CompanyCashFlow>().Update(item);
+                    _unitOfWork.Save();
+                }
                 #endregion
 
                 #region Treasury Money Action
@@ -760,7 +802,7 @@ namespace BWR.Application.AppServices.Transactions
                 outerTransaction.ModifiedBy = _appSession.GetUserName();
 
                 _unitOfWork.GenericRepository<Transaction>().Update(outerTransaction);
-                
+
 
                 #region Money Action
 
@@ -772,11 +814,15 @@ namespace BWR.Application.AppServices.Transactions
                 }
 
                 var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().GetById(moneyActionDto.Id);
+                var lesserDate = moneyAction.Date;
                 if (moneyActionDto.Date != null && moneyAction != null)
                 {
                     moneyAction.ModifiedBy = _appSession.GetUserName();
                     moneyAction.Date = moneyActionDto.Date.Value;
-
+                    if (lesserDate > moneyAction.Date)
+                    {
+                        lesserDate = moneyAction.Date;
+                    }
                     //Old Company Cash Flows
                     var oldCompanyCashFlows = moneyAction.CompanyCashFlows.ToList();
                     foreach (var oldCompanyCashFlow in oldCompanyCashFlows)
@@ -816,7 +862,7 @@ namespace BWR.Application.AppServices.Transactions
                 #endregion
 
                 #region Company Cash Flow
-                
+
                 var companyCashFlow = new CompanyCashFlow()
                 {
                     CreatedBy = _appSession.GetUserName(),
@@ -828,6 +874,16 @@ namespace BWR.Application.AppServices.Transactions
                 };
 
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(companyCashFlow);
+                _unitOfWork.Save();
+                var matchedCompanyCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == companyCashFlow.CompanyId && c.CoinId == companyCashFlow.CoinId && c.Matched == true && c.MoenyAction.Date >= lesserDate);
+                foreach (var item in matchedCompanyCashFlow)
+                {
+                    item.Matched = false;
+                    item.UserMatched = null;
+                    item.CompanyUserMatched = null;
+                    _unitOfWork.GenericRepository<CompanyCashFlow>().Update(item);
+                    _unitOfWork.Save();
+                }
                 #endregion
 
                 #region Client Cash Flow
@@ -847,13 +903,19 @@ namespace BWR.Application.AppServices.Transactions
 
                 if (dto.RecivingAmount != null && dto.RecivingAmount != 0)
                 {
-                    bool response = EditReciveFromClientForMainBoxMethond(dto,oldRecivingAmount,oldCoinId,oldTreasuryId,oldSenderClientId,oldSenderClientComission);
+                    bool response = EditReciveFromClientForMainBoxMethond(dto, oldRecivingAmount, oldCoinId, oldTreasuryId, oldSenderClientId, oldSenderClientComission);
                     if (!response)
                     {
                         return false;
                     }
                 }
-
+                var matchedClienCashFlows = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.CoinId == clientCashFlow.CoinId && c.ClientId == clientCashFlow.ClientId && c.MoenyAction.Date >= lesserDate && c.Matched == true).ToList();
+                foreach (var item in matchedClienCashFlows)
+                {
+                    item.Matched = false;
+                    _unitOfWork.GenericRepository<ClientCashFlow>().Update(item);
+                    _unitOfWork.Save();
+                }
                 _unitOfWork.Save();
                 _unitOfWork.Commit();
 
@@ -913,6 +975,7 @@ namespace BWR.Application.AppServices.Transactions
                 _unitOfWork.GenericRepository<Transaction>().Update(outerTransaction);
 
                 #region Monet Action
+
                 var moneyActionDto = dto.MoenyActions.Where(x => x.BoxActionsId == null).FirstOrDefault();
                 if (moneyActionDto == null)
                 {
@@ -921,11 +984,13 @@ namespace BWR.Application.AppServices.Transactions
                 }
 
                 var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().GetById(moneyActionDto.Id);
+                var lesserDate = moneyAction.Date;
                 if (moneyActionDto.Date != null && moneyAction != null)
                 {
                     moneyAction.ModifiedBy = _appSession.GetUserName();
                     moneyAction.Date = moneyActionDto.Date.Value;
-
+                    if (lesserDate < moneyAction.Date)
+                        lesserDate = moneyAction.Date;
                     //Old Company Cash Flows
                     var oldCompanyCashFlows = moneyAction.CompanyCashFlows.ToList();
                     foreach (var oldCompanyCashFlow in oldCompanyCashFlows)
@@ -974,7 +1039,7 @@ namespace BWR.Application.AppServices.Transactions
                 #endregion
 
                 #region Sender Company Cash Flow
-                
+
                 var companyCashFlow = new CompanyCashFlow()
                 {
                     CreatedBy = _appSession.GetUserName(),
@@ -989,7 +1054,7 @@ namespace BWR.Application.AppServices.Transactions
                 #endregion
 
                 #region Receiver Company Cash Flow
-                
+
                 var receiverCompanyCashFlow = new CompanyCashFlow()
                 {
                     CreatedBy = _appSession.GetUserName(),
@@ -997,15 +1062,23 @@ namespace BWR.Application.AppServices.Transactions
                     MoenyAction = moneyAction,
                     CoinId = dto.CoinId,
                     //Amount = (dto.Amount + dto.OurComission) * -1,
-                    Amount = dto.Amount*-1,
+                    Amount = dto.Amount * -1,
                     Matched = false
                 };
 
                 receiverCompanyCashFlow.Amount += dto.ReceiverCompanyComission.Value;
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(receiverCompanyCashFlow);
                 #endregion
-
-
+                var senderCompanyMatchedCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.MoenyAction.Date >= lesserDate && c.Matched == true && c.CoinId == companyCashFlow.CoinId && c.CompanyId == companyCashFlow.CompanyId).ToList();
+                var reciverCompanyMatchedCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.MoenyAction.Date >= lesserDate && c.Matched == true && c.CoinId == companyCashFlow.CoinId && c.CompanyId == receiverCompanyCashFlow.CompanyId).ToList(); 
+                foreach (var item in senderCompanyMatchedCashFlow.Union(reciverCompanyMatchedCashFlow))
+                {
+                    item.Matched = false;
+                    item.UserMatched = null;
+                    item.CompanyUserMatched = null;
+                    _unitOfWork.GenericRepository<CompanyCashFlow>().Update(item);
+                    _unitOfWork.Save();
+                }
                 _unitOfWork.Save();
                 _unitOfWork.Commit();
 
@@ -1270,7 +1343,7 @@ namespace BWR.Application.AppServices.Transactions
 
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlow);
 
-                
+
 
                 return true;
             }
@@ -1280,6 +1353,17 @@ namespace BWR.Application.AppServices.Transactions
                 return false;
             }
         }
+        /// <summary>
+        /// هي منشان شو مكتوبة و غير مستعملة 
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="oldRecivingAmount"></param>
+        /// <param name="oldRecivingAmount2"></param>
+        /// <param name="oldCoinId"></param>
+        /// <param name="oldTreasuryId"></param>
+        /// <param name="oldSenderCompanyId"></param>
+        /// <param name="oldSenderCompanyCommission"></param>
+        /// <returns>boooooooooooooooooooooooooooooooooooooooooool</returns>
 
         private bool EditReciveFromCompanyForMainBoxMethond(OuterTransactionUpdateDto dto, decimal oldRecivingAmount, decimal oldRecivingAmount2, int oldCoinId, int oldTreasuryId, int oldSenderCompanyId, decimal oldSenderCompanyCommission)
         {
@@ -1522,7 +1606,7 @@ namespace BWR.Application.AppServices.Transactions
             {
                 _unitOfWork.GenericRepository<ClientCashFlow>().Delete(oldClientCashFlows[i]);
             }
-                
+
 
             //Old Branch Cash Flows
             var oldBranchCashFlows = moneyAction.BranchCashFlows.ToArray();

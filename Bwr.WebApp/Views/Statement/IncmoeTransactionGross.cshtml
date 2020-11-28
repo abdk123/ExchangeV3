@@ -91,7 +91,10 @@
                     { "data": "Date" },
                     { "data": "Amount" },
                     { "data": "TransactionCount" },
-                    { "data": "Id" },
+                    {
+                        "data": "Id", render: function (data) {
+                            return '<a class="btn btn-primary" href="@Url.Action("EditTransactionCollection", "Transaction")?collectionId=' + data + '"> تفاصيل</a>';
+                        }    },
                 ]
 
             });

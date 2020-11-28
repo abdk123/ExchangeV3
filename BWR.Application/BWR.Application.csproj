@@ -194,6 +194,7 @@
     <Compile Include="Dtos\Statement\ConclusionDto.cs" />
     <Compile Include="Dtos\Statement\ExpensesDetailDto.cs" />
     <Compile Include="Dtos\Statement\InnerTransactionStatementDetailedDto.cs" />
+    <Compile Include="Dtos\Transaction\InnerTransaction\IncomeTransactionCollectionDetailsDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\IncomeTransactionCollectionDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionDto.cs" />
     <Compile Include="Dtos\Transaction\InnerTransaction\InnerTransactionInsertDto.cs" />

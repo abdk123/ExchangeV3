@@ -1,9 +1,9 @@
 ﻿@model BWR.Application.Dtos.Company.CompanyCashFlow.CompanyCashFlowInputDto
 @{
-                /**/
+    /**/
 
 
-                Layout = "";
+    Layout = "";
 }
 <div class="row">
     <div class="col-md-4">
@@ -62,10 +62,21 @@
                         }
                     },
                     'columns': [
-                        { 'title': 'مطابقة', 'data': 'Id', 'searchable': true },
+                        {
+                            'title': 'مطابقة',
+                            'data': "Matched",
+                            render: function (data, type, row) {
+                                if (row.Id != null) {
+                                    return generateCheckBox(data, type, row);
+                                }
+
+                                return '';
+                            },
+                            className: "dt-body-center"
+                        },
                         {
                             'title': 'الرصيد', 'data': "Balance", 'searchable': true,
-                            render: function (data, type, row) {        
+                            render: function (data, type, row) {
                                 if (data > 0) {
 
                                     return 'له/' + numberWithCommas(data);
@@ -123,7 +134,7 @@
                         { 'title': 'المرسل', 'data': 'SenderName', 'searchable': true },
                         { 'title': 'الجهة', 'data': 'CountryName', 'searchable': true },
                         { 'title': 'النوع', 'data': 'Type', 'searchable': true },
-                        { 'title': 'الرقم', 'data': 'Number', 'searchable': true },
+                        //{ 'title': 'الرقم', 'data': 'Number', 'searchable': true },
                         { 'title': 'ملاحظات', 'data': 'Note', 'searchable': true },
                         {
                             'title': 'تفاصيل',
@@ -137,6 +148,7 @@
                         }
                     ],
                     'lengthMenu': [10, 25, 50, 100],
+
                 });
             },
 
@@ -153,10 +165,49 @@
         $('#a-flow-coinId').on("change", function (e) {
             $inputDto = getData();
             $companyCashFlowDataTable.refresh();
+
+            setTimeout(function () {
+
+                $('input.a-coins-checkbox').iCheck({
+                    checkboxClass: 'icheckbox_flat-green',
+                    radioClass: 'iradio_flat-green'
+                });
+
+                initialCheckBoxes();
+
+                $('input.a-coins-checkbox').on('ifChecked', function (e) {
+                    var eleId = e.currentTarget.id;
+                    var id = eleId.replace('check-', '');
+                    matchOrUnMatchCompanyCashFlow(id, true);
+                });
+
+                $('input.a-coins-checkbox').on('ifUnchecked', function (e) {
+                    var eleId = e.currentTarget.id;
+                    var id = eleId.replace('check-', '');
+                    matchOrUnMatchCompanyCashFlow(id, false);
+                });
+
+            }, 500);
+
+
+
         });
 
+        
 
     });
+
+    function matchOrUnMatchCompanyCashFlow(id,value) {
+        
+        $.post('@Url.Action("ConvertMatchingStatus", "CompanyCashFlow")',
+            { CompanyCashFlowId: id, Matched: value}, function (data) {
+                if (data.Success) {
+                    toastr.success('تم التعديل بنجاح')
+                } else {
+                    toastr.error('حدثت مشكلة اثناء التعديل')
+                }
+        });
+    }
 
     function getData() {
 
@@ -198,6 +249,27 @@
             return data[0].id;
         } catch{
             return 0;
+        }
+
+    }
+
+    function generateCheckBox(data, type, row) {
+
+        return '<input type="checkbox" id="check-' + row.Id + '" class="flat a-coins-checkbox" />';
+
+    }
+
+    function initialCheckBoxes() {
+        var tableData = $('#companyCashFlowDataTable').DataTable().data();
+        for (var i = 0; i < tableData.length; i++) {
+            if (tableData[i].Id != null) {
+                var selector = '#check-' + tableData[i].Id;
+
+                var value = tableData[i].Matched;
+                if (value == true) {
+                    $(selector).iCheck('check');
+                }
+            }
         }
 
     }

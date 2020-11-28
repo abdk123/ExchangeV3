@@ -56,7 +56,9 @@
                     @Html.DisplayFor(modelItem => item.Coin.Name)
                 </td>
                 <td>
-                    @{ 
+
+                    @{
+
                         var moenyActionsId = string.Empty;
                         if (item.MoenyActions.Any())
                         {
@@ -67,13 +69,15 @@
                         }
 
                     }
-                    @Html.Display(moenyActionsId)
+                    @{
+                        Write(moenyActionsId);
+                    }
                 </td>
                 <td>
 
-                    @if (item.Created != null)
+                    @if (item.MoenyActions.Any())
                     {
-                        Write(item.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")));
+                        Write(item.MoenyActions.First().Date.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")));
                     }
 
                 </td>
@@ -91,25 +95,46 @@
                     @Html.DisplayFor(modelItem => item.SenderCompany.Name)
                 </td>
                 <td>
-                    @*@Html.DisplayFor(modelItem => item.TypeOfPay.ToString())*@
+                    @{
+                        switch (item.TypeOfPay)
+                        {
+                            case BWR.Domain.Model.Settings.TypeOfPay.Cash:
+                                {
+                                    Write("نقدي");
+                                }
+                                break;
+                            case BWR.Domain.Model.Settings.TypeOfPay.ClientsReceivables:
+                                {
+                                    Write("ذمم عملاء");
+                                }
+                                break;
+                            case BWR.Domain.Model.Settings.TypeOfPay.CompaniesReceivables:
+                                {
+                                    Write("ذمم شكرات");
+                                }
+                                break;
+                        }
+                    }
                 </td>
                 <td>
                     <a href="@Url.Action("OuterTransactionDetails","OuterTransaction")?transactionId=@item.Id" class="btn btn-primary">عرض </a>
-                    
+
                 </td>
             </tr>
         }
     </tbody>
 </table>
-@Html.PagedListPager(Model,Page=>Url.Action("Index","OuterTransaction",
-    new {
-        Page ,
-        typeOfPay  = Request.QueryString["typeOfPay"],
-        coinId  = Request.QueryString["coinId"],
-        countryId  =Request.QueryString["countryId"],
+@Html.PagedListPager(Model, Page => Url.Action("Index", "OuterTransaction",
+    new
+     {
+        Page,
+        typeOfPay = Request.QueryString["typeOfPay"],
+        coinId = Request.QueryString["coinId"],
+        countryId = Request.QueryString["countryId"],
         receiverClientId = Request.QueryString["receiverClientId"],
-        senderClientId  = Request.QueryString["senderClientId"],
+        senderClientId = Request.QueryString["senderClientId"],
         from = Request.QueryString["from"],
-        to = Request.QueryString["to"]}),
+        to = Request.QueryString["to"]
+                        }),
 
-    new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayItemSliceAndTotal=true})
+    new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayItemSliceAndTotal = true })

@@ -54,6 +54,20 @@
 }
 
 <script>
+    let balcnesTable = $('#balcnesTable').DataTable({
+        "ordering": true,
+        "columnDefs": [{
+            "orderable": false, targets: "no-sort"
+        }],
+        "language": {
+            "search": "البحث",
+            "info": "عرض _START_ إلى _END_ من _كل_ العناصر",
+            "emptyTable": "لا يوجد اي عناصر للعرض",
+            "infoEmpty": "لا يوجد اي عناصر",
+            "zeroRecords": "لا يوجد اي عناصر مطابقة",
+            "infoFiltered": "",
+        },
+    });
     var parmas;
     var coinId;
     var to;
@@ -64,10 +78,11 @@
         
         coinId = '@ViewBag.CoinId';
         to = getDate('@ViewBag.ToDate');
+        
         fillTable(coinId, to);
         fillCoinSelect();
         toDate.val(to);
-    });
+    })();
     
     coinSelect.change(function () {
         fillTable(coinSelect.val(), toDate.val());
@@ -83,6 +98,8 @@
                 to: to
             },
             function (data) {
+                console.log(data);
+                
                 var balances = data.Balances;
 
                 balcnesTable.rows()
@@ -90,6 +107,7 @@
                     .draw();
                 for (var i = 0; i < balances.length; i++) {
                     var status = ""
+                    console.log(balances[i]);
                     if (balances[i].Total > 0) {
                         status = "له";
                     } else if (balances[i].Total < 0) {
@@ -117,20 +135,7 @@
             }
         )
     }
-    var balcnesTable = $('#balcnesTable').DataTable({
-        "ordering": true,
-        "columnDefs": [{
-            "orderable": false, targets: "no-sort"
-        }],
-        "language": {
-            "search": "البحث",
-            "info": "عرض _START_ إلى _END_ من _كل_ العناصر",
-            "emptyTable": "لا يوجد اي عناصر للعرض",
-            "infoEmpty": "لا يوجد اي عناصر",
-            "zeroRecords": "لا يوجد اي عناصر مطابقة",
-            "infoFiltered": "",
-        },
-    });
+    
 
     function getDate(str) {
         

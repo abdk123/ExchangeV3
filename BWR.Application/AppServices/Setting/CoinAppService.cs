@@ -250,7 +250,7 @@ namespace BWR.Application.AppServices.Setting
 
         private void CreateTreasuryCashForAllTreasures(Coin coin)
         {
-            var treasuries = _unitOfWork.GenericRepository<Treasury>().GetAll();
+            var treasuries = _unitOfWork.GenericRepository<Treasury>().GetAll();  
             foreach (var treasury in treasuries)
             {
                 var treasuryCash = new TreasuryCash()

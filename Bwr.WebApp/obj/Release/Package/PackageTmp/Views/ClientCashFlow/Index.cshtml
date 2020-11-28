@@ -61,7 +61,18 @@
                         }
                     },
                     'columns': [
-                        { 'title': 'مطابقة', 'data': 'Id', 'searchable': true },
+                        {
+                            'title': 'مطابقة',
+                            'data': "Matched",
+                            render: function (data, type, row) {
+                                if (row.Id != null) {
+                                    return generateCheckBox(data, type, row);
+                                }
+
+                                return '';
+                            },
+                            className: "dt-body-center"
+                        },
                         {
                             'title': 'الرصيد', 'data': "Balance", 'searchable': true,
                             render: function (data, type, row) {
@@ -153,6 +164,29 @@
 
             $inputDto = getData();
             $clientCashFlowDataTable.refresh();
+
+            setTimeout(function () {
+
+                $('input.a-coins-checkbox').iCheck({
+                    checkboxClass: 'icheckbox_flat-green',
+                    radioClass: 'iradio_flat-green'
+                });
+
+                initialCheckBoxes();
+
+                $('input.a-coins-checkbox').on('ifChecked', function (e) {
+                    var eleId = e.currentTarget.id;
+                    var id = eleId.replace('check-', '');
+                    matchOrUnMatchClientCashFlow(id, true);
+                });
+
+                $('input.a-coins-checkbox').on('ifUnchecked', function (e) {
+                    var eleId = e.currentTarget.id;
+                    var id = eleId.replace('check-', '');
+                    matchOrUnMatchClientCashFlow(id, false);
+                });
+
+            }, 500);
         });
 
 
@@ -206,4 +240,39 @@
         $inputDto = getData();
         $clientCashFlowDataTable.refresh();
     }
+
+    function generateCheckBox(data, type, row) {
+
+        return '<input type="checkbox" id="check-' + row.Id + '" class="flat a-coins-checkbox" />';
+
+    }
+
+    function initialCheckBoxes() {
+        debugger;
+        var tableData = $('#clientCashFlowDataTable').DataTable().data();
+        for (var i = 0; i < tableData.length; i++) {
+            if (tableData[i].Id != null) {
+                var selector = '#check-' + tableData[i].Id;
+
+                var value = tableData[i].Matched;
+                if (value == true) {
+                    $(selector).iCheck('check');
+                }
+            }
+        }
+
+    }
+
+    function matchOrUnMatchClientCashFlow(id,value) {
+        
+        $.post('@Url.Action("ConvertMatchingStatus", "ClientCashFlow")',
+            { ClientCashFlowId: id, Matched: value}, function (data) {
+                if (data.Success) {
+                    toastr.success('تم التعديل بنجاح')
+                } else {
+                    toastr.error('حدثت مشكلة اثناء التعديل')
+                }
+        });
+    }
+
 </script>
