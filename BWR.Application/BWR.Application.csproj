@@ -128,6 +128,7 @@
     <Compile Include="Dtos\Branch\BranchDto.cs" />
     <Compile Include="Dtos\Branch\BranchHelper.cs" />
     <Compile Include="Dtos\Client\ClientAttatchmentDto.cs" />
+    <Compile Include="Dtos\Client\ClientCashFlow\ClientBalanceDto.cs" />
     <Compile Include="Dtos\Client\ClientCashFlow\ClientCashFlowInputDto.cs" />
     <Compile Include="Dtos\Client\ClientCashFlow\ClientCashFlowOutputDto.cs" />
     <Compile Include="Dtos\Client\ClientCashFlow\ClientMatchDto.cs" />
@@ -145,7 +146,9 @@
     <Compile Include="Dtos\Common\BoxActionDto.cs" />
     <Compile Include="Dtos\Common\CashFlowDto.cs" />
     <Compile Include="Dtos\Common\ExchangeDto.cs" />
+    <Compile Include="Dtos\Common\ExchangeInputDto.cs" />
     <Compile Include="Dtos\Common\Select2Dto.cs" />
+    <Compile Include="Dtos\Company\CompanyCashFlow\CompanyBalanceDto.cs" />
     <Compile Include="Dtos\Company\CompanyCashFlow\CompanyMatchDto.cs" />
     <Compile Include="Dtos\Company\CompanySenderDto.cs" />
     <Compile Include="Dtos\MoneyAction\MoneyActionDetailDto.cs" />

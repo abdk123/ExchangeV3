@@ -1,4 +1,5 @@
 ﻿using BWR.Application.Dtos.Branch;
+using BWR.Application.Dtos.Common;
 using BWR.Application.Interfaces.Common;
 using BWR.Application.Interfaces.Shared;
 using BWR.Domain.Model.Branches;
@@ -27,17 +28,17 @@ namespace BWR.Application.AppServices.Common
             _appSession = appSession;
         }
 
-        public bool ExchangeForBranch(int sellingCoinId, int purchasingCoinId, decimal firstAmount)
+        public bool ExchangeForBranch(ExchangeInputDto input)
         {
             try
             {
                 int treasuryId = _appSession.GetCurrentTreasuryId();
-                var secondCoinAmount = CalcForFirstCoin(sellingCoinId, purchasingCoinId, firstAmount);
+                var firstAmount = input.ActionType == 1 ? -input.AmountOfFirstCoin : input.AmountOfFirstCoin;
+                var secondAmount = input.ActionType == 1 ? input.AmoutOfSecondCoin : -input.AmoutOfSecondCoin;
 
                 var mainCoin = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.IsMainCoin == true).FirstOrDefault();
-                var firstCoinExchange = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.CoinId == sellingCoinId).FirstOrDefault();
-                var secoundCoinExchange = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.CoinId == purchasingCoinId).FirstOrDefault();
-
+                var firstCoinExchange = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.CoinId == input.FirstCoinId).FirstOrDefault();
+                var secoundCoinExchange = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.CoinId == input.SecondCoinId).FirstOrDefault();
 
                 _unitOfWork.CreateTransaction();
 
@@ -45,10 +46,10 @@ namespace BWR.Application.AppServices.Common
                 var exchange = new Exchange()
                 {
                     BranchId = BranchHelper.Id,
-                    FirstCoinId = sellingCoinId,
-                    SecoundCoinId = purchasingCoinId,
-                    AmountOfFirstCoin = firstAmount,
-                    AmoutOfSecoundCoin = secondCoinAmount,
+                    FirstCoinId = input.FirstCoinId,
+                    SecoundCoinId = input.SecondCoinId,
+                    AmountOfFirstCoin = input.AmountOfFirstCoin,
+                    AmoutOfSecoundCoin = input.AmoutOfSecondCoin,
                     MainCoinId = mainCoin.CoinId,
                     FirstCoinExchangePriceWithMainCoin = firstCoinExchange.ExchangePrice,
                     FirstCoinSellingPriceWithMainCoin = firstCoinExchange.SellingPrice,
@@ -59,43 +60,28 @@ namespace BWR.Application.AppServices.Common
                 };
                 _unitOfWork.GenericRepository<Exchange>().Insert(exchange);
 
-
-                var branchCaches = _unitOfWork.GenericRepository<BranchCash>();
-                var branchCashSellingCoin = branchCaches.FindBy(c => c.CoinId == sellingCoinId).FirstOrDefault();
-                branchCashSellingCoin.Total -= firstAmount;
-                _unitOfWork.GenericRepository<BranchCash>().Update(branchCashSellingCoin);
-
-
-                var branchCashpurhesCoin = branchCaches.FindBy(c => c.CoinId == purchasingCoinId).FirstOrDefault();
-                branchCashpurhesCoin.Total += secondCoinAmount;
-                _unitOfWork.GenericRepository<BranchCash>().Update(branchCashpurhesCoin);
-
-
-
                 var moneyAction = new MoneyAction()
                 {
-                    ExchangeId = exchange.Id
+                    ExchangeId = exchange.Id,
+                    Date = input.Date
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
+                
                 var branchCashFlowForFirstCoin = new BranchCashFlow()
                 {
                     BranchId = BranchHelper.Id,
                     MoenyAction = moneyAction,
-                    CoinId = sellingCoinId,
-                    Total = branchCashSellingCoin.Total,
-                    Amount = -firstAmount,
+                    CoinId = input.FirstCoinId,
+                    Amount = firstAmount,
                     TreasuryId = treasuryId,
                 };
                 _unitOfWork.GenericRepository<BranchCashFlow>().Insert(branchCashFlowForFirstCoin);
-                var sellingCoinTreasuryCash = _unitOfWork.GenericRepository<TreasuryCash>().FindBy(C => C.TreasuryId == treasuryId && C.CoinId == sellingCoinId).FirstOrDefault();
-                sellingCoinTreasuryCash.Total -= firstAmount;
-                _unitOfWork.GenericRepository<TreasuryCash>().Update(sellingCoinTreasuryCash);
+                
                 TreasuryMoneyAction sellingCoinTreasuryMoeyAction = new TreasuryMoneyAction()
                 {
-                    Amount = -firstAmount,
-                    CoinId = sellingCoinId,
+                    Amount = firstAmount,
+                    CoinId = input.FirstCoinId,
                     TreasuryId = treasuryId,
-                    Total = sellingCoinTreasuryCash.Total,
                     BranchCashFlow = branchCashFlowForFirstCoin,
                 };
                 _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(sellingCoinTreasuryMoeyAction);
@@ -105,8 +91,8 @@ namespace BWR.Application.AppServices.Common
                     var mainTruseryMoneyAction = new TreasuryMoneyAction()
                     {
                         TreasuryId = mainTreasuryId,
-                        Amount = -firstAmount,
-                        CoinId = sellingCoinId,
+                        Amount = firstAmount,
+                        CoinId = input.FirstCoinId,
                         BranchCashFlow = branchCashFlowForFirstCoin,
                         CreatedBy = _appSession.GetUserName()
                     };
@@ -114,27 +100,22 @@ namespace BWR.Application.AppServices.Common
                     _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyAction);
                 }
 
-
+                
                 var branChCashFlowForSecoundCoin = new BranchCashFlow()
                 {
                     BranchId = BranchHelper.Id,
-                    CoinId = purchasingCoinId,
+                    CoinId = input.SecondCoinId,
                     MonyActionId = moneyAction.Id,
-                    Total = branchCashpurhesCoin.Total,
-                    Amount = secondCoinAmount,
+                    Amount = secondAmount,
                     TreasuryId = treasuryId,
                 };
                 _unitOfWork.GenericRepository<BranchCashFlow>().Insert(branChCashFlowForSecoundCoin);
 
-                var secoundCoinTreasuryCash = _unitOfWork.GenericRepository<TreasuryCash>().FindBy(C => C.TreasuryId == treasuryId && C.CoinId == sellingCoinId).FirstOrDefault();
-                secoundCoinTreasuryCash.Total += secondCoinAmount;
-                _unitOfWork.GenericRepository<TreasuryCash>().Update(secoundCoinTreasuryCash);
                 TreasuryMoneyAction secoundCoinTreasuryMoeyAction = new TreasuryMoneyAction()
                 {
-                    Amount = +secondCoinAmount,
-                    CoinId = purchasingCoinId,
+                    Amount = secondAmount,
+                    CoinId = input.SecondCoinId,
                     TreasuryId = treasuryId,
-                    Total = secoundCoinTreasuryCash.Total,
                     BranchCashFlow = branChCashFlowForSecoundCoin,
                 };
                 _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(secoundCoinTreasuryMoeyAction);
@@ -144,9 +125,9 @@ namespace BWR.Application.AppServices.Common
                     var mainTruseryMoneyActionSecoundCoin = new TreasuryMoneyAction()
                     {
                         TreasuryId = mainTreasuryId,
-                        Amount = +secondCoinAmount,
+                        Amount = secondAmount,
                         BranchCashFlow = branChCashFlowForSecoundCoin,
-                        CoinId = purchasingCoinId,
+                        CoinId = input.SecondCoinId,
                         CreatedBy = _appSession.GetUserName()
                     };
 
@@ -163,64 +144,55 @@ namespace BWR.Application.AppServices.Common
             }
         }
 
-        public bool ExchangeForClient(int clientId, int sellingCoinId, int purchasingCoinId, decimal firstAmount)
+        public bool ExchangeForClient(ExchangeInputDto input)
         {
             try
             {
                 int treasuryId = _appSession.GetCurrentTreasuryId();
-                var secondCoinAmount = CalcForFirstCoin(sellingCoinId, purchasingCoinId, firstAmount);
-                var mainCoin = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.IsMainCoin == true).FirstOrDefault();
-                var firstCoinExchange = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == sellingCoinId && c.ClientId == clientId).FirstOrDefault();
-                var secoundCoinExchange = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == purchasingCoinId && c.ClientId == clientId).FirstOrDefault();
+                var firstAmount = input.ActionType == 1 ? -input.AmountOfFirstCoin : input.AmountOfFirstCoin;
+                var secondAmount = input.ActionType == 1 ? input.AmoutOfSecondCoin : -input.AmoutOfSecondCoin;
 
+                var mainCoin = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.IsMainCoin == true).FirstOrDefault();
+                var firstCoinExchange = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.CoinId == input.FirstCoinId).FirstOrDefault();
+                var secoundCoinExchange = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.CoinId == input.SecondCoinId).FirstOrDefault();
                 _unitOfWork.CreateTransaction();
 
 
                 var exchange = new Exchange()
                 {
                     BranchId = BranchHelper.Id,
-                    FirstCoinId = sellingCoinId,
-                    SecoundCoinId = purchasingCoinId,
-                    AmountOfFirstCoin = firstAmount,
-                    AmoutOfSecoundCoin = secondCoinAmount,
+                    FirstCoinId = input.FirstCoinId,
+                    SecoundCoinId = input.SecondCoinId,
+                    AmountOfFirstCoin = input.AmountOfFirstCoin,
+                    AmoutOfSecoundCoin = input.AmoutOfSecondCoin,
                     MainCoinId = mainCoin.CoinId,
                 };
 
                 _unitOfWork.GenericRepository<Exchange>().Insert(exchange);
-
-
-                var clientCaches = _unitOfWork.GenericRepository<ClientCash>().FindBy(c=> c.ClientId == clientId);
-                var branchCashSellingCoin = clientCaches.Where(c => c.CoinId == sellingCoinId).FirstOrDefault();
-                branchCashSellingCoin.Total -= firstAmount;
-                _unitOfWork.GenericRepository<ClientCash>().Update(branchCashSellingCoin);
-
-
-                var branchCashpurhesCoin = clientCaches.Where(c => c.CoinId == purchasingCoinId).FirstOrDefault();
-                branchCashpurhesCoin.Total += secondCoinAmount;
-                _unitOfWork.GenericRepository<ClientCash>().Update(branchCashpurhesCoin);
-
+                                              
                 var moneyAction = new MoneyAction()
                 {
-                    ExchangeId = exchange.Id
+                    ExchangeId = exchange.Id,
+                    Date = input.Date
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
                 var clientCashFlowForFirstCoin = new ClientCashFlow()
                 {
-                    ClientId = clientId,
+                    ClientId = input.AgentId.Value,
                     MoenyAction = moneyAction,
-                    CoinId = sellingCoinId,
-                    Total = branchCashSellingCoin.Total,
+                    CoinId = input.FirstCoinId,
+                    
                     Amount = -firstAmount
                 };
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlowForFirstCoin);
                              
                 var clientCashFlowForSecondCoin = new ClientCashFlow()
                 {
-                    ClientId = clientId,
-                    CoinId = purchasingCoinId,
+                    ClientId = input.AgentId.Value,
+                    CoinId = input.SecondCoinId,
                     MoenyAction = moneyAction,
-                    Total = branchCashpurhesCoin.Total,
-                    Amount = secondCoinAmount
+                    
+                    Amount = secondAmount
                 };
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlowForSecondCoin);
 
@@ -236,64 +208,55 @@ namespace BWR.Application.AppServices.Common
             }
         }
 
-        public bool ExchangeForCompany(int companyId, int sellingCoinId, int purchasingCoinId, decimal firstAmount)
+        public bool ExchangeForCompany(ExchangeInputDto input)
         {
             try
             {
                 int treasuryId = _appSession.GetCurrentTreasuryId();
-                var secondCoinAmount = CalcForFirstCoin(sellingCoinId, purchasingCoinId, firstAmount);
-                var mainCoin = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.IsMainCoin == true).FirstOrDefault();
-                var firstCoinExchange = _unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == sellingCoinId && c.CompanyId == companyId).FirstOrDefault();
-                var secoundCoinExchange = _unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == purchasingCoinId && c.CompanyId == companyId).FirstOrDefault();
+                var firstAmount = input.ActionType == 1 ? -input.AmountOfFirstCoin : input.AmountOfFirstCoin;
+                var secondAmount = input.ActionType == 1 ? input.AmoutOfSecondCoin : -input.AmoutOfSecondCoin;
 
+                var mainCoin = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.IsMainCoin == true).FirstOrDefault();
+                var firstCoinExchange = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.CoinId == input.FirstCoinId).FirstOrDefault();
+                var secoundCoinExchange = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.CoinId == input.SecondCoinId).FirstOrDefault();
                 _unitOfWork.CreateTransaction();
 
 
                 var exchange = new Exchange()
                 {
                     BranchId = BranchHelper.Id,
-                    FirstCoinId = sellingCoinId,
-                    SecoundCoinId = purchasingCoinId,
+                    FirstCoinId = input.FirstCoinId,
+                    SecoundCoinId = input.SecondCoinId,
                     AmountOfFirstCoin = firstAmount,
-                    AmoutOfSecoundCoin = secondCoinAmount,
+                    AmoutOfSecoundCoin = secondAmount,
                     MainCoinId = mainCoin.CoinId,
                 };
 
                 _unitOfWork.GenericRepository<Exchange>().Insert(exchange);
 
-
-                var companyCaches = _unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CompanyId == companyId);
-                var branchCashSellingCoin = companyCaches.Where(c => c.CoinId == sellingCoinId).FirstOrDefault();
-                branchCashSellingCoin.Total -= firstAmount;
-                _unitOfWork.GenericRepository<CompanyCash>().Update(branchCashSellingCoin);
-
-
-                var branchCashpurhesCoin = companyCaches.Where(c => c.CoinId == purchasingCoinId).FirstOrDefault();
-                branchCashpurhesCoin.Total += secondCoinAmount;
-                _unitOfWork.GenericRepository<CompanyCash>().Update(branchCashpurhesCoin);
-
                 var moneyAction = new MoneyAction()
                 {
-                    ExchangeId = exchange.Id
+                    ExchangeId = exchange.Id,
+                    Date = input.Date
                 };
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
                 var companyCashFlowForFirstCoin = new CompanyCashFlow()
                 {
-                    CompanyId = companyId,
+                    CompanyId = input.CompanyId.Value,
                     MoenyAction = moneyAction,
-                    CoinId = sellingCoinId,
-                    Total = branchCashSellingCoin.Total,
-                    Amount = -firstAmount
+                    CoinId = input.FirstCoinId,
+                    
+                    Amount = firstAmount
                 };
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(companyCashFlowForFirstCoin);
 
                 var companyCashFlowForSecondCoin = new CompanyCashFlow()
                 {
-                    CompanyId = companyId,
-                    CoinId = purchasingCoinId,
+                    CompanyId = input.CompanyId.Value,
+                    CoinId = input.SecondCoinId,
                     MoenyAction = moneyAction,
-                    Total = branchCashpurhesCoin.Total,
-                    Amount = secondCoinAmount
+                    
+                    Amount = secondAmount
                 };
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(companyCashFlowForSecondCoin);
 
