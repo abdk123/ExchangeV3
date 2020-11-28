@@ -1,7 +1,9 @@
 ﻿using BWR.Application.Dtos.Branch;
+using BWR.Application.Dtos.Common;
 using BWR.Application.Interfaces.Branch;
 using BWR.Application.Interfaces.Client;
 using BWR.Application.Interfaces.Common;
+using BWR.Application.Interfaces.Company;
 using BWR.Application.Interfaces.Setting;
 using BWR.Application.Interfaces.Transaction;
 using BWR.Application.Interfaces.Treasury;
@@ -21,20 +23,23 @@ namespace Bwr.WebApp.Controllers.Setting
         private readonly IBranchCashAppService _branchCashAppService;
         private readonly ITreasuryAppService _treasuryAppService;
         private readonly ITreasuryCashAppService _treasuryCashAppService;
-        private readonly IOuterTransactionAppService _outerTransactionAppService;
+        private readonly IClientAppService _clientAppService;
+        private readonly ICompanyAppService _companyAppService;
         private readonly IExchangeAppService _exchangeAppService;
 
         public ExchangeController(IBranchCashAppService branchCashAppService, 
             ITreasuryAppService treasuryAppService,
             ITreasuryCashAppService treasuryCashAppService,
             IExchangeAppService exchangeAppService,
-            IOuterTransactionAppService outerTransactionAppService)
+            ICompanyAppService companyAppService,
+            IClientAppService clientAppService)
         {
             _branchCashAppService = branchCashAppService;
             _treasuryAppService = treasuryAppService;
             _treasuryCashAppService = treasuryCashAppService;
-            _outerTransactionAppService = outerTransactionAppService;
+            _clientAppService = clientAppService;
             _exchangeAppService = exchangeAppService;
+            _companyAppService = companyAppService;
         }
         // GET: BranchCash
         public ActionResult Index()
@@ -51,16 +56,14 @@ namespace Bwr.WebApp.Controllers.Setting
             if (!CheckTreasury())
                 return RedirectToAction("NoTreasury", "Home");
 
-            var initialInputs = _outerTransactionAppService.InitialInputData();
-            var coins = _branchCashAppService.GetAll().Select(x => new { Id = x.CoinId, Name = x.Coin.Name });
+            var agents = _clientAppService.GetAll();
+            var branchCashs = _branchCashAppService.GetAll();
+            var companies = _companyAppService.GetAll();
+            //ViewData["Clients"] = initialInputs.Clients;
+            ViewBag.Agents = new SelectList(agents, "Id", "FullName");
+            ViewBag.Companies = new SelectList(companies, "Id", "Name");
 
-            ViewBag.FirstCoins = new SelectList(coins, "Id", "Name");
-            ViewBag.SecondCoins = new SelectList(coins, "Id", "Name");
-
-            ViewData["Clients"] = initialInputs.Clients;
-            ViewBag.Agents = new SelectList(initialInputs.Agents, "Id", "FullName");
-            ViewBag.Companies = new SelectList(initialInputs.Companies, "Id", "Name");
-            return View();
+            return View(branchCashs);
         }
 
         public ActionResult MainCoinIsRequired()
@@ -92,19 +95,19 @@ namespace Bwr.WebApp.Controllers.Setting
             return Json(new { Success = success, Message = message }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult ExchangeForClient(int clientId, int sellingCoinId, int purchasingCoinId, decimal firstAmount)
+        public ActionResult ExchangeForClient(ExchangeInputDto input)
         {
-            return Json(_exchangeAppService.ExchangeForClient(clientId, sellingCoinId, purchasingCoinId, firstAmount));
+            return Json(_exchangeAppService.ExchangeForClient(input));
         }
 
-        public ActionResult ExchangeForCompany(int companyId, int sellingCoinId, int purchasingCoinId, decimal firstAmount)
+        public ActionResult ExchangeForCompany(ExchangeInputDto input)
         {
-            return Json(_exchangeAppService.ExchangeForCompany(companyId, sellingCoinId, purchasingCoinId, firstAmount));
+            return Json(_exchangeAppService.ExchangeForCompany(input));
         }
 
-        public ActionResult ExchangeForBranch(int sellingCoinId, int purchasingCoinId, decimal firstAmount)
+        public ActionResult ExchangeForBranch(ExchangeInputDto input)
         {
-            return Json(_exchangeAppService.ExchangeForBranch(sellingCoinId, purchasingCoinId, firstAmount));
+            return Json(_exchangeAppService.ExchangeForBranch(input));
         }
 
         public decimal CalcForFirstCoin(int sellingCoinId, int purchasingCoinId, decimal amountFromFirstCoin)

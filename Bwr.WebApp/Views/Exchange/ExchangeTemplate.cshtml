@@ -1,523 +1,458 @@
-﻿@using BWR.Application.Dtos.Client
+﻿@model IList<BWR.Application.Dtos.Branch.BranchCashDto>
+@{
+    var coins = Model.Where(x => !x.IsMainCoin).Select(x => x.Coin);
+
+    var mainCoinName = "";
+    var mainCoinId = 0;
+    var branchCashForMainCoin = Model.FirstOrDefault(x => x.IsMainCoin);
+    if (branchCashForMainCoin != null)
+    {
+        mainCoinName = branchCashForMainCoin.Coin.Name;
+        mainCoinId = branchCashForMainCoin.Coin.Id.Value;
+    }
+}
 
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
 }
 <br />
-<br />
-<div class="row">
-    <div class="col-lg-4">
-        <label>بيع</label>
-        @Html.DropDownList("FirstCoins", null, "اختر العملة", htmlAttributes: new { @class = "form-control", id = "firstCoin" })
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <h4><i class="fa fa-exchange"> </i>   <b>الصيرفة</b></h4>
     </div>
-    <div class="col-lg-4">
-        <label>
-            شراء
-        </label>
-        @Html.DropDownList("SecondCoins", null, "اختر العملة", htmlAttributes: new { @class = "form-control", id = "secondCoin" })
-    </div>
-    <div class="col-lg-2" id="purchasingPriceDiv">
-        <label style="display:block;font-size:20px">السعر الرئيسي للعملة الأولى</label>
-        <label id="firstCoinExchange"></label>
-    </div>
-    <div class="col-lg-2" id="sellingPriceDiv">
-        <label style="display:block;font-size:20px">السعر الرئيسي للعملة الثانية</label>
-        <label id="secoundCoinExchangePrice"></label>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-4">
-        <label>نوع الدفع</label>
-        @*@Html.DropDownList("typeOfPay", null, htmlAttributes: new { @class = "form-control" })*@
-        <select id="typeOfPay" class="form-control">
-            <option value="0" index="0"></option>
-            <option value="1">نقدي</option>
-            <option value="2">ذمم عملاء</option>
-            <option value="3">ذمم شركات</option>
-        </select>
-    </div>
-    <div id="normalClient">
-        <div class="col-lg-4">
-            @*<label>الزبون</label>
-                <select class="form-control" id="clientSelect">
-                    <option value="" selected>ادخل اسم الزبون او اختر الزبون</option>
-                    @{
-                        var clinets = (List<ClientDto>)ViewData["Clients"];
-                        foreach (var item in clinets)
+    <div class="portlet-body">
+        <div class="portlet-form">
+            <div class="row">
+
+                <div class="col-lg-4 col-md-4">
+                    <div class="form-group">
+                        <label for="typeOfPay">نوع الدفع</label>
+                        <select id="typeOfPay" class="form-control">
+                            @*<option value="0" index="0"></option>*@
+                            <option value="1">نقدي</option>
+                            <option value="2">ذمم عملاء</option>
+                            <option value="3">ذمم شركات</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="col-lg-4 col-md-4">
+                    <div class="form-group">
+                        <label for="actionType">نوع الحركة</label>
+                        <select id="actionType" class="form-control">
+                            <option index="0"></option>
+                            <option value="1">بيع</option>
+                            <option value="2">شراء</option>
+
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-4">
+                    <div class="form-group">
+                        <label for="date">التاريخ</label>
+                        <input type="date" id="date" class="form-control" />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-4">
+                <div class="form-group">
+                    <label for="coin">العملة</label>
+
+                    <select id="coin" class="form-control">
+                        <option index="0"></option>
+                        @foreach (var coin in coins)
                         {
-                            <option value="@item.Id"> @item.FullName </option>
+                            <option value="@coin.Id">@coin.Name</option>
                         }
-                    }
-                </select>*@
+                    </select>
 
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4">
+                <div class="form-group">
+                    <label for="exchangePrice">سعر الصرف :</label>
+                    <input type="number" id="exchangePrice" class="form-control" />
+                </div>
+
+            </div>
+            <div class="col-lg-4 col-md-4">
+                <label></label>
+                <div class="alert alert-info">
+                    <strong>سعر الصرف الاساسي :</strong>  <a id="mainExchangePrice" class="alert-link">0.0</a>
+                </div>
+            </div>
         </div>
 
-        <div class="col-lg-4">
-            <div class="row">
-                <div class="col-lg-6">
-                    <label>الرصيد من العملة الأولى</label>
-                    <br />
-                    <span id="balanceFirstBalanceSpan"></span>
+        <div class="row" id="agentOrCompanyDiv" style="display:none;">
+            <div class="col-lg-4 col-md-4">
+                <div class="form-group" id="agentDiv" style="display:none">
+                    <label for="agent">العميل</label>
+                    @Html.DropDownList("Agents", null, "", htmlAttributes: new { @class = "form-control", id = "agent" })
                 </div>
-                <div class="col-lg-6">
-                    <label>الرصيد من العملة الثانية</label>
-                    <br />
-                    <span id="balanceSecondBalanceSpan"></span>
+                <div class="form-group" id="companyDiv" style="display:none">
+                    <label for="comapny">الشركة</label>
+                    @Html.DropDownList("Companies", null, "", htmlAttributes: new { @class = "form-control", id = "company" })
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4">
+
+                <label></label>
+                <div class="alert alert-info">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <strong id="currentBalanceLabel">الرصيد الحالي :</strong>  <a id="currentBalance" class="alert-link">0.0</a>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <strong id="currentBalanceMainLabel">الرصيد الحالي @mainCoinName :</strong>  <a id="currentBalanceMain" class="alert-link">0.0</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4">
+
+                <label></label>
+                <div class="alert alert-info">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <strong id="newBalanceLabel">الرصيد الجديد :</strong>  <a id="newBalance" class="alert-link">0.0</a>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <strong id="newBalanceMainLabel">الرصيد الجديد @mainCoinName :</strong>  <a id="newBalanceMain" class="alert-link">0.0</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 col-md-4">
+                <div class="form-group">
+                    <label for="amount" id="amountLabel">المبلغ</label>
+                    <input type="number" id="amount" class="form-control" autocomplete="off" />
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4">
+                <div class="form-group">
+                    <label for="amountForMainCoin">المبلغ @mainCoinName</label>
+                    <input type="number" id="amountForMainCoin" class="form-control" disabled="disabled" />
+                </div>
+
+            </div>
+            <div class="col-lg-4 col-md-4">
+                <div class="form-group">
+                    <label for="note">ملاحظات</label>
+                    <textarea id="note" class="form-control"></textarea>
                 </div>
             </div>
         </div>
 
     </div>
-    <div id="agentDev" style="display: none;">
-        <div class="col-lg-4">
-            <label>العميل</label>
-            @Html.DropDownList("Agents", null, "اختر المعيل", htmlAttributes: new { @class = "form-control", id = "agent" })
-        </div>
-        <div class="col-lg-4">
-            <div class="row">
-                <div class="col-lg-6">
-                    <label>الرصيد من العملة الأولى</label>
-                    <br />
-                    <span id="agentFirstBalanceSpan"></span>
-                </div>
-                <div class="col-lg-6">
-                    <label>الرصيد من العملة الثانية</label>
-                    <br />
-                    <span id="agentSecondBalanceSpan"></span>
+    <div class="panel-footer">
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <button class="btn btn-success" id="exchangeBtn"><i class="fa fa-save"></i>  حفظ</button>
+            </div>
+            <div class="col-lg-12 col-md-12" style="margin-top:10px;">
+                <div class="alert alert-danger" id="validationMassagesDiv" style="display:none;">
+                    <div class="row">
+                        <ul id="validationMassagesUl">
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="companyDiv" style="display:none">
-        <div class="col-lg-4">
-            <label>الشركات</label>
-            @Html.DropDownList("Companies", null, "اختر الشركة", htmlAttributes: new { @class = "form-control", id = "company" })
-        </div>
-        <div class="col-lg-4">
-            <div class="row">
-                <div class="col-lg-6">
-                    <label>الرصيد من العملة الأولى</label>
-                    <br />
-                    <span id="companyFirstBalanceSpan"></span>
-                </div>
-                <div class="col-lg-6">
-                    <label>الرصيد من العملة الثانية</label>
-                    <br />
-                    <span id="companySecondBalanceSpan"></span>
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
 
+<style>
+    label {
+        font-weight: bold;
+    }
+</style>
 
-<div class="row">
-    <div class="col-lg-4">
-        <div class="form-group">
-            <label>القيمة من العملة الأولى</label>
-            <input type="text" id="firstCoinAmout" class="form-control" />
-        </div>
-    </div>
-    <div class="col-lg-4">
-        <div class="form-group">
-            <label>القيمة من العملة الثانية</label>
-            <input type="text" value="" id="secounCoinAmout" class="form-control" />
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-4">
-        <button class="btn btn-primary" id="submit">تحويل</button>
-    </div>
-</div>
 
 
 
 <script>
+    var _branchCashs = @Html.Raw(Json.Encode(Model));
+    var _oldBalance = 0;
+    var _oldMainBalance = 0;
+    //seletors
+    var $coin = $('#coin');
+    var $agent = $('#agent');
+    var $typeOfPay = $('#typeOfPay');
+    var $actionType = $('#actionType');
+    var $company = $('#company');
+    var $amount = $('#amount');
+    var $date = $('#date');
+    var $note = $('#note');
+    var $amountForMainCoin = $('#amountForMainCoin');
+
     $(function () {
-        hideAllReciverDivs();
 
-        $('#firstCoin').change(function () {
+        $date.val(getCurrentDateForDatepicker());
 
-            $('#secondCoin').val('').change();
-            $('#secondCoin option').each(function () {
-                $(this).prop('disabled', false);
-            });
-            var coinId = $(this).val();
-            if (coinId == "") {
-                $('#firstCoinExchange').text("");
-                $('#purchasingPriceDiv').show();
-                return;
+        $coin.change(function () {
+            handleChangeCoin();
+        });
+
+        $agent.change(function () {
+            handleChanges();
+        });
+
+        $company.change(function () {
+            handleChanges();
+        });
+
+        $typeOfPay.change(function () {
+            if ($typeOfPay.val() == 1) {
+                $('#agentOrCompanyDiv').css('display', 'none');
+                $('#agentDiv').css('display', 'none');
+                $('#companyDiv').css('display', 'none');
+            } else if ($typeOfPay.val() == 2) {
+                $('#agentOrCompanyDiv').css('display', 'block');
+                $('#agentDiv').css('display', 'block');
+                $('#companyDiv').css('display', 'none');
+            } else if ($typeOfPay.val() == 3) {
+                $('#agentOrCompanyDiv').css('display', 'block');
+                $('#agentDiv').css('display', 'none');
+                $('#companyDiv').css('display', 'block');
             }
 
-            checkIfFirstCoinIsMainCoin(coinId);
-
-            $('#secondCoin option[value=' + $(this).val() + ']').prop('disabled', true);
+            handleChanges();
         });
 
-        $('#secondCoin').change(function () {
-            var coinId = $(this).val();
-            if (coinId == "") {
-                $('#secoundCoinExchangePrice').text('');
-                $('#sellingPriceDiv').show();
-                return;
+        $actionType.change(function () {
+            handleChanges();
+        });
+
+        $amount.keyup(function () {
+            onChangeAmount();
+        });
+
+        $('#exchangeBtn').on('click', function () {
+            if (!checkValidationError()) {
+
+                var url = '';
+                var input = {
+                    'Date': $date.val(),
+                    'FirstCoinId': $coin.val(),
+                    'SecondCoinId': '@mainCoinId',
+                    'AgentId': null,
+                    'CompanyId':null,
+                    'TypeOfPay': $typeOfPay.val(),
+                    'ActionType': $actionType.val(),
+                    'AmountOfFirstCoin': $amount.val(),
+                    'AmoutOfSecondCoin': $amountForMainCoin.val(),
+                    'Note': $note.val()
+                };
+                if ($typeOfPay.val() == 1) {
+                    url = '@Url.Action("ExchangeForBranch", "Exchange")';
+                    exchangeAmount(url, input);
+                } else if ($typeOfPay.val() == 2) {
+                    url = '@Url.Action("ExchangeForClient", "Exchange")';
+                    input['AgentId'] = $agent.val();
+                    exchangeAmount(url, input);
+                } else if ($typeOfPay.val() == 3) {
+                    url = '@Url.Action("ExchangeForCompany", "Exchange")';
+                    input['CompanyId'] = $company.val();
+                    exchangeAmount(url, input);
+                }
             }
-            checkIfSecondCoinIsMainCoin($(this).val());
-
-        });
-
-        $('#typeOfPay').change(function () {
-            hideAllReciverDivs();
-            var typeOfPay = $(this).val();
-            if (typeOfPay == 1) {
-                $('#normalClient').show();
-                getBranchBalances();
-            } else
-            if (typeOfPay == 2) {
-                $('#agentDev').show();
-
-            } else {
-                $('#companyDiv').show();
-            }
-        });
-
-        $('#company').change(function () {
-            getCompanyBalances();
-        });
-
-        $('#agent').change(function () {
-            getAgentBalances();
         });
 
     });
 
-    function getBranchBalances() {
-
-        $.post(
-            '@Url.Action("Get", "BranchCash")',
-            function (data) {
-
-                var branchCashes = data.data;
-                $('#balanceFirstBalanceSpan').html("");
-                $('#balanceSecondBalanceSpan').html("");
-
-                var firtCoin = $('#firstCoin').val();
-                var secoundCoin = $('#secondCoin').val();
-
-                for (var i = 0; i < branchCashes.length; i++) {
-                    var branchCash = branchCashes[i];
-                    if (branchCash.CoinId == firtCoin) {
-
-                        $('#balanceFirstBalanceSpan').html(branchCash.Total);
-                    } else if (branchCash.CoinId == secoundCoin) {
-
-                        $('#balanceSecondBalanceSpan').html(branchCash.Total);
-                    }
-                }
-            }
-        )
-    }
-
-    function getAgentBalances() {
-        var agentId = $('#agent').val();
-
-        $.post(
-            '@Url.Action("Get", "ClientCash")', {
-                clientId: agentId
-            },
-            function (data) {
-
-                var clientCashes = data.data;
-                $('#agentFirstBalanceSpan').html("");
-                $('#agentSecondBalanceSpan').html("");
-
-                var firtCoin = $('#firstCoin').val();
-                var secoundCoin = $('#secondCoin').val();
-                
-                for (var i = 0; i < clientCashes.length; i++) {
-                    var clientCash = clientCashes[i];
-                    if (clientCash.CoinId == firtCoin) {
-
-                        $('#agentFirstBalanceSpan').html(clientCash.Total);
-                    } else if (clientCash.CoinId == secoundCoin) {
-
-                        $('#agentSecondBalanceSpan').html(clientCash.Total);
-                    }
-                }
-            }
-        )
-    }
-
-    function getCompanyBalances() {
-
-        var companyId = $('#company').val();
-            $.post(
-            '@Url.Action("Get", "CompanyCash")', {
-                companyId: companyId
-            },
-            function (data) {
-
-                var companyCashes = data.data;
-                $('#companyFirstBalanceSpan').html("");
-                $('#companySecondBalanceSpan').html("");
-
-                var firtCoin = $('#firstCoin').val();
-                var secoundCoin = $('#secondCoin').val();
-
-                for (var i = 0; i < companyCashes.length; i++) {
-                    var companyCash = companyCashes[i];
-                    if (companyCash.CoinId == firtCoin) {
-
-                        $('#companyFirstBalanceSpan').html(companyCash.Total);
-                        
-                    } else if (companyCash.CoinId == secoundCoin) {
-
-                        $('#companySecondBalanceSpan').html(companyCash.Total);
-                    }
-                }
-            }
-        )
-    }
-
-    function checkIfFirstCoinIsMainCoin(coinId) {
-
-        $.post(
-            '@Url.Action("IsMaincoin", "BranchCash")', {
-                coinId: coinId
-            },
-            function (data) {
-                var isMainCoin = data;
-                if (isMainCoin == "False") {
-                    getFirstBalance(coinId);
-
+    function exchangeAmount(url, input) {
+        $.post(url, {
+            input: input
+        }, function (output) {
+                if (output) {
+                    toastr["success"]("تم الحفظ بنجاح", "");
                 } else {
-                    $('#firstCoinExchange').text("عملة اساسية");
+                    toastr["error"]("حدث خطأ اثناء الحفظ", "");
                 }
+        });
 
-                $('#purchasingPriceDiv').show();
-            }
-        );
     }
 
-    function checkIfSecondCoinIsMainCoin(coinId) {
+    function handleChangeCoin(e) {
+        var coinName = $coin.text();
+        $('#currentBalanceLabel').text('');
+        $('#currentBalanceLabel').text('الرصيد الحالي ' + coinName + ' :');
+        $('#newBalanceLabel').text('');
+        $('#newBalanceLabel').text('الرصيد الجديد ' + coinName + ' :');
 
-        $.post(
-            '@Url.Action("IsMaincoin", "BranchCash")', {
-                coinId: coinId
-            },
-            function (data) {
-                var isMainCoin = data;
-                if (isMainCoin == "False") {
-                    getSecondBalance(coinId);
+        $('#amountLabel').text('');
+        $('#amountLabel').text('المبلغ ' + coinName);
 
+        handleChanges();
+
+    }
+
+    function handleChanges() {
+        var agentId = $agent.val();
+        var coinId = $coin.val();
+        var companyId = $company.val();
+
+        if ($typeOfPay.val() == 2 && !isNullOrEmpty(agentId) && !isNullOrEmpty(coinId)) {
+            getBalanceForClient()
+        } else if ($typeOfPay.val() == 3 && !isNullOrEmpty(companyId) && !isNullOrEmpty(coinId)) {
+            getBalanceForCompany()
+        }
+
+        var actionType = $actionType.val();
+        if (!isNullOrEmpty(actionType) && !isNullOrEmpty(coinId)) {
+            getExchangeInfo(actionType, coinId);
+
+        }
+
+        $('#amount').val('');
+    }
+
+    function getExchangeInfo(actionType, coinId) {
+        $.each(_branchCashs, function (key, row) {
+            if (row.Coin.Id == coinId) {
+                $('#mainExchangePrice').text(row.ExchangePrice);
+                if (actionType == 1) {
+                    $('#exchangePrice').val(row.SellingPrice);
                 } else {
-                    $('#secoundCoinExchangePrice').text("عملة اساسية");
+                    $('#exchangePrice').val(row.PurchasingPrice);
                 }
-
-                $('#sellingPriceDiv').show();
             }
-        );
+        });
+
     }
 
-    function getFirstBalance(coinId) {
-
+    function getBalanceForClient() {
          $.post(
-            '@Url.Action("GetCoinExchange", "BranchCash")', {
-                coinId: coinId
-            },
-             function (data) {
-                 console.log(data);
-                $('#firstCoinExchange').text(data.PurchasingPrice ? data.PurchasingPrice : "لم يعرف");
-            }
-        )
+                '@Url.Action("GetBalanceForClient", "ClientCashFlow")', {
+                     clientId: $agent.val(),
+                     coinId: $coin.val()
+
+                }, function (data) {
+                     $.each(data, function (key, row) {
+                         if (row.IsMainCoin) {
+                             _oldMainBalance = row.Balance;
+                             var balance = row.Balance > 0 ? ('له/' + row.Balance) : ('عليه/' + Math.abs(row.Balance));
+                             $('#currentBalanceMain').text(balance);
+                             $('#newBalanceMain').text(balance);
+                         } else {
+                             _oldBalance = row.Balance;
+                             var balance = row.Balance > 0 ? ('له/' + row.Balance) : ('عليه/' + Math.abs(row.Balance));
+                             $('#currentBalance').text(balance);
+                             $('#newBalance').text(balance);
+                         }
+                     });
+                }
+            )
     }
 
-    function getSecondBalance(coinId) {
-         $.post(
-            '@Url.Action("GetCoinExchange", "BranchCash")', {
-                coinId: coinId
-            },
-             function (data) {
-                 console.log(data);
-                 $('#secoundCoinExchangePrice').text(data.SellingPrice ? data.SellingPrice : "لم يعرف");
-            }
-        )
-    }
-    //$(document).ready(function () {
-    //    $('#clientSelect').select2({
-    //        tags: true
-    //    });
-    //});
-
-    function hideAllReciverDivs() {
-        $('#normalClient').hide();
-        $('#agentDev').hide();
-        $('#companyDiv').hide();
-    }
-
-    $('#firstCoinAmout').keyup(function () {
-
-        CalcCommission();
-    });
-    function CalcCommission() {
-
-        var firtCoin = $('#firstCoin').val();
-        var secoundCoin = $('#secondCoin').val();
-        if (firtCoin == "" || secoundCoin == "") {
-            $('#secounCoinAmout').val("");
-            return;
-        }
+    function getBalanceForCompany() {
         $.post(
-            '@Url.Action("CalcForFirstCoin", "Exchange")', {
-                sellingCoinId: firtCoin,
-                purchasingCoinId: secoundCoin,
-                amountFromFirstCoin: $('#firstCoinAmout').val()
-            },
-            function (data) {
-                $('#secounCoinAmout').val(data);
-            }
-        )
+                '@Url.Action("GetBalanceForCompany", "CompanyCashFlow")', {
+                companyId: $company.val(),
+                coinId: $coin.val()
 
-    }
-
-    $('#submit').click(function () {
-        var typeOfPay = $('#typeOfPay').val();
-        var sellingCoinId = $('#firstCoin').val();
-        var purchasingCoinId = $('#secondCoin').val();
-        var firstAmount = $('#firstCoinAmout').val();
-
-        if (typeOfPay == 1) {
-            $.post(
-                '@Url.Action("ExchangeForBranch", "Exchange")', {
-                    clientId: clientId,
-                    sellingCoinId: sellingCoinId,
-                    purchasingCoinId: purchasingCoinId,
-                    firstAmount: firstAmount,
                 }, function (data) {
-                    if (data == true) {
-                        toastr["success"]("تم");
-                        emptyForm();
-                    } else {
-                        toastr["error"]("حدث خطأ ما اثناء التحويل");
-                    }
+                     $.each(data, function (key, row) {
+                         if (row.IsMainCoin) {
+                             _oldMainBalance = row.Balance;
+                             var balance = row.Balance > 0 ? ('له/' + row.Balance) : ('عليه/' + Math.abs(row.Balance));
+                             $('#currentBalanceMain').text(balance);
+                             $('#newBalanceMain').text(balance);
+                         } else {
+                             _oldBalance = row.Balance;
+                             var balance = row.Balance > 0 ? ('له/' + row.Balance) : ('عليه/' + Math.abs(row.Balance));
+                             $('#currentBalance').text(balance);
+                             $('#newBalance').text(balance);
+                         }
+                     });
                 }
             )
-        } else if (typeOfPay == 2) {
-            var clientId = agentValidation();
-            if (clientId == null)
-                return;
-
-            $.post(
-                '@Url.Action("ExchangeForClient", "Exchange")', {
-                    clientId: clientId,
-                    sellingCoinId: sellingCoinId,
-                    purchasingCoinId: purchasingCoinId,
-                    firstAmount: firstAmount,
-                }, function (data) {
-                    if (data == true) {
-                        toastr["success"]("تم");
-                        emptyForm();
-                    } else {
-                        toastr["error"]("حدث خطأ ما اثناء التحويل");
-                    }
-                }
-            )
-        } else if (typeOfPay == 3) {
-
-            var companyId = companyValidation();
-            if (companyId == null)
-                return;
-
-            $.post(
-            '@Url.Action("ExchangeForCompany", "Exchange")', {
-                companyId: companyId,
-                sellingCoinId: sellingCoinId,
-                purchasingCoinId: purchasingCoinId,
-                firstAmount: firstAmount,
-            }, function (data) {
-                if (data == true) {
-                    toastr["success"]("تم");
-                    emptyForm();
-                } else {
-                    toastr["error"]("حدث خطأ ما اثناء التحويل");
-                }
-            }
-        )
-        }
-
-
-    });
-
-    function emptyForm() {
-        $('#firstCoin').val('').change();
-        $('#typeOfPay').val('1').change();
-        $('#agent').val('');
-        $('#company').val('');
-        $('#firstCoinAmout').val('');
-        $('#secounCoinAmout').val('');
     }
 
-    function validation() {
+    function isNullOrEmpty(value) {
+        return (value == null || value == "");
+    }
 
-        var firtCoin = $('#firstCoin').val();
-        if (firtCoin == "") {
-            toastr["error"]("يجب تحديد العملة الأولى");
-            return false;
-        }
-        var secoundCoin = $('#secondCoin').val();
-        if (secoundCoin == "") {
-            toastr["error"]("يجب تحديد العملة الثانية");
-            return false;
-        }
+    function onChangeAmount() {
+        debugger;
+        var amount = $amount.val();
+        var exchangePrice = $('#exchangePrice').val();
+        var amountForMainCoin = getRealAmount(amount * exchangePrice);
+        $amountForMainCoin.val(amountForMainCoin);
 
-        var firstAmount = $('#firstCoinAmout').val();
-        if (firstAmount == "") {
-            toastr["error"]("يجب كتابة القيمة من العملة");
-            return false;
-        }
-        var firstAmount = $('#firstCoinAmout').val();
+        //Main coin
+        var newMainBalance = $actionType.val() == 1 ? parseFloat(_oldMainBalance) + parseFloat(amountForMainCoin) : parseFloat(_oldMainBalance) - parseFloat(amountForMainCoin);
+        var mainBalance = newMainBalance > 0 ? ('له/' + newMainBalance) : ('عليه/' + Math.abs(newMainBalance));
+        $('#newBalanceMain').text(mainBalance);
+
+        //Selected coin
+        var newBalance = $actionType.val() == 1 ? parseFloat(_oldBalance) - parseFloat(amount) : parseFloat(_oldBalance) + parseFloat(amount);
+        var balance = newBalance > 0 ? ('له/' + newBalance) : ('عليه/' + Math.abs(newBalance));
+        $('#newBalance').text(balance);
 
     }
 
-    function clientValidation() {
+    function getRealAmount(amount) {
+        var value = amount.toString().slice(-2);
+        if (value < 50) {
+            amount = amount - value + 50;
+        } else if (value > 50) {
+            amount = amount - value + 100;
+        }
 
-        var clientVal = $('#clientSelect').val();
-        if (clientVal == "") {
-            toastr["error"]("يجب اختيار الزبون");
-            return false;
-        }
-        if (isNaN(clientVal)) {
-             $.post(
-                '@Url.Action("AddClientWithJustName", "Client")', {
-                    FullName: clientVal,
-                },
-                function (data) {
-                    clientVal = data;
-                }
-            )
-        }
-        return clientVal;
+        return amount;
     }
 
-    function agentValidation() {
-        var agent = $('#agent').val();
-        if (agent == "") {
-            toastr["error"]("يجب اختيار العميل");
-            return null;
+    function checkValidationError() {
+        $('#validationMassagesUl').html('');
+        var valid = false;
+
+        if (isNullOrEmpty($actionType.val())) {
+            valid = true;
+            $('#validationMassagesUl').append('<li>نوع الحركة مطلوبة</li>');
+        }
+        if (isNullOrEmpty($coin.val())) {
+            valid = true;
+            $('#validationMassagesUl').append('<li>العملة مطلوبة</li>');
+        }
+        if (isNullOrEmpty($('#exchangePrice').val())) {
+            valid = true;
+            $('#validationMassagesUl').append('<li>سعر الصرف مطلوب</li>');
+        }
+        if ($typeOfPay.val() == 2 && isNullOrEmpty($agent.val())) {
+            valid = true;
+            $('#validationMassagesUl').append('<li>العميل مطلوب</li>');
+
+        }
+        if ($typeOfPay.val() == 3 && isNullOrEmpty($company.val())) {
+            valid = true;
+            $('#validationMassagesUl').append('<li>الشركة مطلوب</li>');
+        }
+        if (isNullOrEmpty($date.val())) {
+            valid = true;
+            $('#validationMassagesUl').append('<li>التاريخ مطلوبة</li>');
+        }
+        if (isNullOrEmpty($('#amount').val())) {
+            valid = true;
+            $('#validationMassagesUl').append('<li>المبلغ مطلوبة</li>');
         }
 
-        return agent;
-    }
-
-    function companyValidation() {
-        var company = $('#company').val();
-        if (company == "") {
-            toastr["error"]("يجب اختيار الشركة");
-            return null;
+        if (valid) {
+            $('#validationMassagesDiv').css('display', 'block');
+        } else {
+            $('#validationMassagesDiv').css('display', 'none');
         }
-
-        return company;
+        return valid;
     }
 
 </script>

@@ -3,14 +3,10 @@ using BWR.Application.Dtos.Company.CompanyCashFlow;
 using BWR.Application.Extensions;
 using BWR.Application.Interfaces.Common;
 using BWR.Application.Interfaces.Shared;
-using BWR.Domain.Model.Clients;
-using BWR.Domain.Model.Common;
 using BWR.Domain.Model.Companies;
 using BWR.Domain.Model.Enums;
-using BWR.Domain.Model.Settings;
 using BWR.Infrastructure.Context;
 using BWR.Infrastructure.Exceptions;
-using BWR.ShareKernel.Exceptions;
 using BWR.ShareKernel.Interfaces;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,6 +15,7 @@ using BWR.Application.Interfaces.Company;
 using System;
 using BWR.Application.Dtos.Statement;
 using BWR.Domain.Model.Security;
+using BWR.Domain.Model.Branches;
 
 namespace BWR.Application.AppServices.Companies
 {
@@ -309,6 +306,35 @@ namespace BWR.Application.AppServices.Companies
             }
 
             return output;
+        }
+
+        public IList<CompanyBalanceDto> GetBalanceForCompany(int companyId, int coinId)
+        {
+            var companyBalances = new List<CompanyBalanceDto>();
+            var mainCoin = _unitOfWork.GenericRepository<BranchCash>().FindBy(x => x.IsMainCoin).FirstOrDefault().Coin;
+            if (mainCoin != null)
+            {
+                var companyCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>().GetIQueryable()
+               .Where(x => x.CompanyId == companyId);
+
+                var mainCompanyCash = _unitOfWork.GenericRepository<CompanyCash>().FindBy(x => x.CoinId == mainCoin.Id).FirstOrDefault();
+                companyBalances.Add(new CompanyBalanceDto()
+                {
+                    IsMainCoin = true,
+                    Balance = companyCashFlows.Where(x => x.CoinId == mainCoin.Id).Sum(x => x.Amount) + mainCompanyCash.InitialBalance,
+                    CoinId = mainCoin.Id
+                });
+
+                var companyCash = _unitOfWork.GenericRepository<CompanyCash>().FindBy(x => x.CoinId == coinId).FirstOrDefault();
+                companyBalances.Add(new CompanyBalanceDto()
+                {
+                    IsMainCoin = false,
+                    Balance = companyCashFlows.Where(x => x.CoinId == coinId).Sum(x => x.Amount) + companyCash.InitialBalance,
+                    CoinId = coinId
+                });
+            }
+
+            return companyBalances;
         }
     }
 }

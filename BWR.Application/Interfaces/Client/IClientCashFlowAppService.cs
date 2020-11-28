@@ -10,5 +10,6 @@ namespace BWR.Application.Interfaces.Client
         IList<ClientCashFlowOutputDto> Get(ClientCashFlowInputDto input);
         IList<BalanceStatementDto> GetForStatement(int coinId, DateTime to);
         ClientMatchDto ConvertMatchingStatus(ClientMatchDto dto);
+        IList<ClientBalanceDto> GetBalanceForClient(int clientId, int coinId);
     }
 }

@@ -38,5 +38,10 @@ namespace Bwr.WebApp.Controllers
 
             return Json(new { Success = _success }, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult GetBalanceForCompany(int companyId, int coinId)
+        {
+            return Json(_companyCashFlowAppService.GetBalanceForCompany(companyId, coinId));
+        }
     }
 }

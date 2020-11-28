@@ -4,13 +4,9 @@ using BWR.Application.Extensions;
 using BWR.Application.Interfaces.Common;
 using BWR.Application.Interfaces.Shared;
 using BWR.Domain.Model.Clients;
-using BWR.Domain.Model.Common;
-using BWR.Domain.Model.Companies;
 using BWR.Domain.Model.Enums;
-using BWR.Domain.Model.Settings;
 using BWR.Infrastructure.Context;
 using BWR.Infrastructure.Exceptions;
-using BWR.ShareKernel.Exceptions;
 using BWR.ShareKernel.Interfaces;
 using System.Collections.Generic;
 using System.Globalization;
@@ -18,6 +14,7 @@ using System.Linq;
 using BWR.Application.Interfaces.Client;
 using System;
 using BWR.Application.Dtos.Statement;
+using BWR.Domain.Model.Branches;
 
 namespace BWR.Application.AppServices.Companies
 {
@@ -222,5 +219,35 @@ namespace BWR.Application.AppServices.Companies
 
             return output;
         }
+
+        public IList<ClientBalanceDto> GetBalanceForClient(int clientId, int coinId)
+        {
+            var clientBalances = new List<ClientBalanceDto>();
+            var mainCoin = _unitOfWork.GenericRepository<BranchCash>().FindBy(x => x.IsMainCoin).FirstOrDefault().Coin;
+            if (mainCoin != null)
+            {
+                var clientCashFlows = _unitOfWork.GenericRepository<ClientCashFlow>().GetIQueryable()
+               .Where(x => x.ClientId == clientId);
+
+                var mainClientCash = _unitOfWork.GenericRepository<ClientCash>().FindBy(x => x.CoinId == mainCoin.Id).FirstOrDefault();
+                clientBalances.Add(new ClientBalanceDto()
+                {
+                    IsMainCoin = true,
+                    Balance = clientCashFlows.Where(x => x.CoinId == mainCoin.Id).Sum(x => x.Amount) + mainClientCash.InitialBalance,
+                    CoinId = mainCoin.Id
+                });
+
+                var clientCash = _unitOfWork.GenericRepository<ClientCash>().FindBy(x => x.CoinId == coinId).FirstOrDefault();
+                clientBalances.Add(new ClientBalanceDto()
+                {
+                    IsMainCoin = false,
+                    Balance = clientCashFlows.Where(x => x.CoinId == coinId).Sum(x => x.Amount) + clientCash.InitialBalance,
+                    CoinId = coinId
+                });
+            }
+
+            return clientBalances;
+        }
+
     }
 }
