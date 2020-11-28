@@ -56,3 +56,4 @@ C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Release\BWR.In
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Release\BWR.Infrastructure.csproj.CopyComplete
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Release\BWR.Infrastructure.dll
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Release\BWR.Infrastructure.pdb
+C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.Infrastructure\obj\Release\BWR.Infrastructure.Migrations.Create_sp_EmptyDB_Porc.resources

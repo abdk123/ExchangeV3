@@ -13,6 +13,7 @@ using BWR.ShareKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace BWR.Application.AppServices.Security
 {
@@ -33,6 +34,21 @@ namespace BWR.Application.AppServices.Security
             try
             {
                 var users = _unitOfWork.GenericRepository<User>().GetAll().ToList();
+                usersDtos = Mapper.Map<List<User>, List<UserDto>>(users);
+            }
+            catch (Exception ex)
+            {
+                Tracing.SaveException(ex);
+            }
+
+            return usersDtos;
+        }
+        public IList<UserDto> GetAll(Expression<Func<User, bool>> predicate)
+        {
+            var usersDtos = new List<UserDto>();
+            try
+            {
+                var users = _unitOfWork.GenericRepository<User>().FindBy(predicate).ToList();
                 usersDtos = Mapper.Map<List<User>, List<UserDto>>(users);
             }
             catch (Exception ex)
@@ -301,5 +317,7 @@ namespace BWR.Application.AppServices.Security
             }
             return dto;
         }
+
+        
     }
 }
