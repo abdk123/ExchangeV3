@@ -24,7 +24,7 @@
             <label>الحساب</label>
             <select class="form-control" id="firstAcountSelect">
                 <option value="1">عامة</option>
-                @*<option value="2">حوالة مباشرة</option>*@
+
                 <option value="3">حساب العملاء</option>
                 <option value="4">حساب الشركات</option>
             </select>
@@ -42,11 +42,14 @@
                         <label>رصيد العميل</label>
                         <br />
                         <span class="label label-primary" id="agentcurrentBalnce"></span>
+                        <span lass="label label-primary" id="agentcurrentBalnceStatus"></span>
                     </div>
                     <div class="col-lg-6">
                         <label>الرصيد المتبقي</label>
                         <br />
                         <span class="label label-primary" id="agentnewBalnce"></span>
+
+                        <span lass="label label-primary" id="agentnewBalnceStatus"></span>
                     </div>
                 </div>
             </div>
@@ -118,7 +121,6 @@
 </div>
 @section ScriptPath{
     <script src="~/Scripts/GlopalScript.js"></script>
-    @*<script src="~/Scripts/BoxAction/Index.js"></script>*@
 }
 <script>
     var clientBalnae;
@@ -254,11 +256,20 @@
                 clientId: clientId,
                 coinId: coinId
             }, function (data) {
-                console.log(data);
                 clientBalnae = data;
-                var balnce = numberWithCommas(parseFloat(data.Total));
+                var total = data.Total;
+                var status = "";
+                if (total > 0) {
+                    status = "له";
+                }
+                else if (total < 0) {
+                    status = "عليه";
+                }
+                var balnce = numberWithCommas(Math.abs(parseFloat(data.Total)));
                 $('#agentnewBalnce').text(balnce);
-                $('#agentcurrentBalnce').text(numberWithCommas(balnce));
+                $('#agentcurrentBalnceStatus').text(status);
+                $('#agentcurrentBalnce').text(balnce);
+                $('#agentnewBalnceStatus').text(status);
             }
         );
     }
@@ -449,12 +460,26 @@
 
         var typeOfAtionVal = $('#typeOfAction').val();
         if (clientBalnae != null) {
+            var total;
             if (typeOfAtionVal == 1) {
-
-                $('#agentnewBalnce').text(numberWithCommas(clientBalnae.Total + amount));
+                total=  clientBalnae.Total + amount;
             } else {
-                $('#agentnewBalnce').text(numberWithCommas(clientBalnae.Total - amount));
+                total = clientBalnae.Total - amount;
             }
+            var status = "";
+            if (total > 0) {
+                status = "له";
+            } else if (total<0)
+            {
+                status = "عليه";
+            }
+            debugger;
+            total = Math.abs(total);
+            total = numberWithCommas(total);
+
+            $('#agentnewBalnce').text(total);
+            $('#agentnewBalnceStatus').text(status);
+
         }
 
     }
