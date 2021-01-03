@@ -28,5 +28,6 @@ namespace BWR.Domain.Model.Clients
         public Guid? UserId { get; set; }
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
+        public bool? Shaded { get; set; }
     }
 }

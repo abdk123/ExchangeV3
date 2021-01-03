@@ -43,5 +43,11 @@ namespace Bwr.WebApp.Controllers
         {
             return Json(_companyCashFlowAppService.GetBalanceForCompany(companyId, coinId));
         }
+        [HttpPost]
+        public void Shaded(int id, bool value)
+        {
+                _companyCashFlowAppService.Shaded(id, value);
+            
+        }
     }
 }

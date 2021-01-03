@@ -11,5 +11,6 @@ namespace BWR.Application.Interfaces.Company
         IList<BalanceStatementDto> GetForStatement(int coinId, DateTime to);
         CompanyMatchDto ConvertMatchingStatus(CompanyMatchDto dto);
         IList<CompanyBalanceDto> GetBalanceForCompany(int companyId, int coinId);
+        void Shaded(int id, bool value);
     }
 }

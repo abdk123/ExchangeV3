@@ -103,7 +103,10 @@ namespace BWR.Application.AppServices.Companies
                             Date = companyCashFlow.MoenyAction.Date != null ? companyCashFlow.MoenyAction.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
                             Note = companyCashFlow.MoenyAction.GetNote(Requester.Company, companyCashFlow.CompanyId),
                             MoneyActionId = companyCashFlow.MoneyActionId,
-                            Matched = companyCashFlow.Matched
+                            Matched = companyCashFlow.Matched,
+                            Shaded = companyCashFlow.Shaded==true,
+                            UserMatched = companyCashFlow.User?.FullName??"",
+                             CompanyUserMatched = companyCashFlow.CompanyUser?.Name??""
                         };
                         //temp.Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.Amount;
                         temp.Balance += temp.Commission;
@@ -328,6 +331,21 @@ namespace BWR.Application.AppServices.Companies
             }
 
             return companyBalances;
+        }
+        public void Shaded(int id , bool value)
+        {
+            try
+            {
+                var companyCahsFlow = this._unitOfWork.GenericRepository<CompanyCashFlow>().GetById(id);
+                companyCahsFlow.Shaded = value;
+                _unitOfWork.GenericRepository<CompanyCashFlow>().Update(companyCahsFlow);
+                _unitOfWork.Save();
+            }
+            catch(Exception ex)
+            {
+                Tracing.SaveException(ex);
+                throw ex;
+            }
         }
     }
 }

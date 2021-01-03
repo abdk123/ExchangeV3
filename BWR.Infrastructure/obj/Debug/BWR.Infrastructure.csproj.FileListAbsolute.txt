@@ -177,3 +177,5 @@ C:\Users\HP\Desktop\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.c
 C:\Users\HP\Desktop\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.csproj.CopyComplete
 C:\Users\HP\Desktop\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.dll
 C:\Users\HP\Desktop\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.pdb
+C:\Users\HP\Desktop\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.Migrations.Add_Shaded_Cloumn_For_CompanyCashFlow.resources
+C:\Users\HP\Desktop\ExchangeV3\BWR.Infrastructure\obj\Debug\BWR.Infrastructure.Migrations.Add_Shaded_Cloumn_For_ClientCahsFlow.resources
