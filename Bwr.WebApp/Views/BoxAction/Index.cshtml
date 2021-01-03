@@ -46,6 +46,7 @@
                     <div class="col-lg-6">
                         <label>الرصيد المتبقي</label>
                         <br />
+
                         <span class="label label-primary" id="agentnewBalnce"></span>
 
                         <span lass="label label-primary" id="agentnewBalnceStatus"></span>
@@ -105,17 +106,17 @@
         </div>
         <div class="col-lg-8" style="display:none" id="secounAcountDetials">
             <div id="secoundCompanyDiv" style="display:none">
-                <div class="col-lg-8">
+                <div class="col-lg-6">
                     <label> اختر الشركة</label>
                     <select id="secoundCompanySelect"></select>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="row">
                         <div class="col-lg-6">
                             <label>الرصيد</label>
                             <br />
                             <span class="label label-primary" id="secondcompanycurrentBalnce"></span>
-                        <span class="label label-primary" id="secondcompanycurrentBalnceStatus"></span>
+                            <span class="label label-primary" id="secondcompanycurrentBalnceStatus"></span>
                         </div>
                         <div class="col-lg-6">
                             <label>الرصيد المتبقي</label>
@@ -123,18 +124,24 @@
                     </div>
                 </div>
             </div>
-            <div id="secoundAgentDiv" style="display:none"> 
-                <div class="col-lg-8">
+            <div id="secoundAgentDiv" style="display:none">
+                <div class="col-lg-6">
                     <label> اختر العميل</label>
-                    <select id="secoundAgentSelect"></select>
+                    <select id="secoundAgentSelect" onchange=""></select>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-lg-4">
                             <label>الرصيد</label>
+                            <span class="label label-primary" id="secoundagentcurrentBalnce"></span>
+                            <span lass="label label-primary" id="secoundagentcurrentBalnceStatus"></span>
+
                         </div>
                         <div class="col-lg-6">
                             <label>الرصيد المتبقي </label>
+
+                            <span class="label label-primary" id="secoundagentnewBalnce"></span>
+                            <span lass="label label-primary" id="secoundagentnewBalnceStatus"></span>
                         </div>
                     </div>
                 </div>
@@ -149,7 +156,8 @@
 <script>
     var clientBalnae;
     var companyBalnce;
-
+    var secoundClientBalnce;
+    var secoundCompanyBalcne;
     $(function () {
         $('#secoundAcount').change(function () {
             hideAllSecoundDiv();
@@ -217,7 +225,7 @@
 
                     $('#secoundAgentSelect').append(newOption).trigger('change');
                 }
-                $('#secoundAgentSelect').val(null).trigger('change');
+                //$('#secoundAgentSelect').val(null).trigger('change');
             }
         )
 
@@ -318,21 +326,29 @@
             }
         )
     }
-    $('#coins').change(function () {
+    $('#coins').change(async function () {
 
         if ($('#agents').val() == "") {
             resetAgentBlance();
         } else {
-            getClientBalanceByCoin($('#agents').val(), $(this).val());
+            await getClientBalanceByCoin($('#agents').val(), $(this).val());
+            clacAgentCurrentBalcne();
+  //          getSecoundClientBalanceByCoin($('#secoundAgentSelect'), $(this).val());
         }
         if ($('#companies').val() == "") {
             resetCompanyBalnce();
         } else {
             getCompanyBalnceByCoin($('#companies').val(), $(this).val())
         }
-        if ($('#agents').val() != '') {
-            clacAgentCurrentBalcne();
+        if ($('#secoundAgentSelect').val()) {
+            await getSecoundClientBalanceByCoin($('#secoundAgentSelect').val(), $(this).val());
+            CalcSecoundAgentCurrentBalcne();
+        } else {
+            resetSecoundAgentBalcne();
         }
+        //if ($('#agents').val() != '') {
+        //    clacAgentCurrentBalcne();
+        //}
     });
     $('#companies').change(async function () {
         if ($(this).val() == "") {
@@ -356,6 +372,12 @@
     function resetAgentBlance() {
         $('#agentcurrentBalnce').empty();
         $('#agentnewBalnce').empty();
+    }
+    function resetSecoundAgentBalcne() {
+        $('#secoundagentnewBalnce').text('');
+                $('#secoundagentcurrentBalnceStatus').text('');
+                $('#secoundagentcurrentBalnce').text('');
+                $('#secoundagentnewBalnceStatus').text('');
     }
     function resetCompanyBalnce() {
         $('#companycurrentBalnce').empty();
@@ -484,7 +506,44 @@
     });
     $('#amout').keyup(() => {
         CalcAllFirstBalance();
+        CalcAllSecoundBalances();
     });
+    function CalcAllSecoundBalances() {
+        var type = $('#secoundAcount').val();
+        if (type == 2) {
+            CalcSecoundAgentCurrentBalcne();
+        } else if (type == 3) {
+
+        }
+    }
+
+    function CalcSecoundAgentCurrentBalcne() {
+    var amount = parseFloat(deleteCommaFromNumber($('#amout').val()));
+        if (isNaN(amount)) {
+            amount = 0;
+        }
+
+        var typeOfAtionVal = $('#typeOfAction').val();
+        if (secoundClientBalnce != null) {
+            var total;
+            if (typeOfAtionVal != 1) {
+                total = secoundClientBalnce.Total + amount;
+            } else {
+                total = secoundClientBalnce.Total - amount;
+            }
+            var status = "";
+            if (total > 0) {
+                status = "له";
+            } else if (total < 0) {
+                status = "عليه";
+            }
+            total = Math.abs(total);
+            total = numberWithCommas(total);
+
+            $('#secoundagentnewBalnce').text(total);
+            $('#secoundagentnewBalnceStatus').text(status);
+        }
+    }
     function CalcAllFirstBalance() {
         var type = $('#firstAcountSelect').val();
         if (type == 3) {
@@ -835,7 +894,7 @@
         );
     }
     function fromCompanyToPublicIncome(coinId, companyId, publicIncomeId, amount, note) {
-       
+
         $.post(
             '@Url.Action("FromCompanyToPublicIncome", "BoxAction")', {
                 CoinId: coinId,
@@ -854,7 +913,40 @@
             }
         );
     }
-    $('#secoundAgentSelect').change(function () {
-
+    $('#secoundAgentSelect').change(async function () {
+        await getSecoundClientBalanceByCoin($(this).val(), $('#coins').val());
+        CalcAllSecoundBalances();
     });
+    async function getSecoundClientBalanceByCoin(clientId, coinId) {
+        console.log(coinId);
+        console.log(clientId);
+                $('#secoundagentnewBalnce').text('');
+                $('#secoundagentcurrentBalnceStatus').text('');
+                $('#secoundagentcurrentBalnce').text('');
+                $('#secoundagentnewBalnceStatus').text('');
+        secoundClientBalnce = null;
+        await $.post(
+            '@Url.Action("GetClientCashByCoin", "ClientCash")',
+            {
+                clientId: clientId,
+                coinId: coinId
+            }, function (data) {
+                secoundClientBalnce = data;
+                var total = data.Total;
+                var status = "";
+                if (total > 0) {
+                    status = "له";
+                }
+                else if (total < 0) {
+                    status = "عليه";
+                }
+                var balnce = numberWithCommas(Math.abs(parseFloat(data.Total)));
+                $('#secoundagentnewBalnce').text(balnce);
+                $('#secoundagentcurrentBalnceStatus').text(status);
+                $('#secoundagentcurrentBalnce').text(balnce);
+                $('#secoundagentnewBalnceStatus').text(status);
+            }
+        );
+    }
+
 </script>

@@ -15,13 +15,14 @@
     <div class="col-md-4">
         <div class="form-group">
             <label class="control-label" for="a-flow-from">من </label>
-            <input type="date" class="form-control" id="a-flow-from" onchange="$companyCashFlowDataTable.refresh();;" />
+            <input type="date" class="form-control" id="a-flow-from" onchange="ReFull();" />
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             <label class="control-label" for="a-flow-to">إلى </label>
-            <input type="date" class="form-control" id="a-flow-to" onchange="$companyCashFlowDataTable.refresh();;" />
+            @*$companyCashFlowDataTable.refresh();;*@
+            <input type="date" class="form-control" id="a-flow-to" onchange="ReFull();" />
         </div>
     </div>
 </div>
@@ -162,6 +163,10 @@
 
 
 
+        function ReFull() {
+                        $inputDto = getData();
+            $companyCashFlowDataTable.refresh();
+        }
         $('#a-flow-coinId').on("change", function (e) {
             $inputDto = getData();
             $companyCashFlowDataTable.refresh();
@@ -193,12 +198,12 @@
 
         });
 
-        
+
 
     });
 
     function matchOrUnMatchCompanyCashFlow(id,value) {
-        
+
         $.post('@Url.Action("ConvertMatchingStatus", "CompanyCashFlow")',
             { CompanyCashFlowId: id, Matched: value}, function (data) {
                 if (data.Success) {

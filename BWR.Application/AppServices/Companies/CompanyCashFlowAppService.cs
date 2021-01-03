@@ -49,7 +49,7 @@ namespace BWR.Application.AppServices.Companies
                     {
                         lastBalance = companyCash.InitialBalance;
                     }
-                    var companyCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>()
+                    var companyCashFlows = (IQueryable<CompanyCashFlow>)_unitOfWork.GenericRepository<CompanyCashFlow>()
                         .FindBy(x => x.CoinId.Equals(input.CoinId) && x.CompanyId.Equals(input.CompanyId)
                         , c => c.MoenyAction.Clearing.FromClient
                         , c => c.MoenyAction.Clearing.ToClient
@@ -73,25 +73,19 @@ namespace BWR.Application.AppServices.Companies
                                 Type = "رصيد سابق"
                             });
 
-
-                    var dataCashFlows = new List<CompanyCashFlow>();
-
                     if (input.From != null && input.To != null)
                     {
-                        dataCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date >= input.From && x.MoenyAction.Date <= input.To).ToList();
+                        companyCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date >= input.From && x.MoenyAction.Date <= input.To);
                     }
                     else if (input.From == null && input.To != null)
                     {
-                        dataCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date <= input.To).ToList();
+                        companyCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date <= input.To);
                     }
                     else if (input.From != null && input.To == null)
                     {
-                        dataCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date >= input.From).ToList();
+                        companyCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date >= input.From);
                     }
-                    else
-                    {
-                        dataCashFlows = companyCashFlows.ToList();
-                    }
+                    var dataCashFlows = companyCashFlows.OrderBy(c => c.MoenyAction.Date).ThenBy(c => c.Id).ToList();
                     foreach (var companyCashFlow in dataCashFlows)
                     {
                         var temp = new CompanyCashFlowOutputDto()

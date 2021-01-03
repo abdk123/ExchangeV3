@@ -48,13 +48,13 @@ namespace BWR.Application.AppServices.Companies
                     {
                         lastBalance = clientCash.InitialBalance;
                     }
-                    var clientCashFlows = _unitOfWork.GenericRepository<ClientCashFlow>()
+                    var clientCashFlows =(IQueryable< ClientCashFlow>) _unitOfWork.GenericRepository<ClientCashFlow>()
                         .FindBy(x => x.CoinId.Equals(input.CoinId) && x.ClientId.Equals(input.ClientId), c => c.MoenyAction, c => c.MoenyAction.Clearing, c => c.MoenyAction.Clearing.ToClient
                         , c => c.MoenyAction.Clearing.FromClient
                         , c => c.MoenyAction.Clearing.FromCompany
                         , c => c.MoenyAction.Clearing.ToCompany
                         , c => c.MoenyAction.PublicMoney.PublicExpense
-                        , c => c.MoenyAction.PublicMoney.PublicIncome).OrderBy(x => x.MoenyAction.Date);
+                        , c => c.MoenyAction.PublicMoney.PublicIncome);
                     var clientCashFlowsBeforeFromDate = clientCashFlows.Where(x => x.MoenyAction.Date < input.From);
                     if (clientCashFlowsBeforeFromDate.Any())
                     {
@@ -71,25 +71,23 @@ namespace BWR.Application.AppServices.Companies
                             });
 
 
-                    var dataCashFlows = new List<ClientCashFlow>();
+                    
 
                     if (input.From != null && input.To != null)
                     {
-                        dataCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date >= input.From && x.MoenyAction.Date <= input.To).ToList();
+                        clientCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date >= input.From && x.MoenyAction.Date <= input.To);
                     }
                     else if (input.From == null && input.To != null)
                     {
-                        dataCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date <= input.To).ToList();
+                        clientCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date <= input.To);
                     }   
                     else if (input.From != null && input.To == null)
                     {
-                        dataCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date >= input.From).ToList();
-                    }
-                    else
-                    {
-                        dataCashFlows = clientCashFlows.ToList();
+                        clientCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date >= input.From);
                     }
 
+                    var dataCashFlows = clientCashFlows.OrderBy(c => c.MoenyAction.Date).ThenBy(c=>c.Id).ToList();
+                    
                     foreach (var clientCashFlow in dataCashFlows)
                     {
                         var temp = new ClientCashFlowOutputDto()

@@ -10,3 +10,8 @@
 /BWR.Infrastructure/obj
 /BWR.ShareKernel/obj
 /Bwr.WebApp/obj
+/BWR.Application/bin
+/BWR.Domain/bin
+/BWR.Infrastructure/bin
+/BWR.ShareKernel/bin
+/Bwr.WebApp/bin

@@ -81,3 +81,13 @@ C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKe
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CopyComplete
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.dll
 C:\Users\Tariq\Desktop\Exchange\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.pdb
+C:\Users\HP\Desktop\ExchangeV3\BWR.ShareKernel\bin\Debug\BWR.ShareKernel.dll
+C:\Users\HP\Desktop\ExchangeV3\BWR.ShareKernel\bin\Debug\BWR.ShareKernel.pdb
+C:\Users\HP\Desktop\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.dll
+C:\Users\HP\Desktop\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\HP\Desktop\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.xml
+C:\Users\HP\Desktop\ExchangeV3\BWR.ShareKernel\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\HP\Desktop\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csprojAssemblyReference.cache
+C:\Users\HP\Desktop\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.csproj.CopyComplete
+C:\Users\HP\Desktop\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.dll
+C:\Users\HP\Desktop\ExchangeV3\BWR.ShareKernel\obj\Debug\BWR.ShareKernel.pdb

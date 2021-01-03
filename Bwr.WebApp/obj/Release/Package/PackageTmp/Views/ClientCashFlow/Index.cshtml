@@ -143,6 +143,8 @@
                             'searchable': false,
                             'sortable': false,
                             'render': function (data, type, full, meta) {
+                                if (data == null)
+                                    return "";  
                                 return '<a href="@Url.Action("Index", "MoneyAction")?id=' + data + '" class="btn btn-defult editClientCommission"><span class="glyphicon glyphicon-eye"></span>  تفاصيل</a>';
 
                             }
@@ -202,7 +204,6 @@
             'From': $('#a-flow-from').val(),
             'To': $('#a-flow-to').val()
         };
-        console.log(dto);
         return dto;
     }
 

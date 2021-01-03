@@ -1,4 +1,4 @@
-using AutoMapper;
+Ôªøusing AutoMapper;
 using BWR.Application.Dtos.Branch;
 using BWR.Application.Dtos.Branch.BranchCashFlow;
 using BWR.Application.Dtos.BranchCashFlow;
@@ -93,7 +93,7 @@ namespace BWR.Application.AppServices.Branches
                 branchCashFlowsDto.Add(new BranchCashFlowOutputDto
                 {
                     Balance = lastTotal,
-                    Type = "—’Ìœ ”«»ﬁ",
+                    Type = "√ë√ï√≠√è √ì√á√à√û",
                 });
 
 
@@ -117,7 +117,7 @@ namespace BWR.Application.AppServices.Branches
                                 branchCashFlowsDto.Add(new BranchCashFlowOutputDto
                                 {
                                     Balance = lastTotal,
-                                    Type = "—’Ìœ ”«»ﬁ"                                    
+                                    Type = "ÿ±ÿµŸäÿØ ÿ≥ÿßÿ®ŸÇ"                                    
                                 });
                             }
                         }

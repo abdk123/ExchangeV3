@@ -90,7 +90,7 @@ namespace Bwr.WebApp.Controllers.Setting
             if (_publicIncomeAppService.CheckIfExist(dto.Name, 0))
             {
                 _success = false;
-                _message = "يوجد بلد بنفس الاسم";
+                _message = "يوجد ب اثم مماثل";
                 exist = true;
             }
             else
