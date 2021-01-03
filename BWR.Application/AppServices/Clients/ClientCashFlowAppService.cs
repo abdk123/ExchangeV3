@@ -48,7 +48,7 @@ namespace BWR.Application.AppServices.Companies
                     {
                         lastBalance = clientCash.InitialBalance;
                     }
-                    var clientCashFlows =(IQueryable< ClientCashFlow>) _unitOfWork.GenericRepository<ClientCashFlow>()
+                    var clientCashFlows = _unitOfWork.GenericRepository<ClientCashFlow>()
                         .FindBy(x => x.CoinId.Equals(input.CoinId) && x.ClientId.Equals(input.ClientId), c => c.MoenyAction, c => c.MoenyAction.Clearing, c => c.MoenyAction.Clearing.ToClient
                         , c => c.MoenyAction.Clearing.FromClient
                         , c => c.MoenyAction.Clearing.FromCompany

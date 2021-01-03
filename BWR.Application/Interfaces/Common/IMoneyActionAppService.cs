@@ -11,5 +11,6 @@ namespace BWR.Application.Interfaces.Common
         string GetActionName(MoneyAction moneyAction);
         IList<MoneyActionDetailDto> GetByTransactionId(int transactionId);
         MoneyActionOutputDto GetById(int id);
+        bool Delete(int id);
     }
 }

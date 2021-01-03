@@ -95,5 +95,47 @@ namespace BWR.Application.AppServices.Common
 
             return moneyActionDetailsDto;
         }
+        public bool Delete(int id)
+        {
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(c=>c.Id==id,c=>c.BoxAction,c=>c.Exchange,c=>c.PublicMoney, c => c.Transaction, c => c.Clearing).SingleOrDefault();
+            if(moneyAction==null)
+            return false;
+            try
+            {
+                _unitOfWork.CreateTransaction();
+                if (moneyAction.BoxAction != null)
+                {
+                    _unitOfWork.Delete(moneyAction.BoxAction);
+                    _unitOfWork.Save();
+                }
+                if (moneyAction.Exchange != null)
+                {
+                    _unitOfWork.Delete(moneyAction.Exchange);
+                }
+                if (moneyAction.PublicMoney != null)
+                {
+                    _unitOfWork.Delete(moneyAction.PublicMoney);
+                }
+                if (moneyAction.Transaction != null)
+                {
+                    _unitOfWork.Delete(moneyAction.Transaction);
+                }
+                if (moneyAction.Clearing != null)
+                {
+                    _unitOfWork.Delete(moneyAction.Transaction);
+                }
+                _unitOfWork.Delete(moneyAction);
+                _unitOfWork.Save();
+                _unitOfWork.Commit();
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Tracing.SaveException(ex);
+                _unitOfWork.Rollback();
+                return false;
+            }
+        }
     }
 }

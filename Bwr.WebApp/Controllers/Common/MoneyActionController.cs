@@ -46,5 +46,11 @@ namespace Bwr.WebApp.Controllers.Common
             
             return View();
         }
+        [HttpPost]
+        public ActionResult DeleteMoenyAction(int id)
+        {
+             
+            return Json(_moneyActionAppService.Delete(id));
+        }
     }
 }

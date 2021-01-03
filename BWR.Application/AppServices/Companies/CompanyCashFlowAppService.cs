@@ -49,7 +49,7 @@ namespace BWR.Application.AppServices.Companies
                     {
                         lastBalance = companyCash.InitialBalance;
                     }
-                    var companyCashFlows = (IQueryable<CompanyCashFlow>)_unitOfWork.GenericRepository<CompanyCashFlow>()
+                    var companyCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>()
                         .FindBy(x => x.CoinId.Equals(input.CoinId) && x.CompanyId.Equals(input.CompanyId)
                         , c => c.MoenyAction.Clearing.FromClient
                         , c => c.MoenyAction.Clearing.ToClient
@@ -58,14 +58,13 @@ namespace BWR.Application.AppServices.Companies
                         , c => c.MoenyAction.Clearing.FromCompany
                         , c => c.MoenyAction.PublicMoney.PublicExpense
                         , c => c.MoenyAction.PublicMoney.PublicIncome
-                        ).OrderBy(x => x.MoenyAction.Date);
+                        );
                     var companyCashFlowsBeforeFromDate = companyCashFlows.Where(x => x.MoenyAction.Date < input.From);
                     if (companyCashFlowsBeforeFromDate.Any())
                     {
                         var lastCompanyCashFlowBeforeFromDate = companyCashFlowsBeforeFromDate.Sum(c => c.Amount);
                         lastBalance = lastCompanyCashFlowBeforeFromDate;
                     }
-
                     companyCashFlowsDtos.Add(
                             new CompanyCashFlowOutputDto()
                             {

@@ -12,15 +12,17 @@ namespace BWR.Infrastructure.Exceptions
         {
             Task.Factory.StartNew(() =>
             {
+                
                 System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace(ex, true);
+                var frameZero = trace.GetFrame(0);
                 string exption = "FileName: " + Environment.NewLine;
-                exption += trace.GetFrame(0).GetFileName() + Environment.NewLine;
+                exption += frameZero.GetFileName() + Environment.NewLine;
                 exption += "MethodName:" + Environment.NewLine;
-                exption += trace.GetFrame(0).GetMethod() + Environment.NewLine;
+                exption += frameZero.GetMethod() + Environment.NewLine;
                 exption += "Line:" + Environment.NewLine;
-                exption += trace.GetFrame(0).GetFileLineNumber() + Environment.NewLine;
+                exption += frameZero.GetFileLineNumber() + Environment.NewLine;
                 exption += "Column:" + Environment.NewLine;
-                exption += trace.GetFrame(0).GetFileColumnNumber() + Environment.NewLine;
+                exption += frameZero.GetFileColumnNumber() + Environment.NewLine;
                 File.WriteAllText(path + @"\log.txt", exption);
             });
         }
