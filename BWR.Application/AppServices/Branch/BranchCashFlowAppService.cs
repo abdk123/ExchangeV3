@@ -33,7 +33,7 @@ namespace BWR.Application.AppServices.Branches
             //_moneyActionAppService = moneyActionAppService;
             _appSession = appSession;
         }
-        
+
         public IList<BranchCashFlowDto> GetAll()
         {
             var branchcashflowsDtos = new List<BranchCashFlowDto>();
@@ -63,7 +63,7 @@ namespace BWR.Application.AppServices.Branches
         //        {
         //            branchcashflowsDtos = Mapper.Map<List<BranchCashFlow>, List<BranchCashFlowDto>>(branchcashflows);
         //        }
-                
+
         //    }
         //    catch (Exception ex)
         //    {
@@ -75,22 +75,22 @@ namespace BWR.Application.AppServices.Branches
 
         public IList<BranchCashFlowOutputDto> Get(int? branchId, int coinId, DateTime? from, DateTime? to)
         {
-            IList<BranchCashFlowOutputDto> branchCashFlowsDto = new List<BranchCashFlowOutputDto>() ;
+            IList<BranchCashFlowOutputDto> branchCashFlowsDto = new List<BranchCashFlowOutputDto>();
             try
             {
-                if(branchId==null)
+                if (branchId == null)
                     branchId = BranchHelper.Id;
 
                 #region Last Total
 
                 decimal lastTotal;
-                var brachCashs = _unitOfWork.GenericRepository<BranchCash>()
-                    .FindBy(c => c.CoinId == coinId && c.BranchId == branchId).ToList();
+                var brachCash = _unitOfWork.GenericRepository<BranchCash>()
+                    .FindBy(c => c.CoinId == coinId && c.BranchId == branchId).FirstOrDefault();
 
-                if (!brachCashs.Any())
+                if (brachCash == null)
                     return branchCashFlowsDto;
 
-                lastTotal = brachCashs.FirstOrDefault().InitialBalance;
+                lastTotal = brachCash.InitialBalance;
                 branchCashFlowsDto.Add(new BranchCashFlowOutputDto
                 {
                     Balance = lastTotal,
@@ -101,10 +101,10 @@ namespace BWR.Application.AppServices.Branches
                 #endregion
 
                 var allBranchCashFlows = _unitOfWork.GenericRepository<BranchCashFlow>()
-                    .FindBy(c => c.CoinId == coinId && c.BranchId == branchId, c => c.MoenyAction,c=>c.MoenyAction.BoxAction, c => c.MoenyAction.Clearing.ToClient, c => c.MoenyAction.Clearing.ToCompany, c => c.MoenyAction.Clearing.FromClient, c => c.MoenyAction.Clearing.FromCompany
+                    .FindBy(c => c.CoinId == coinId && c.BranchId == branchId, c => c.MoenyAction, c => c.MoenyAction.BoxAction, c => c.MoenyAction.Clearing.ToClient, c => c.MoenyAction.Clearing.ToCompany, c => c.MoenyAction.Clearing.FromClient, c => c.MoenyAction.Clearing.FromCompany
                     , c => c.MoenyAction.Exchange.FirstCoin, c => c.MoenyAction.Exchange.SecoundCoin, c => c.MoenyAction.Exchange.MainCoin, c => c.MoenyAction.PublicMoney.PublicExpense, c => c.MoenyAction.PublicMoney.PublicIncome
-                    , c => c.MoenyAction.Transaction.ReciverClient, c => c.MoenyAction.Transaction.ReceiverCompany, c => c.MoenyAction.Transaction.SenderCompany, c => c.MoenyAction.Transaction.SenderClient,c => c.MoenyAction.Transaction.Coin
-                    ,c => c.MoenyAction.ClientCashFlows, c => c.MoenyAction.CompanyCashFlows
+                    , c => c.MoenyAction.Transaction.ReciverClient, c => c.MoenyAction.Transaction.ReceiverCompany, c => c.MoenyAction.Transaction.SenderCompany, c => c.MoenyAction.Transaction.SenderClient, c => c.MoenyAction.Transaction.Coin
+                    , c => c.MoenyAction.ClientCashFlows, c => c.MoenyAction.CompanyCashFlows
                     );
                 if (allBranchCashFlows.Any())
                 {
@@ -114,15 +114,15 @@ namespace BWR.Application.AppServices.Branches
                     {
                         if (from != null)
                         {
-                            var tempLastBranchCahsFlow = allBranchCashFlows.Where(c => c.MoenyAction.Date< from).ToList();
+                            var tempLastBranchCahsFlow = allBranchCashFlows.Where(c => c.MoenyAction.Date < from&&c.CoinId==coinId).ToList();
                             if (tempLastBranchCahsFlow.Any())
                             {
                                 branchCashFlowsDto.Clear();
-                                lastTotal = tempLastBranchCahsFlow.Last().Total;
+                                lastTotal = tempLastBranchCahsFlow.Sum(c=>c.Amount)+lastTotal;
                                 branchCashFlowsDto.Add(new BranchCashFlowOutputDto
                                 {
                                     Balance = lastTotal,
-                                    Type = "رصيد سابق"                                    
+                                    Type = "رصيد سابق"
                                 });
                             }
                         }
@@ -156,9 +156,9 @@ namespace BWR.Application.AppServices.Branches
                         branchCashFlowsDto.Add(dto);
                     }
 
-                    
+
                 }
-                
+
             }
             catch (Exception ex)
             {

@@ -10,7 +10,7 @@ namespace BWR.Domain.Model.Clients
         public string Path { get; set; }
         public bool IsEnabled { get; set; }
 
-        public int AttachmentId { get; set; }
+        public int AttachmentId { get; set; }   
 
         [ForeignKey("AttachmentId")]
         public virtual Attachment Attatchmant { get; set; }

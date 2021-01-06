@@ -138,7 +138,7 @@ namespace BWR.Application.AppServices.Transactions
 
                     var branchCashFLow = new BranchCashFlow()
                     {
-                        Total = branchCash.Total,
+                        //Total = branchCash.Total,
                         Amount = -transaction.Amount,
                         MonyActionId = moneyActinId,
                         BranchId = BranchHelper.Id,

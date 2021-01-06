@@ -143,7 +143,7 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     BranchId = branchId,
                     CoinId = input.CoinId,
-                    Total = branchCash.Total,
+                    //Total = branchCash.Total,
                     Amount = -input.Amount,
                     MoenyAction = moneyAction,
                     TreasuryId = treasuryId,
@@ -234,7 +234,7 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     BranchId = branchId,
                     CoinId = input.CoinId,
-                    Total = branchCash.Total,
+                    //Total = branchCash.Total,
                     Amount = input.Amount,
                     MoenyAction = moneyAction,
                     TreasuryId = treasuryId,
@@ -325,7 +325,7 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     BranchId = branchId,
                     CoinId = input.CoinId,
-                    Total = branchCash.Total,
+                   // Total = branchCash.Total,
                     Amount = -input.Amount,
                     MoenyAction = moneyAction,
                     TreasuryId = treasuryId,
@@ -428,7 +428,7 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     BranchId = branchId,
                     CoinId = input.CoinId,
-                    Total = branchCash.Total,
+                    //Total = branchCash.Total,
                     Amount = input.Amount,
                     MonyActionId = moneyAction.Id,
                     TreasuryId = treasuryId,
@@ -534,7 +534,7 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     BranchId = branchId,
                     CoinId = input.CoinId,
-                    Total = branchCash.Total,
+               //     Total = branchCash.Total,
                     Amount = input.Amount,
                     MonyActionId = moneyAction.Id,
                     TreasuryId = treasuryId,
@@ -634,7 +634,7 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     BranchId = branchId,
                     CoinId = input.CoinId,
-                    Total = branchCash.Total,
+                    //Total = branchCash.Total,
                     Amount = -input.Amount,
                     MoenyAction = moneyAction,
                     TreasuryId = treasuryId,

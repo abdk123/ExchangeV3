@@ -212,7 +212,7 @@ namespace BWR.Application.AppServices.Transactions
                     TreasuryId = treasuryId,
                     CoinId = dto.CoinId,
                     Amount = dto.Amount + dto.OurComission,
-                    Total = branchCash.Total
+                    //Total = branchCash.Total
                 };
 
                 _unitOfWork.GenericRepository<BranchCashFlow>().Insert(branchCashFlow);
@@ -1142,7 +1142,7 @@ namespace BWR.Application.AppServices.Transactions
                 {
                     BranchId = branchId,
                     CoinId = dto.CoinId,
-                    Total = branchCash.Total,
+                //    Total = branchCash.Total,
                     Amount = (decimal)dto.RecivingAmount,
                     MonyActionId = moneyAction.Id,
                     TreasuryId = treasuryId,
