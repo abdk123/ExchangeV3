@@ -26,3 +26,5 @@ BWR.Application/bin/
 BWR.Domain/bin/Release/BWR.Domain.pdb
 Bwr.WebApp/bin
 Bwr.WebApp/obj
+BWR.ShareKernel/bin
+BWR.ShareKernel/obj
