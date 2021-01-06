@@ -1,8 +1,11 @@
-﻿using BWR.Domain.Model.Common;
+﻿using BWR.Domain.Model.Clients;
+using BWR.Domain.Model.Common;
+using BWR.Domain.Model.Companies;
 using BWR.Domain.Model.Enums;
 using BWR.Domain.Model.Settings;
 using BWR.Infrastructure.Common;
 using BWR.Infrastructure.Context;
+using BWR.Infrastructure.Exceptions;
 using BWR.ShareKernel.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -194,8 +197,31 @@ namespace BWR.Application.Extensions
             }
             return "GetTypeName";
         }
-        
-
-
+        public static string GetActionName(this MoneyAction moneyAction)
+        {
+            try
+            {
+                if (moneyAction.Transaction != null && moneyAction.BoxAction == null)
+                    return moneyAction.Transaction.GetActionName();
+                if (moneyAction.PublicMoney != null)
+                    return moneyAction.PublicMoney.GetActionName();
+                if (moneyAction.BoxAction != null)
+                {
+                    if (moneyAction.ClientCashFlows != null && moneyAction.ClientCashFlows.Count > 0)
+                        return new List<ClientCashFlow>(moneyAction.ClientCashFlows)[0].Client.FullName;
+                    return new List<CompanyCashFlow>(moneyAction.CompanyCashFlows)[0].CompanyName();
+                }
+                if (moneyAction.Exchange != null)
+                {
+                    return moneyAction.Exchange.SecoundCoin.Name;
+                    //return _unitOfWork.GenericRepository<Coin>().GetById(moneyAction.Exchange.SecoundCoinId).Name;
+                }
+            }
+            catch (Exception ex)
+            {
+                Tracing.SaveException(ex);
+            }
+            return "GetActionName";
+        }
     }
 }

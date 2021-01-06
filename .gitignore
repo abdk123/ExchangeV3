@@ -15,3 +15,12 @@
 /BWR.Infrastructure/bin
 /BWR.ShareKernel/bin
 /Bwr.WebApp/bin
+BWR.Application/bin/Debug/BWR.Application.dll
+BWR.Application/bin/Debug/BWR.Infrastructure.dll
+BWR.Application/bin/Debug/BWR.Infrastructure.pdb
+BWR.Application/bin/Debug/BWR.ShareKernel.dll
+BWR.Application/obj/Release/BWR.Application.dll
+BWR.Application/bin/Release/BWR.Application.dll
+BWR.Application/bin/Debug/BWR.ShareKernel.pdb
+BWR.Application/bin/
+BWR.Domain/bin/Release/BWR.Domain.pdb

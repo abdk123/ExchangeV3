@@ -21,7 +21,7 @@ namespace BWR.Application.AppServices.Companies
     public class ClientCashFlowAppService : IClientCashFlowAppService
     {
         private readonly IUnitOfWork<MainContext> _unitOfWork;
-        private readonly IMoneyActionAppService _moneyActionAppService;
+        //private readonly IMoneyActionAppService _moneyActionAppService;
         private readonly IAppSession _appSession;
         public ClientCashFlowAppService(
             IUnitOfWork<MainContext> unitOfWork,
@@ -31,7 +31,7 @@ namespace BWR.Application.AppServices.Companies
             IClientCashAppService clientCashAppService)
         {
             _unitOfWork = unitOfWork;
-            _moneyActionAppService = moneyActionAppService;
+            //_moneyActionAppService = moneyActionAppService;
             _appSession = appSession;
         }
 

@@ -13,6 +13,6 @@ namespace BWR.ShareKernel.Interfaces
         Task SaveAsync();
         IGenericRepository<TEntity> GenericRepository<TEntity>() where TEntity : class;
         void Delete<T>(T entity) where T : class;
-         void LoadCollection<T>(T t, params string[] propertySelectors) where T : class;
+        void LoadCollection<T>(T t, params string[] propertySelectors) where T : class;
     }
 }

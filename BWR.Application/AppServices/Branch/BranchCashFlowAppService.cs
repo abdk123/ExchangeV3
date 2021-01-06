@@ -22,7 +22,7 @@ namespace BWR.Application.AppServices.Branches
     public class BranchCashFlowAppService : IBranchCashFlowAppService
     {
         private readonly IUnitOfWork<MainContext> _unitOfWork;
-        private readonly IMoneyActionAppService _moneyActionAppService;
+        //private readonly IMoneyActionAppService _moneyActionAppService;
         private readonly IAppSession _appSession;
 
         public BranchCashFlowAppService(IUnitOfWork<MainContext> unitOfWork,
@@ -30,7 +30,7 @@ namespace BWR.Application.AppServices.Branches
             IAppSession appSession)
         {
             _unitOfWork = unitOfWork;
-            _moneyActionAppService = moneyActionAppService;
+            //_moneyActionAppService = moneyActionAppService;
             _appSession = appSession;
         }
         
@@ -146,7 +146,7 @@ namespace BWR.Application.AppServices.Branches
                             Balance = branchCashFlowsDto.Last().Balance + item.Amount,
                             Amount = item.Amount,
                             Type = item.MoenyAction.GetTypeName(Requester.Branch, null),
-                            Name = _moneyActionAppService.GetActionName(item.MoenyAction),
+                            Name = item.MoenyAction.GetActionName(),
                             Number = item.MoenyAction.GetActionId().ToString(),
                             Date = item.MoenyAction.GetDate(),
                             Note = note,

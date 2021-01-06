@@ -22,7 +22,7 @@ namespace BWR.Application.AppServices.Companies
     public class CompanyCashFlowAppService : ICompanyCashFlowAppService
     {
         private readonly IUnitOfWork<MainContext> _unitOfWork;
-        private readonly IMoneyActionAppService _moneyActionAppService;
+        //private readonly IMoneyActionAppService _moneyActionAppService;
         private readonly IAppSession _appSession;
 
         public CompanyCashFlowAppService(
@@ -31,7 +31,7 @@ namespace BWR.Application.AppServices.Companies
             IAppSession appSession)
         {
             _unitOfWork = unitOfWork;
-            _moneyActionAppService = moneyActionAppService;
+            //_moneyActionAppService = moneyActionAppService;
             _appSession = appSession;
         }
 
@@ -51,13 +51,10 @@ namespace BWR.Application.AppServices.Companies
                     }
                     var companyCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>()
                         .FindBy(x => x.CoinId.Equals(input.CoinId) && x.CompanyId.Equals(input.CompanyId)
-                        , c => c.MoenyAction.Clearing.FromClient
-                        , c => c.MoenyAction.Clearing.ToClient
-                        , c => c.MoenyAction.Clearing.ToCompany
-                        , c => c.MoenyAction.Clearing.ToCompany
-                        , c => c.MoenyAction.Clearing.FromCompany
-                        , c => c.MoenyAction.PublicMoney.PublicExpense
-                        , c => c.MoenyAction.PublicMoney.PublicIncome
+                        ,c => c.MoenyAction, c => c.MoenyAction.BoxAction, c => c.MoenyAction.Clearing.ToClient, c => c.MoenyAction.Clearing.ToCompany, c => c.MoenyAction.Clearing.FromClient, c => c.MoenyAction.Clearing.FromCompany
+                    , c => c.MoenyAction.Exchange.FirstCoin, c => c.MoenyAction.Exchange.SecoundCoin, c => c.MoenyAction.Exchange.MainCoin, c => c.MoenyAction.PublicMoney.PublicExpense, c => c.MoenyAction.PublicMoney.PublicIncome
+                    , c => c.MoenyAction.Transaction.ReciverClient, c => c.MoenyAction.Transaction.ReceiverCompany, c => c.MoenyAction.Transaction.SenderCompany, c => c.MoenyAction.Transaction.SenderClient, c => c.MoenyAction.Transaction.Coin
+                    , c => c.MoenyAction.ClientCashFlows, c => c.MoenyAction.CompanyCashFlows
                         );
                     var companyCashFlowsBeforeFromDate = companyCashFlows.Where(x => x.MoenyAction.Date < input.From);
                     if (companyCashFlowsBeforeFromDate.Any())
@@ -98,7 +95,7 @@ namespace BWR.Application.AppServices.Companies
                             SenderName = companyCashFlow.SenderName(Requester.Company, input.CompanyId),
                             CountryName = companyCashFlow.CountryName(),
                             Type = companyCashFlow.MoenyAction.GetTypeName(Requester.Company, companyCashFlow.CompanyId),
-                            Name = _moneyActionAppService.GetActionName(companyCashFlow.MoenyAction),
+                            Name = companyCashFlow.MoenyAction.GetActionName(),
                             Number = companyCashFlow.MoenyAction.GetActionId(),
                             Date = companyCashFlow.MoenyAction.Date != null ? companyCashFlow.MoenyAction.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
                             Note = companyCashFlow.MoenyAction.GetNote(Requester.Company, companyCashFlow.CompanyId),

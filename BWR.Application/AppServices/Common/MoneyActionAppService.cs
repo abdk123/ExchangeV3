@@ -15,7 +15,6 @@ using BWR.Infrastructure.Exceptions;
 using BWR.ShareKernel.Exceptions;
 using System;
 using BWR.Application.Dtos.MoneyAction;
-using BWR.Application.Interfaces.BranchCashFlow;
 
 namespace BWR.Application.AppServices.Common
 {
@@ -124,21 +123,18 @@ namespace BWR.Application.AppServices.Common
                     _unitOfWork.Delete(moneyAction.Transaction);
                 }
                 _unitOfWork.Save();
-                //moneyAction.BranchCashFlows.ToList().ForEach(b =>
-                //{
-                //    _branchCashFlow.Delete(b);
-                //});
-                moneyAction.BranchCashFlows.ToList().ForEach(b =>
-                {
+                var tempBC = moneyAction.BranchCashFlows.ToList();
+                for (int i = 0; i < tempBC.Count; i++)
+                { 
+                    var b = tempBC[i];
                     if (b.TreasuryMoneyActions.Count() == 0)
                         _unitOfWork.LoadCollection(b, "TreasuryMoneyActions");
-                    var tr = b.TreasuryMoneyActions.ToList();
-                    for (int i = 0; i < tr.Count; i++)
+                    var tempTm = b.TreasuryMoneyActions.ToList();
+                    for (int j = 0; j < tempTm.Count; j++)
                     {
-                        _unitOfWork.Delete(tr[i]);
+                        _unitOfWork.Delete(tempTm[j]);
                     }
-                    _unitOfWork.Delete(b);
-                });
+                }
                 _unitOfWork.Delete(moneyAction);
                 _unitOfWork.Save();
                 _unitOfWork.Commit();
