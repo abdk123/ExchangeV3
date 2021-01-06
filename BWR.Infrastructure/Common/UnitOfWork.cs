@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BWR.Infrastructure.Common
@@ -114,6 +115,13 @@ where TContext : DbContext, new()
                     foreach (var validationError in validationErrors.ValidationErrors)
                         _errorMessage += string.Format("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage) + Environment.NewLine;
                 throw new Exception(_errorMessage, dbEx);
+            }
+        }
+        public void LoadCollection<T>(T t, params string[] propertySelectors) where T: class 
+        {
+            foreach (var item in propertySelectors)
+            {
+                this._context.Entry(t).Collection(item).Load();
             }
         }
 

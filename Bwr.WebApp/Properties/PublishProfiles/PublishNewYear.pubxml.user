@@ -6,7 +6,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>C:\Users\HP\OneDrive</_PublishTargetUrl>
+    <_PublishTargetUrl>C:\Users\HP\Dropbox\PublishNewYear</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="bin/Antlr3.Runtime.dll">
@@ -19,37 +19,37 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/02/2021 11:11:19</publishTime>
     </File>
     <File Include="bin/BWR.Application.dll">
-      <publishTime>01/02/2021 14:57:39</publishTime>
+      <publishTime>01/03/2021 21:39:30</publishTime>
     </File>
     <File Include="bin/BWR.Application.pdb">
-      <publishTime>01/02/2021 14:57:39</publishTime>
+      <publishTime>01/03/2021 21:39:30</publishTime>
     </File>
     <File Include="bin/BWR.Domain.dll">
-      <publishTime>01/02/2021 14:57:35</publishTime>
+      <publishTime>01/03/2021 21:39:28</publishTime>
     </File>
     <File Include="bin/BWR.Domain.pdb">
-      <publishTime>01/02/2021 14:57:35</publishTime>
+      <publishTime>01/03/2021 21:39:28</publishTime>
     </File>
     <File Include="bin/BWR.Infrastructure.dll">
-      <publishTime>01/02/2021 14:57:37</publishTime>
+      <publishTime>01/03/2021 21:39:29</publishTime>
     </File>
     <File Include="bin/BWR.Infrastructure.dll.config">
       <publishTime>01/02/2021 11:11:07</publishTime>
     </File>
     <File Include="bin/BWR.Infrastructure.pdb">
-      <publishTime>01/02/2021 14:57:37</publishTime>
+      <publishTime>01/03/2021 21:39:29</publishTime>
     </File>
     <File Include="bin/BWR.ShareKernel.dll">
-      <publishTime>01/02/2021 14:57:33</publishTime>
+      <publishTime>01/03/2021 21:39:27</publishTime>
     </File>
     <File Include="bin/BWR.ShareKernel.pdb">
-      <publishTime>01/02/2021 14:57:33</publishTime>
+      <publishTime>01/03/2021 21:39:27</publishTime>
     </File>
     <File Include="bin/Bwr.WebApp.dll">
-      <publishTime>01/02/2021 15:02:22</publishTime>
+      <publishTime>01/03/2021 21:39:33</publishTime>
     </File>
     <File Include="bin/Bwr.WebApp.pdb">
-      <publishTime>01/02/2021 15:02:22</publishTime>
+      <publishTime>01/03/2021 21:39:33</publishTime>
     </File>
     <File Include="bin/Castle.Core.dll">
       <publishTime>01/02/2021 11:11:19</publishTime>
@@ -18544,10 +18544,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/02/2021 11:11:13</publishTime>
     </File>
     <File Include="Views/BoxAction/EditBoxAction.cshtml">
-      <publishTime>01/02/2021 11:11:13</publishTime>
+      <publishTime>01/03/2021 20:09:22</publishTime>
     </File>
     <File Include="Views/BoxAction/Index.cshtml">
-      <publishTime>01/02/2021 14:55:46</publishTime>
+      <publishTime>01/03/2021 17:14:57</publishTime>
     </File>
     <File Include="Views/BranchCash/Index.cshtml">
       <publishTime>01/02/2021 11:11:13</publishTime>
@@ -18631,7 +18631,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/02/2021 11:11:13</publishTime>
     </File>
     <File Include="Views/CompanyCashFlow/Index.cshtml">
-      <publishTime>01/02/2021 12:30:12</publishTime>
+      <publishTime>01/03/2021 21:37:54</publishTime>
     </File>
     <File Include="Views/CompanyCommission/Index.cshtml">
       <publishTime>01/02/2021 11:11:13</publishTime>

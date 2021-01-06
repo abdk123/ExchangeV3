@@ -15,14 +15,14 @@ using BWR.Infrastructure.Exceptions;
 using BWR.ShareKernel.Exceptions;
 using System;
 using BWR.Application.Dtos.MoneyAction;
+using BWR.Application.Interfaces.BranchCashFlow;
 
 namespace BWR.Application.AppServices.Common
 {
-    public class MoneyActionAppService: IMoneyActionAppService
+    public class MoneyActionAppService : IMoneyActionAppService
     {
         private readonly IUnitOfWork<MainContext> _unitOfWork;
         private readonly IAppSession _appSession;
-
         public MoneyActionAppService(IUnitOfWork<MainContext> unitOfWork
             , IAppSession appSession)
         {
@@ -49,7 +49,7 @@ namespace BWR.Application.AppServices.Common
                     return _unitOfWork.GenericRepository<Coin>().GetById(moneyAction.Exchange.SecoundCoinId).Name;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Tracing.SaveException(ex);
             }
@@ -97,16 +97,15 @@ namespace BWR.Application.AppServices.Common
         }
         public bool Delete(int id)
         {
-            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(c=>c.Id==id,c=>c.BoxAction,c=>c.Exchange,c=>c.PublicMoney, c => c.Transaction, c => c.Clearing).SingleOrDefault();
-            if(moneyAction==null)
-            return false;
+            var moneyAction = _unitOfWork.GenericRepository<MoneyAction>().FindBy(c => c.Id == id, c => c.BoxAction, c => c.Exchange, c => c.PublicMoney, c => c.Transaction, c => c.Clearing).SingleOrDefault();
+            if (moneyAction == null)
+                return false;
             try
             {
                 _unitOfWork.CreateTransaction();
                 if (moneyAction.BoxAction != null)
                 {
                     _unitOfWork.Delete(moneyAction.BoxAction);
-                    _unitOfWork.Save();
                 }
                 if (moneyAction.Exchange != null)
                 {
@@ -124,13 +123,29 @@ namespace BWR.Application.AppServices.Common
                 {
                     _unitOfWork.Delete(moneyAction.Transaction);
                 }
+                _unitOfWork.Save();
+                //moneyAction.BranchCashFlows.ToList().ForEach(b =>
+                //{
+                //    _branchCashFlow.Delete(b);
+                //});
+                moneyAction.BranchCashFlows.ToList().ForEach(b =>
+                {
+                    if (b.TreasuryMoneyActions.Count() == 0)
+                        _unitOfWork.LoadCollection(b, "TreasuryMoneyActions");
+                    var tr = b.TreasuryMoneyActions.ToList();
+                    for (int i = 0; i < tr.Count; i++)
+                    {
+                        _unitOfWork.Delete(tr[i]);
+                    }
+                    _unitOfWork.Delete(b);
+                });
                 _unitOfWork.Delete(moneyAction);
                 _unitOfWork.Save();
                 _unitOfWork.Commit();
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Tracing.SaveException(ex);
                 _unitOfWork.Rollback();

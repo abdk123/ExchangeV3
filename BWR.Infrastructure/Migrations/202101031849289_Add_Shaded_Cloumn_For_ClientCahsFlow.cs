@@ -13,6 +13,8 @@
         public override void Down()
         {
             DropColumn("dbo.ClientCashFlow", "Shaded");
-        }
+            //Alter table BranchCashFlow drop constraint[FK_dbo.BranchCashFlow_dbo.MoneyAction_MonyActionId];
+            //Alter table BranchCashFlow Add constraint[FK_dbo.BranchCashFlow_dbo.MoneyAction_MonyActionId] Foreign key(MoneyActionId) REFERENCES MoneyAcion(Id)
+        }   
     }
 }

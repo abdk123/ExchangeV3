@@ -36,18 +36,18 @@ namespace BWR.Infrastructure.Context
             modelBuilder.Configurations.Add(new ClaimConfiguration());
             modelBuilder.Configurations.Add(new TreasuryConfiguration());
             modelBuilder.Configurations.Add(new ExchangeConfiguration());
-            modelBuilder.Entity<BranchCashFlow>()
-                .HasRequired(s => s.MoenyAction)
-                .WithMany()
-                .WillCascadeOnDelete(true);
-            modelBuilder.Entity<ClientCashFlow>()
-                .HasRequired(s => s.MoenyAction)
-                .WithMany()
-                .WillCascadeOnDelete(true);
-            modelBuilder.Entity<CompanyCashFlow>()
-                .HasRequired(s => s.MoenyAction)
-                .WithMany()
-                .WillCascadeOnDelete(true);
+            //modelBuilder.Entity<BranchCashFlow>()
+            //    .HasRequired(s => s.MoenyAction)
+            //    .WithMany()
+            //    .WillCascadeOnDelete(true);
+            //modelBuilder.Entity<ClientCashFlow>()
+            //    .HasRequired(s => s.MoenyAction)
+            //    .WithMany()
+            //    .WillCascadeOnDelete(true);
+            //modelBuilder.Entity<CompanyCashFlow>()
+            //    .HasRequired(s => s.MoenyAction)
+            //    .WithMany()
+            //    .WillCascadeOnDelete(true);
             //modelBuilder.Entity<MoneyAction>()
             //    .HasOptional(c => c.Clearing)
             //    .WithOptionalDependent()
