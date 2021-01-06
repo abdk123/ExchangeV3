@@ -366,7 +366,6 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     CoinId = input.CoinId,
                     ClientId = input.ClientId,
-                    Total = clientCash.Total,
                     Amount = -input.Amount,
                     MoenyAction = moneyAction,
                     Matched = false,
@@ -470,7 +469,6 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     CoinId = input.CoinId,
                     ClientId = input.ClientId,
-                    Total = clientCash.Total,
                     Amount = input.Amount,
                     MoenyAction = moneyAction,
                     Matched = false,
@@ -730,7 +728,6 @@ namespace BWR.Application.AppServices.BoxActions
                     CoinId = dto.CoinId,
                     MoenyActionId = moenyAction.Id,
                     Amount = dto.Amount,
-                    Total = firstClientChash.Total,
                 };
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(firstClientCashFlow);
 
@@ -740,13 +737,13 @@ namespace BWR.Application.AppServices.BoxActions
                     CoinId = dto.CoinId,
                     MoenyActionId = moenyAction.Id,
                     Amount = -dto.Amount,
-                    Total = secounClientCahs.Total,
                 };
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(SecoundClientCashFlow);
                 _unitOfWork.Save();
                 _unitOfWork.Commit();
                 return true;
             }
+
             catch
             {
                 _unitOfWork.Rollback();
@@ -797,7 +794,6 @@ namespace BWR.Application.AppServices.BoxActions
                     CoinId = dto.CoinId,
                     MoenyActionId = moenyAction.Id,
                     Amount = -dto.Amount,
-                    Total = clientCash.Total,
                 };
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlow);
                 _unitOfWork.Save();
@@ -844,7 +840,6 @@ namespace BWR.Application.AppServices.BoxActions
                     CoinId = dto.CoinId,
                     MoenyActionId = moenyAction.Id,
                     Amount = dto.Amount,
-                    Total = clientChash.Total,
                 };
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlow);
 
@@ -955,7 +950,6 @@ namespace BWR.Application.AppServices.BoxActions
                     CoinId = dto.CoinId,
                     Amount = dto.Amount,
                     ClientId = dto.ClientId,
-                    Total = clientCash.Total,
                     MoenyActionId = moneyAction.Id,
                 };
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlow);
@@ -1001,7 +995,6 @@ namespace BWR.Application.AppServices.BoxActions
                     CoinId = dto.CoinId,
                     Amount = -dto.Amount,
                     ClientId = dto.ClientId,
-                    Total = clientCash.Total,
                     MoenyActionId = moneyAction.Id,
                 };
                 _unitOfWork.GenericRepository<ClientCashFlow>().Insert(clientCashFlow);
@@ -1369,7 +1362,6 @@ namespace BWR.Application.AppServices.BoxActions
                 {
                     CoinId = input.CoinId,
                     ClientId = input.ClientId,
-                    Total = clientCash.Total,
                     Amount = -input.Amount,
                     MoenyAction = moneyAction,
                     Matched = false,

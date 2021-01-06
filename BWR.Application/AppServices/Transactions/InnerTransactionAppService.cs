@@ -386,7 +386,6 @@ namespace BWR.Application.AppServices.Transactions
             {
                 ClientId = dto.AgentId,
                 CoinId = dto.CoinId,
-                Total = clientCash.Total,
                 Amount = dto.Amount,
                 Matched = false,
                 MoenyAction = moneyAction

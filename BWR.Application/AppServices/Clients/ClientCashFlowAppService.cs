@@ -55,11 +55,10 @@ namespace BWR.Application.AppServices.Companies
                         , c => c.MoenyAction.Clearing.ToCompany
                         , c => c.MoenyAction.PublicMoney.PublicExpense
                         , c => c.MoenyAction.PublicMoney.PublicIncome);
-                    var clientCashFlowsBeforeFromDate = clientCashFlows.Where(x => x.MoenyAction.Date < input.From);
+                    var clientCashFlowsBeforeFromDate = clientCashFlows.Where(x => x.MoenyAction.Date < input.From&&x.CoinId==input.CoinId);
                     if (clientCashFlowsBeforeFromDate.Any())
                     {
-                        var lastClientCashFlowBeforeFromDate = clientCashFlowsBeforeFromDate.LastOrDefault();
-                        lastBalance = lastClientCashFlowBeforeFromDate.Total;
+                        lastBalance = clientCashFlowsBeforeFromDate.Sum(c=>c.Amount)+lastBalance;
                     }
 
                     clientCashFlowsDtos.Add(

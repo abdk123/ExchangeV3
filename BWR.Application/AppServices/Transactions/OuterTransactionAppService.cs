@@ -391,7 +391,6 @@ namespace BWR.Application.AppServices.Transactions
                 var clientCashFlow = new ClientCashFlow()
                 {
                     ClientId = dto.SenderClientId.Value,
-                    Total = clientCash.Total,
                     MoenyAction = moneyAction,
                     CoinId = dto.CoinId,
                     Matched = false,
@@ -1189,7 +1188,6 @@ namespace BWR.Application.AppServices.Transactions
                 {
                     CoinId = dto.CoinId,
                     ClientId = (int)dto.SenderClientId,
-                    Total = clientCash.Total,
                     Amount = (decimal)dto.RecivingAmount,
                     MoenyActionId = moneyAction.Id,
                     Matched = false,
