@@ -10,7 +10,6 @@ namespace BWR.Domain.Model.Companies
     public class CompanyCashFlow: Entity
     {
         public decimal Amount { get; set; }
-        public decimal Total { get; set; }
         public bool Matched { get; set; }
         public bool? Shaded { get; set; }
         public int CoinId { get; set; }

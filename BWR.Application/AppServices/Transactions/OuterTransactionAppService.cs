@@ -218,16 +218,6 @@ namespace BWR.Application.AppServices.Transactions
                 _unitOfWork.GenericRepository<BranchCashFlow>().Insert(branchCashFlow);
                 #endregion
 
-                #region Company Cash
-                var companyCash = _unitOfWork.GenericRepository<CompanyCash>().FindBy(x => x.CompanyId == dto.SenderCompanyId && x.CoinId == dto.CoinId).FirstOrDefault();
-                if (companyCash != null)
-                {
-                    companyCash.Total += dto.Amount + dto.SenderCompanyComission.Value;
-                    companyCash.ModifiedBy = _appSession.GetUserName();
-                    _unitOfWork.GenericRepository<CompanyCash>().Update(companyCash);
-                }
-
-                #endregion
 
                 #region Company Cash Flow
                 var companyCashFlow = new CompanyCashFlow()
@@ -237,7 +227,6 @@ namespace BWR.Application.AppServices.Transactions
                     MoneyActionId = moneyAction.Id,
                     CoinId = dto.CoinId,
                     Amount = dto.Amount,
-                    Total = companyCash.Total,
                     Matched = false
                 };
 
@@ -337,16 +326,7 @@ namespace BWR.Application.AppServices.Transactions
                 #endregion
 
 
-                #region Company Cash
-                var companyCash = _unitOfWork.GenericRepository<CompanyCash>().FindBy(x => x.CompanyId == dto.SenderCompanyId && x.CoinId == dto.CoinId).FirstOrDefault();
-                if (companyCash != null)
-                {
-                    companyCash.Total += dto.Amount + dto.SenderCompanyComission.Value;
-                    companyCash.ModifiedBy = _appSession.GetUserName();
-                    _unitOfWork.GenericRepository<CompanyCash>().Update(companyCash);
-                }
-
-                #endregion
+                
 
                 #region Company Cash Flow
                 var companyCashFlow = new CompanyCashFlow()
@@ -356,7 +336,6 @@ namespace BWR.Application.AppServices.Transactions
                     MoenyAction = moneyAction,
                     CoinId = dto.CoinId,
                     Amount = dto.Amount,
-                    Total = companyCash.Total,
                     Matched = false
                 };
 
@@ -453,16 +432,7 @@ namespace BWR.Application.AppServices.Transactions
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
                 #endregion
 
-                #region Sender Company Cash
-                var senderCompanyCash = _unitOfWork.GenericRepository<CompanyCash>().FindBy(x => x.CompanyId == dto.SenderCompanyId && x.CoinId == dto.CoinId).FirstOrDefault();
-                if (senderCompanyCash != null)
-                {
-                    senderCompanyCash.Total += dto.Amount + dto.SenderCompanyComission.Value;
-                    senderCompanyCash.ModifiedBy = _appSession.GetUserName();
-                    _unitOfWork.GenericRepository<CompanyCash>().Update(senderCompanyCash);
-                }
-
-                #endregion
+                
 
                 #region Sender Company Cash Flow
                 var senderCompanyCashFlow = new CompanyCashFlow()
@@ -472,7 +442,6 @@ namespace BWR.Application.AppServices.Transactions
                     MoenyAction = moneyAction,
                     CoinId = dto.CoinId,
                     Amount = dto.Amount,
-                    Total = senderCompanyCash.Total,
                     Matched = false
                 };
 
@@ -489,18 +458,7 @@ namespace BWR.Application.AppServices.Transactions
                 }
                 #endregion
 
-                #region Receiver Company Cash
-                var receiverCompanyCash = _unitOfWork.GenericRepository<CompanyCash>().FindBy(x => x.CompanyId == dto.ReceiverCompanyId && x.CoinId == dto.CoinId).FirstOrDefault();
-                if (receiverCompanyCash != null)
-                {
-                    receiverCompanyCash.Total -= dto.Amount;
-                    receiverCompanyCash.Total -= dto.OurComission;
-                    receiverCompanyCash.Total += dto.ReceiverCompanyComission.Value;
-                    receiverCompanyCash.ModifiedBy = _appSession.GetUserName();
-                    _unitOfWork.GenericRepository<CompanyCash>().Update(receiverCompanyCash);
-                }
-
-                #endregion
+                
 
                 #region Receiver Company Cash Flow
                 var receiverCompanyCashFlow = new CompanyCashFlow()
@@ -510,14 +468,13 @@ namespace BWR.Application.AppServices.Transactions
                     MoenyAction = moneyAction,
                     CoinId = dto.CoinId,
                     Amount = (dto.Amount) * -1,
-                    Total = receiverCompanyCash.Total,
                     Matched = false
                 };
 
                 receiverCompanyCashFlow.Amount += dto.ReceiverCompanyComission.Value;
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(receiverCompanyCashFlow);
 
-                var reciverCompanyMatchedCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == receiverCompanyCashFlow.CompanyId && c.CoinId == receiverCompanyCash.CoinId && c.Matched == true && c.MoenyAction.Date > moneyAction.Date);
+                var reciverCompanyMatchedCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == receiverCompanyCashFlow.CompanyId && c.CoinId == dto.CoinId && c.Matched == true && c.MoenyAction.Date > moneyAction.Date);
                 foreach (var item in reciverCompanyMatchedCashFlows)
                 {
                     item.Matched = false;
@@ -1426,37 +1383,37 @@ namespace BWR.Application.AppServices.Transactions
                         }
 
                         #region Company Cash
-                        var companyCash = _unitOfWork.GenericRepository<CompanyCash>()
-                            .FindBy(x => x.CompanyId == dto.SenderCompanyId && x.CoinId == dto.CoinId).FirstOrDefault();
-                        if (companyCash != null)
-                        {
-                            if (oldCoinId == dto.CoinId && dto.SenderCompanyId == oldSenderCompanyId)
-                            {
-                                companyCash.Total += oldRecivingAmount;
-                                companyCash.Total -= oldSenderCompanyCommission;
-                            }
-                            else
-                            {
-                                var oldCompanyCash = _unitOfWork.GenericRepository<CompanyCash>()
-                                    .FindBy(x => x.CompanyId == oldSenderCompanyId && x.CoinId == oldCoinId).FirstOrDefault();
+                        //var companyCash = _unitOfWork.GenericRepository<CompanyCash>()
+                        //    .FindBy(x => x.CompanyId == dto.SenderCompanyId && x.CoinId == dto.CoinId).FirstOrDefault();
+                        //if (companyCash != null)
+                        //{
+                        //    if (oldCoinId == dto.CoinId && dto.SenderCompanyId == oldSenderCompanyId)
+                        //    {
+                        //        companyCash.Total += oldRecivingAmount;
+                        //        companyCash.Total -= oldSenderCompanyCommission;
+                        //    }
+                        //    else
+                        //    {
+                        //        var oldCompanyCash = _unitOfWork.GenericRepository<CompanyCash>()
+                        //            .FindBy(x => x.CompanyId == oldSenderCompanyId && x.CoinId == oldCoinId).FirstOrDefault();
 
-                                if (oldCompanyCash != null)
-                                {
-                                    oldCompanyCash.Total += oldRecivingAmount;
-                                    oldCompanyCash.Total -= oldSenderCompanyCommission;
+                        //        if (oldCompanyCash != null)
+                        //        {
+                        //            oldCompanyCash.Total += oldRecivingAmount;
+                        //            oldCompanyCash.Total -= oldSenderCompanyCommission;
 
-                                    oldCompanyCash.ModifiedBy = _appSession.GetUserName();
+                        //            oldCompanyCash.ModifiedBy = _appSession.GetUserName();
 
-                                    _unitOfWork.GenericRepository<CompanyCash>().Update(oldCompanyCash);
-                                }
-                            }
+                        //            _unitOfWork.GenericRepository<CompanyCash>().Update(oldCompanyCash);
+                        //        }
+                        //    }
 
-                            companyCash.Total -= dto.RecivingAmount.Value;
-                            if (dto.SenderCompanyComission != null && dto.SenderCompanyComission != 0)
-                                companyCash.Total += (decimal)dto.SenderCompanyComission;
-                            companyCash.ModifiedBy = _appSession.GetUserName();
-                        }
-                        _unitOfWork.GenericRepository<CompanyCash>().Update(companyCash);
+                        //    companyCash.Total -= dto.RecivingAmount.Value;
+                        //    if (dto.SenderCompanyComission != null && dto.SenderCompanyComission != 0)
+                        //        companyCash.Total += (decimal)dto.SenderCompanyComission;
+                        //    companyCash.ModifiedBy = _appSession.GetUserName();
+                        //}
+                        //_unitOfWork.GenericRepository<CompanyCash>().Update(companyCash);
 
                         #endregion
 

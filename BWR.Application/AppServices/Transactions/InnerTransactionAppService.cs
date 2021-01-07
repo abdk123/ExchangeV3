@@ -349,19 +349,11 @@ namespace BWR.Application.AppServices.Transactions
 
         private void CompanyBlanceArbitrage(InnerTransactionInsertDto dto, MoneyAction moneyAction)
         {
-            var companyCah = _unitOfWork.GenericRepository<CompanyCash>()
-                .FindBy(c => c.CoinId == dto.CoinId && c.CompanyId == dto.ReciverCompany.CompanyId)
-                .FirstOrDefault();
-
-            companyCah.Total += dto.Amount;
-            companyCah.Total += dto.ReciverCompany.CompanyCommission;
-            companyCah.ModifiedBy = _appSession.GetUserName();
-            _unitOfWork.GenericRepository<CompanyCash>().Update(companyCah);
+            
 
             var companyCahsFlow = new CompanyCashFlow()
             {
                 MoenyAction = moneyAction,
-                Total = companyCah.Total,
                 Amount = dto.Amount + dto.ReciverCompany.CompanyCommission,
                 Matched = false,
                 CompanyId = dto.ReciverCompany.CompanyId,
@@ -388,15 +380,12 @@ namespace BWR.Application.AppServices.Transactions
 
         private void MaiCompanyBalanceArbitrage(CompanyCash companyCash, InnerTransactionInsertDto dto, int mainCompanyId, MoneyAction moneyAction)
         {
-            companyCash.Total -= (dto.Amount + dto.OurComission);
-            companyCash.ModifiedBy = _appSession.GetUserName();
-            _unitOfWork.GenericRepository<CompanyCash>().Update(companyCash);
+            
 
             var companyCahsFlow = new CompanyCashFlow()
             {
                 CoinId = dto.CoinId,
                 CompanyId = mainCompanyId,
-                Total = companyCash.Total,
                 Amount = -dto.Amount,
                 Matched = false,
                 MoenyAction = moneyAction
