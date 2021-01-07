@@ -196,10 +196,10 @@ namespace BWR.Application.AppServices.Transactions
                 #endregion
 
                 #region Branch Cash
-                var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(x => x.BranchId == BranchHelper.Id && x.CoinId == dto.CoinId).FirstOrDefault();
-                branchCash.Total += dto.Amount + dto.OurComission;
-                branchCash.ModifiedBy = _appSession.GetUserName();
-                _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
+                //var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(x => x.BranchId == BranchHelper.Id && x.CoinId == dto.CoinId).FirstOrDefault();
+                //branchCash.Total += dto.Amount + dto.OurComission;
+                //branchCash.ModifiedBy = _appSession.GetUserName();
+                //_unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
 
                 #endregion
 
@@ -1114,7 +1114,7 @@ namespace BWR.Application.AppServices.Transactions
                 var branchId = BranchHelper.Id;
                 var treasuryId = _appSession.GetCurrentTreasuryId();
                 var mainTreasury = _appSession.GetMainTreasury();
-                var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.BranchId == branchId && c.CoinId == dto.CoinId).FirstOrDefault();
+               
                 var boxAction = new BoxAction()
                 {
                     Amount = (decimal)dto.RecivingAmount,
@@ -1133,9 +1133,7 @@ namespace BWR.Application.AppServices.Transactions
                 };
 
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
-                branchCash.Total += (decimal)dto.RecivingAmount;
-                branchCash.ModifiedBy = _appSession.GetUserName();
-                _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
+                
 
                 var branchCashFlow = new BranchCashFlow()
                 {
@@ -1397,36 +1395,6 @@ namespace BWR.Application.AppServices.Transactions
                         {
                             _unitOfWork.GenericRepository<BranchCashFlow>().Delete(oldBranchCashFlow);
                         }
-
-                        #region Branch Cash
-                        var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(x => x.BranchId == branchId && x.CoinId == dto.CoinId).FirstOrDefault();
-                        if (branchCash != null)
-                        {
-                            if (dto.CoinId == oldCoinId)
-                            {
-                                branchCash.Total -= oldRecivingAmount;
-                            }
-                            else
-                            {
-                                var oldBranchCash = _unitOfWork.GenericRepository<BranchCash>()
-                                    .FindBy(x => x.BranchId == BranchHelper.Id && x.CoinId == oldCoinId).FirstOrDefault();
-
-                                if (oldBranchCash != null)
-                                {
-                                    oldBranchCash.Total -= oldRecivingAmount;
-
-                                    _unitOfWork.GenericRepository<BranchCash>().Update(oldBranchCash);
-                                }
-                            }
-
-                            branchCash.Total += dto.RecivingAmount.Value;
-                            branchCash.ModifiedBy = _appSession.GetUserName();
-                            _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
-
-                        }
-
-                        #endregion
-
                         var oldTreasuryMoneyAction = _unitOfWork.GenericRepository<TreasuryMoneyAction>()
                         .FindBy(x => x.BranchCashFlow.MonyActionId == oldMoneyAction.Id).FirstOrDefault();
                         if (oldTreasuryMoneyAction != null)

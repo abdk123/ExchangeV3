@@ -107,11 +107,11 @@ namespace BWR.Application.AppServices.BoxActions
                 var publicActionMoneyId = _unitOfWork.GenericRepository<PublicMoney>().FindBy(c => c.ExpenseId == input.ExpensiveId).FirstOrDefault().Id;
                 var branchId = BranchHelper.Id;
 
-                var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.BranchId == branchId && c.CoinId == input.CoinId).First();
+                //var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.BranchId == branchId && c.CoinId == input.CoinId).First();
 
-                branchCash.Total -= input.Amount;
-                branchCash.ModifiedBy = _appSession.GetUserName();
-                _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
+                //branchCash.Total -= input.Amount;
+                //branchCash.ModifiedBy = _appSession.GetUserName();
+                //_unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
 
                 var treasuryId = _appSession.GetCurrentTreasuryId();
                 var mainTreasuryId = _appSession.GetMainTreasury();
@@ -197,11 +197,11 @@ namespace BWR.Application.AppServices.BoxActions
 
                 var branchId = BranchHelper.Id;
 
-                var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.BranchId == branchId && c.CoinId == input.CoinId).FirstOrDefault();
+                //var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.BranchId == branchId && c.CoinId == input.CoinId).FirstOrDefault();
 
-                branchCash.Total += input.Amount;
-                branchCash.ModifiedBy = _appSession.GetUserName();
-                _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
+                //branchCash.Total += input.Amount;
+                //branchCash.ModifiedBy = _appSession.GetUserName();
+                //_unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
 
                 var treasuryId = _appSession.GetCurrentTreasuryId();
                 var mainTreasuryId = _appSession.GetMainTreasury();
@@ -297,7 +297,7 @@ namespace BWR.Application.AppServices.BoxActions
                 _unitOfWork.GenericRepository<TreasuryCash>().Update(treasuryCash);
 
 
-                var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.BranchId == branchId && c.CoinId == input.CoinId).FirstOrDefault();
+                
                 var boxAction = new BoxAction()
                 {
                     Amount = input.Amount,
@@ -316,9 +316,6 @@ namespace BWR.Application.AppServices.BoxActions
                 };
 
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
-                branchCash.Total -= input.Amount;
-                branchCash.ModifiedBy = _appSession.GetUserName();
-                _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
 
 
                 var branchCashFlow = new BranchCashFlow()
@@ -399,7 +396,7 @@ namespace BWR.Application.AppServices.BoxActions
                 treuseryCash.ModifiedBy = _appSession.GetUserName();
                 _unitOfWork.GenericRepository<TreasuryCash>().Update(treuseryCash);
 
-                var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.BranchId == branchId && c.CoinId == input.CoinId).FirstOrDefault();
+                
                 var boxAction = new BoxAction()
                 {
                     Amount = input.Amount,
@@ -418,10 +415,7 @@ namespace BWR.Application.AppServices.BoxActions
                 };
 
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
-
-                branchCash.Total += input.Amount;
-                branchCash.ModifiedBy = _appSession.GetUserName();
-                _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
+                
 
                 var branchCashFlow = new BranchCashFlow()
                 {
@@ -504,7 +498,7 @@ namespace BWR.Application.AppServices.BoxActions
                 treuseryCash.ModifiedBy = _appSession.GetUserName();
                 _unitOfWork.GenericRepository<TreasuryCash>().Update(treuseryCash);
 
-                var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.BranchId == branchId && c.CoinId == input.CoinId).FirstOrDefault();
+                
                 var boxAction = new BoxAction()
                 {
                     Amount = input.Amount,
@@ -523,10 +517,7 @@ namespace BWR.Application.AppServices.BoxActions
                 };
 
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
-
-                branchCash.Total += input.Amount;
-                branchCash.ModifiedBy = _appSession.GetUserName();
-                _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
+                
 
                 var branchCashFlow = new BranchCashFlow()
                 {
@@ -605,7 +596,6 @@ namespace BWR.Application.AppServices.BoxActions
                 treasuryCash.ModifiedBy = _appSession.GetUserName();
                 _unitOfWork.GenericRepository<TreasuryCash>().Update(treasuryCash);
 
-                var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.BranchId == branchId && c.CoinId == input.CoinId).FirstOrDefault();
                 var boxAction = new BoxAction()
                 {
                     Amount = input.Amount,
@@ -624,9 +614,7 @@ namespace BWR.Application.AppServices.BoxActions
                 };
 
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
-                branchCash.Total -= input.Amount;
-                branchCash.ModifiedBy = _appSession.GetUserName();
-                _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
+                
 
                 var branchCashFlow = new BranchCashFlow()
                 {

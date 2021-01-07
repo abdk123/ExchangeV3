@@ -119,12 +119,12 @@ namespace BWR.Application.AppServices.Transactions
                     transaction.ModifiedBy = _appSession.GetUserName();
                     _unitOfWork.GenericRepository<Transaction>().Update(transaction);
 
-                    var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(x => x.CoinId == transaction.CoinId).FirstOrDefault();
-                    if (branchCash != null)
-                    {
-                        branchCash.Total -= transaction.Amount;
-                        _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
-                    }
+                    //var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(x => x.CoinId == transaction.CoinId).FirstOrDefault();
+                    //if (branchCash != null)
+                    //{
+                    //    branchCash.Total -= transaction.Amount;
+                    //    _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
+                    //}
 
                     var treasuryCash = _unitOfWork.GenericRepository<TreasuryCash>()
                         .FindBy(x => x.CoinId == transaction.CoinId && x.TreasuryId == treasuryId).FirstOrDefault();

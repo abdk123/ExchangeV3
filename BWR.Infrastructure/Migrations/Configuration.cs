@@ -134,13 +134,11 @@
                     CoinId = dollar.Id,
                     BranchId = brancheId,
                     InitialBalance = total,
-                    Total = total,
                 };
                 var iBranchCash = new BranchCash()
                 {
                     BranchId = brancheId,
                     CoinId = irDinar.Id,
-                    Total = total,
                     InitialBalance = total
                 };
                 context.BranchCashs.AddRange(new[] { iBranchCash, sBranchCash });
