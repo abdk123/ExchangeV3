@@ -7,7 +7,6 @@ namespace BWR.Domain.Model.Companies
     public class CompanyCash: Entity
     {
         public decimal InitialBalance { get; set; }
-        public decimal Total { get; set; }
         public decimal? MaxCreditor { get; set; }
         public decimal? MaxDebit { get; set; }
         public bool IsEnabled { get; set; }
