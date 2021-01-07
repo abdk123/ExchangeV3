@@ -373,14 +373,6 @@ namespace BWR.Application.AppServices.Transactions
 
         private void AgentBalnaceArbitrage(InnerTransactionInsertDto dto, MoneyAction moneyAction)
         {
-            var clientCash = _unitOfWork.GenericRepository<ClientCash>()
-                .FindBy(c => c.CoinId == dto.CoinId && c.ClientId == dto.AgentId)
-                .FirstOrDefault();
-
-            clientCash.Total += dto.Amount;
-            clientCash.Total += dto.AgentCommission;
-            clientCash.ModifiedBy = _appSession.GetUserName();
-            _unitOfWork.GenericRepository<ClientCash>().Update(clientCash);
 
             var clientCashFlow = new ClientCashFlow()
             {

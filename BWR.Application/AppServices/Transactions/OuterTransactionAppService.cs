@@ -374,18 +374,7 @@ namespace BWR.Application.AppServices.Transactions
                 }
                 #endregion
 
-                #region Client Cash
-                var clientCash = _unitOfWork.GenericRepository<ClientCash>().FindBy(x => x.ClientId == dto.SenderClientId && x.CoinId == dto.CoinId).FirstOrDefault();
-                if (clientCash != null)
-                {
-                    clientCash.Total -= dto.Amount + dto.OurComission;
-                    if (dto.SenderCleirntCommission != null && dto.SenderCleirntCommission != 0)
-                        clientCash.Total += (decimal)dto.SenderCleirntCommission;
-                    clientCash.ModifiedBy = _appSession.GetUserName();
-                }
-                _unitOfWork.GenericRepository<ClientCash>().Update(clientCash);
-
-                #endregion
+                
 
                 #region Client Cash Flow
                 var clientCashFlow = new ClientCashFlow()
@@ -1176,10 +1165,7 @@ namespace BWR.Application.AppServices.Transactions
                     _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyAction);
                 }
 
-                var clientCash = _unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.ClientId == dto.SenderClientId && c.CoinId == dto.CoinId).First();
-                clientCash.Total += (decimal)dto.RecivingAmount;
-                clientCash.ModifiedBy = _appSession.GetUserName();
-                _unitOfWork.GenericRepository<ClientCash>().Update(clientCash);
+                
 
 
                 var clientCashFlow = new ClientCashFlow()
