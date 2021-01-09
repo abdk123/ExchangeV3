@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Threading.Tasks;
+using BWR.Application.Dtos.Setting.Coin;
 
 namespace BWR.Application.AppServices.Treasuries
 {
@@ -30,9 +31,29 @@ namespace BWR.Application.AppServices.Treasuries
             var treasuryCashsDto = new List<TreasuryCashDto>();
             try
             {
-                var treasuryCashes = _unitOfWork.GenericRepository<TreasuryCash>()
-                    .FindBy(x => x.TreasuryId == treasuryId).ToList();
-                treasuryCashsDto = Mapper.Map<List<TreasuryCash>, List<TreasuryCashDto>>(treasuryCashes);
+                //var treasuryCashes = _unitOfWork.GenericRepository<TreasuryCash>()
+                //    .FindBy(x => x.TreasuryId == treasuryId).ToList();
+                //treasuryCashsDto = Mapper.Map<List<TreasuryCash>, List<TreasuryCashDto>>(treasuryCashes);
+                var treasuryMoneyAction = _unitOfWork.GenericRepository<TreasuryMoneyAction>()
+                    .FindBy(c => c.TreasuryId == treasuryId, "BranchCashFlow", "Coin").ToList();
+                var group = treasuryMoneyAction.GroupBy(c => c.Coin);
+                foreach (var item in group)
+                {
+                    var moenyActions = item.ToList();
+                    treasuryCashsDto.Add(new TreasuryCashDto()
+                    {
+                        Coin = Mapper.Map<BWR.Domain.Model.Settings.Coin, CoinDto>(item.Key),
+                        Amount = moenyActions.Sum(c => c.RealAmount),
+                        CoinId = item.Key.Id,                         
+                    });
+                }
+                //foreach (var item in treasuryCashes)
+                //{
+                //    treasuryCashsDto.Add(new TreasuryCashDto()
+                //    {
+                        
+                //    })
+                //}
 
             }
             catch (Exception ex)

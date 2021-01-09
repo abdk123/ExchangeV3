@@ -171,7 +171,6 @@
 
     function initialCoins() {
         $.get('@Url.Action("GetCoinsForDropdown","Coin")', { term: "" }, function (data) {
-
             var coins = data.Coins;
             var selectedCoins =@Html.Raw(Json.Encode(Model.TreasuryCashes));
             for (var i = 0; i < coins.length; i++) {

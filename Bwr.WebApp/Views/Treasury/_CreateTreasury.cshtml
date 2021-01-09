@@ -139,7 +139,7 @@
             let id = row.getElementsByTagName('input')[0].value;
             let amount = row.getElementsByTagName('input')[1].value;
             amount = deleteCommaFromNumber(amount);
-            treasuryCoins.push({ 'InitialBalance': amount, 'Total': amount, 'CoinId': id });
+            treasuryCoins.push({  'Amount': amount, 'CoinId': id });
         }
 
         return treasuryCoins;

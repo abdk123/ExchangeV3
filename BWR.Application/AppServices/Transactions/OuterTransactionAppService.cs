@@ -195,13 +195,6 @@ namespace BWR.Application.AppServices.Transactions
                 _unitOfWork.Save();
                 #endregion
 
-                #region Branch Cash
-                //var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(x => x.BranchId == BranchHelper.Id && x.CoinId == dto.CoinId).FirstOrDefault();
-                //branchCash.Total += dto.Amount + dto.OurComission;
-                //branchCash.ModifiedBy = _appSession.GetUserName();
-                //_unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
-
-                #endregion
 
                 #region Branch Cash Flow
                 var branchCashFlow = new BranchCashFlow()
@@ -243,12 +236,12 @@ namespace BWR.Application.AppServices.Transactions
                 #endregion
 
                 #region Treasury Cash
-                var treasuryCash = _unitOfWork.GenericRepository<TreasuryCash>().FindBy(x => x.TreasuryId == treasuryId && x.CoinId == dto.CoinId).FirstOrDefault();
-                if (treasuryCash != null)
-                {
-                    treasuryCash.Total += dto.Amount + dto.OurComission;
-                }
-                _unitOfWork.GenericRepository<TreasuryCash>().Update(treasuryCash);
+                //var treasuryCash = _unitOfWork.GenericRepository<TreasuryCash>().FindBy(x => x.TreasuryId == treasuryId && x.CoinId == dto.CoinId).FirstOrDefault();
+                //if (treasuryCash != null)
+                //{
+                //    treasuryCash.Total += dto.Amount + dto.OurComission;
+                //}
+                //_unitOfWork.GenericRepository<TreasuryCash>().Update(treasuryCash);
 
                 #endregion
 
@@ -256,7 +249,7 @@ namespace BWR.Application.AppServices.Transactions
 
                 var truseryMoneyAction = new TreasuryMoneyAction()
                 {
-                    Total = treasuryCash.Total,
+                    //Total = treasuryCash.Total,
                     Amount = dto.Amount + dto.OurComission,
                     TreasuryId = treasuryId,
                     CoinId = dto.CoinId,
@@ -1094,15 +1087,15 @@ namespace BWR.Application.AppServices.Transactions
 
                 _unitOfWork.GenericRepository<BranchCashFlow>().Insert(branchCashFlow);
 
-                var treuseryCash = _unitOfWork.GenericRepository<TreasuryCash>().FindBy(c => c.CoinId == dto.CoinId && c.TreasuryId == treasuryId).FirstOrDefault();
-                treuseryCash.Total += (decimal)dto.RecivingAmount;
-                treuseryCash.ModifiedBy = _appSession.GetUserName();
-                _unitOfWork.GenericRepository<TreasuryCash>().Update(treuseryCash);
+                //var treuseryCash = _unitOfWork.GenericRepository<TreasuryCash>().FindBy(c => c.CoinId == dto.CoinId && c.TreasuryId == treasuryId).FirstOrDefault();
+                //treuseryCash.Total += (decimal)dto.RecivingAmount;
+                //treuseryCash.ModifiedBy = _appSession.GetUserName();
+                //_unitOfWork.GenericRepository<TreasuryCash>().Update(treuseryCash);
                 var treasuryMoneyAction = new TreasuryMoneyAction()
                 {
                     BranchCashFlowId = branchCashFlow.Id,
                     CoinId = dto.CoinId,
-                    Total = treuseryCash.Total,
+                    //Total = treuseryCash.Total,
                     TreasuryId = treasuryId,
                     Amount = (decimal)dto.RecivingAmount,
                     CreatedBy = _appSession.GetUserName()
@@ -1121,9 +1114,6 @@ namespace BWR.Application.AppServices.Transactions
 
                     _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyAction);
                 }
-
-                
-
 
                 var clientCashFlow = new ClientCashFlow()
                 {
@@ -1293,212 +1283,205 @@ namespace BWR.Application.AppServices.Transactions
             }
         }
         /// <summary>
-        /// هي منشان شو مكتوبة و غير مستعملة 
+        /// هي مكتوبة و مالها مستعملة 
         /// </summary>
-        /// <param name="dto"></param>
-        /// <param name="oldRecivingAmount"></param>
-        /// <param name="oldRecivingAmount2"></param>
-        /// <param name="oldCoinId"></param>
-        /// <param name="oldTreasuryId"></param>
-        /// <param name="oldSenderCompanyId"></param>
-        /// <param name="oldSenderCompanyCommission"></param>
-        /// <returns>boooooooooooooooooooooooooooooooooooooooooool</returns>
+        /// <param name="moneyAction"></param>
 
-        private bool EditReciveFromCompanyForMainBoxMethond(OuterTransactionUpdateDto dto, decimal oldRecivingAmount, decimal oldRecivingAmount2, int oldCoinId, int oldTreasuryId, int oldSenderCompanyId, decimal oldSenderCompanyCommission)
-        {
-            try
-            {
-                _unitOfWork.CreateTransaction();
-                var branchId = BranchHelper.Id;
-                var treasuryId = _appSession.GetCurrentTreasuryId();
-                var mainTreasury = _appSession.GetMainTreasury();
+        //private bool EditReciveFromCompanyForMainBoxMethond(OuterTransactionUpdateDto dto, decimal oldRecivingAmount, decimal oldRecivingAmount2, int oldCoinId, int oldTreasuryId, int oldSenderCompanyId, decimal oldSenderCompanyCommission)
+        //{
+        //    try
+        //    {
+        //        _unitOfWork.CreateTransaction();
+        //        var branchId = BranchHelper.Id;
+        //        var treasuryId = _appSession.GetCurrentTreasuryId();
+        //        var mainTreasury = _appSession.GetMainTreasury();
 
-                int? boxActionId;
+        //        int? boxActionId;
 
-                var moneyActionDetailDto = dto.MoenyActions.FirstOrDefault(x => x.Id != null);
-                if (moneyActionDetailDto != null)
-                {
-                    boxActionId = moneyActionDetailDto.Id;
+        //        var moneyActionDetailDto = dto.MoenyActions.FirstOrDefault(x => x.Id != null);
+        //        if (moneyActionDetailDto != null)
+        //        {
+        //            boxActionId = moneyActionDetailDto.Id;
 
-                    var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
-                   .FindBy(x => x.Id == moneyActionDetailDto.Id).FirstOrDefault();
+        //            var oldMoneyAction = _unitOfWork.GenericRepository<MoneyAction>()
+        //           .FindBy(x => x.Id == moneyActionDetailDto.Id).FirstOrDefault();
 
-                    if (oldMoneyAction != null)
-                    {
-                        var oldBoxAction = _unitOfWork.GenericRepository<BoxAction>()
-                        .FindBy(x => x.Id == boxActionId).FirstOrDefault();
-                        if (oldBoxAction != null)
-                        {
-                            _unitOfWork.GenericRepository<BoxAction>().Delete(oldBoxAction);
-                        }
+        //            if (oldMoneyAction != null)
+        //            {
+        //                var oldBoxAction = _unitOfWork.GenericRepository<BoxAction>()
+        //                .FindBy(x => x.Id == boxActionId).FirstOrDefault();
+        //                if (oldBoxAction != null)
+        //                {
+        //                    _unitOfWork.GenericRepository<BoxAction>().Delete(oldBoxAction);
+        //                }
 
-                        var oldBranchCashFlow = _unitOfWork.GenericRepository<BranchCashFlow>()
-                            .FindBy(x => x.MonyActionId == oldMoneyAction.Id).FirstOrDefault();
-                        if (oldBranchCashFlow != null)
-                        {
-                            _unitOfWork.GenericRepository<BranchCashFlow>().Delete(oldBranchCashFlow);
-                        }
-                        var oldTreasuryMoneyAction = _unitOfWork.GenericRepository<TreasuryMoneyAction>()
-                        .FindBy(x => x.BranchCashFlow.MonyActionId == oldMoneyAction.Id).FirstOrDefault();
-                        if (oldTreasuryMoneyAction != null)
-                        {
-                            _unitOfWork.GenericRepository<TreasuryMoneyAction>().Delete(oldTreasuryMoneyAction);
-                        }
+        //                var oldBranchCashFlow = _unitOfWork.GenericRepository<BranchCashFlow>()
+        //                    .FindBy(x => x.MonyActionId == oldMoneyAction.Id).FirstOrDefault();
+        //                if (oldBranchCashFlow != null)
+        //                {
+        //                    _unitOfWork.GenericRepository<BranchCashFlow>().Delete(oldBranchCashFlow);
+        //                }
+        //                var oldTreasuryMoneyAction = _unitOfWork.GenericRepository<TreasuryMoneyAction>()
+        //                .FindBy(x => x.BranchCashFlow.MonyActionId == oldMoneyAction.Id).FirstOrDefault();
+        //                if (oldTreasuryMoneyAction != null)
+        //                {
+        //                    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Delete(oldTreasuryMoneyAction);
+        //                }
 
-                        #region Treasury Cash
+        //                #region Treasury Cash
 
-                        var treasuryCash = _unitOfWork.GenericRepository<TreasuryCash>()
-                            .FindBy(x => x.TreasuryId == treasuryId && x.CoinId == dto.CoinId).FirstOrDefault();
+        //                var treasuryCash = _unitOfWork.GenericRepository<TreasuryCash>()
+        //                    .FindBy(x => x.TreasuryId == treasuryId && x.CoinId == dto.CoinId).FirstOrDefault();
 
-                        if (treasuryCash != null)
-                        {
-                            if (treasuryCash.CoinId == oldCoinId && treasuryId == oldTreasuryId)
-                            {
-                                treasuryCash.Total -= oldRecivingAmount;
+        //                if (treasuryCash != null)
+        //                {
+        //                    if (treasuryCash.CoinId == oldCoinId && treasuryId == oldTreasuryId)
+        //                    {
+        //                        treasuryCash.Total -= oldRecivingAmount;
 
-                            }
-                            else
-                            {
-                                var oldTreasuryCash = _unitOfWork.GenericRepository<TreasuryCash>()
-                                .FindBy(x => x.TreasuryId == oldTreasuryId && x.CoinId == oldCoinId).FirstOrDefault();
-                                if (oldTreasuryCash != null)
-                                {
-                                    oldTreasuryCash.Total -= oldRecivingAmount;
-                                }
-                            }
+        //                    }
+        //                    else
+        //                    {
+        //                        var oldTreasuryCash = _unitOfWork.GenericRepository<TreasuryCash>()
+        //                        .FindBy(x => x.TreasuryId == oldTreasuryId && x.CoinId == oldCoinId).FirstOrDefault();
+        //                        if (oldTreasuryCash != null)
+        //                        {
+        //                            oldTreasuryCash.Total -= oldRecivingAmount;
+        //                        }
+        //                    }
 
-                            treasuryCash.Total += dto.RecivingAmount.Value;
-                            treasuryCash.ModifiedBy = _appSession.GetUserName();
-                            _unitOfWork.GenericRepository<TreasuryCash>().Update(treasuryCash);
-                        }
+        //                    treasuryCash.Total += dto.RecivingAmount.Value;
+        //                    treasuryCash.ModifiedBy = _appSession.GetUserName();
+        //                    _unitOfWork.GenericRepository<TreasuryCash>().Update(treasuryCash);
+        //                }
 
-                        #endregion
+        //                #endregion
 
-                        var oldCompanyCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>()
-                            .FindBy(x => x.CompanyId == oldSenderCompanyId && x.CoinId == oldCoinId).FirstOrDefault();
+        //                var oldCompanyCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>()
+        //                    .FindBy(x => x.CompanyId == oldSenderCompanyId && x.CoinId == oldCoinId).FirstOrDefault();
 
-                        if (oldCompanyCashFlow != null)
-                        {
-                            _unitOfWork.GenericRepository<CompanyCashFlow>().Delete(oldCompanyCashFlow);
-                        }
+        //                if (oldCompanyCashFlow != null)
+        //                {
+        //                    _unitOfWork.GenericRepository<CompanyCashFlow>().Delete(oldCompanyCashFlow);
+        //                }
 
-                        #region Company Cash
-                        //var companyCash = _unitOfWork.GenericRepository<CompanyCash>()
-                        //    .FindBy(x => x.CompanyId == dto.SenderCompanyId && x.CoinId == dto.CoinId).FirstOrDefault();
-                        //if (companyCash != null)
-                        //{
-                        //    if (oldCoinId == dto.CoinId && dto.SenderCompanyId == oldSenderCompanyId)
-                        //    {
-                        //        companyCash.Total += oldRecivingAmount;
-                        //        companyCash.Total -= oldSenderCompanyCommission;
-                        //    }
-                        //    else
-                        //    {
-                        //        var oldCompanyCash = _unitOfWork.GenericRepository<CompanyCash>()
-                        //            .FindBy(x => x.CompanyId == oldSenderCompanyId && x.CoinId == oldCoinId).FirstOrDefault();
+        //                #region Company Cash
+        //                //var companyCash = _unitOfWork.GenericRepository<CompanyCash>()
+        //                //    .FindBy(x => x.CompanyId == dto.SenderCompanyId && x.CoinId == dto.CoinId).FirstOrDefault();
+        //                //if (companyCash != null)
+        //                //{
+        //                //    if (oldCoinId == dto.CoinId && dto.SenderCompanyId == oldSenderCompanyId)
+        //                //    {
+        //                //        companyCash.Total += oldRecivingAmount;
+        //                //        companyCash.Total -= oldSenderCompanyCommission;
+        //                //    }
+        //                //    else
+        //                //    {
+        //                //        var oldCompanyCash = _unitOfWork.GenericRepository<CompanyCash>()
+        //                //            .FindBy(x => x.CompanyId == oldSenderCompanyId && x.CoinId == oldCoinId).FirstOrDefault();
 
-                        //        if (oldCompanyCash != null)
-                        //        {
-                        //            oldCompanyCash.Total += oldRecivingAmount;
-                        //            oldCompanyCash.Total -= oldSenderCompanyCommission;
+        //                //        if (oldCompanyCash != null)
+        //                //        {
+        //                //            oldCompanyCash.Total += oldRecivingAmount;
+        //                //            oldCompanyCash.Total -= oldSenderCompanyCommission;
 
-                        //            oldCompanyCash.ModifiedBy = _appSession.GetUserName();
+        //                //            oldCompanyCash.ModifiedBy = _appSession.GetUserName();
 
-                        //            _unitOfWork.GenericRepository<CompanyCash>().Update(oldCompanyCash);
-                        //        }
-                        //    }
+        //                //            _unitOfWork.GenericRepository<CompanyCash>().Update(oldCompanyCash);
+        //                //        }
+        //                //    }
 
-                        //    companyCash.Total -= dto.RecivingAmount.Value;
-                        //    if (dto.SenderCompanyComission != null && dto.SenderCompanyComission != 0)
-                        //        companyCash.Total += (decimal)dto.SenderCompanyComission;
-                        //    companyCash.ModifiedBy = _appSession.GetUserName();
-                        //}
-                        //_unitOfWork.GenericRepository<CompanyCash>().Update(companyCash);
+        //                //    companyCash.Total -= dto.RecivingAmount.Value;
+        //                //    if (dto.SenderCompanyComission != null && dto.SenderCompanyComission != 0)
+        //                //        companyCash.Total += (decimal)dto.SenderCompanyComission;
+        //                //    companyCash.ModifiedBy = _appSession.GetUserName();
+        //                //}
+        //                //_unitOfWork.GenericRepository<CompanyCash>().Update(companyCash);
 
-                        #endregion
+        //                #endregion
 
-                        _unitOfWork.GenericRepository<MoneyAction>().Delete(oldMoneyAction);
-                    }
+        //                _unitOfWork.GenericRepository<MoneyAction>().Delete(oldMoneyAction);
+        //            }
 
-                    var boxAction = new BoxAction()
-                    {
-                        Amount = dto.RecivingAmount.Value,
-                        IsIncmoe = true,
-                        CoinId = dto.CoinId,
-                        Note = dto.Note,
-                        CreatedBy = _appSession.GetUserName()
-                    };
+        //            var boxAction = new BoxAction()
+        //            {
+        //                Amount = dto.RecivingAmount.Value,
+        //                IsIncmoe = true,
+        //                CoinId = dto.CoinId,
+        //                Note = dto.Note,
+        //                CreatedBy = _appSession.GetUserName()
+        //            };
 
-                    _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
-                    var moneyAction = new MoneyAction()
-                    {
-                        Date = DateTime.Now,
-                        BoxActionsId = boxAction.Id,
-                        TransactionId = dto.Id,
-                        CreatedBy = _appSession.GetUserName()
-                    };
+        //            _unitOfWork.GenericRepository<BoxAction>().Insert(boxAction);
+        //            var moneyAction = new MoneyAction()
+        //            {
+        //                Date = DateTime.Now,
+        //                BoxActionsId = boxAction.Id,
+        //                TransactionId = dto.Id,
+        //                CreatedBy = _appSession.GetUserName()
+        //            };
 
-                    _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
+        //            _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
 
-                    var branchCashFlow = new BranchCashFlow()
-                    {
-                        BranchId = branchId,
-                        CoinId = dto.CoinId,
-                        Amount = dto.RecivingAmount.Value,
-                        MonyActionId = moneyAction.Id,
-                        TreasuryId = treasuryId,
-                        CreatedBy = _appSession.GetUserName()
-                    };
+        //            var branchCashFlow = new BranchCashFlow()
+        //            {
+        //                BranchId = branchId,
+        //                CoinId = dto.CoinId,
+        //                Amount = dto.RecivingAmount.Value,
+        //                MonyActionId = moneyAction.Id,
+        //                TreasuryId = treasuryId,
+        //                CreatedBy = _appSession.GetUserName()
+        //            };
 
-                    _unitOfWork.GenericRepository<BranchCashFlow>().Insert(branchCashFlow);
+        //            _unitOfWork.GenericRepository<BranchCashFlow>().Insert(branchCashFlow);
 
-                    var treasuryMoneyAction = new TreasuryMoneyAction()
-                    {
-                        BranchCashFlowId = branchCashFlow.Id,
-                        CoinId = dto.CoinId,
-                        TreasuryId = treasuryId,
-                        Amount = dto.RecivingAmount.Value,
-                        CreatedBy = _appSession.GetUserName()
-                    };
+        //            var treasuryMoneyAction = new TreasuryMoneyAction()
+        //            {
+        //                BranchCashFlowId = branchCashFlow.Id,
+        //                CoinId = dto.CoinId,
+        //                TreasuryId = treasuryId,
+        //                Amount = dto.RecivingAmount.Value,
+        //                CreatedBy = _appSession.GetUserName()
+        //            };
 
-                    if (mainTreasury != treasuryId)
-                    {
-                        var mainTruseryMoneyAction = new TreasuryMoneyAction()
-                        {
-                            Amount = dto.RecivingAmount.Value,
-                            TreasuryId = mainTreasury,
-                            CoinId = dto.CoinId,
-                            BranchCashFlow = branchCashFlow,
-                        };
+        //            if (mainTreasury != treasuryId)
+        //            {
+        //                var mainTruseryMoneyAction = new TreasuryMoneyAction()
+        //                {
+        //                    Amount = dto.RecivingAmount.Value,
+        //                    TreasuryId = mainTreasury,
+        //                    CoinId = dto.CoinId,
+        //                    BranchCashFlow = branchCashFlow,
+        //                };
 
-                        _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyAction);
-                    }
+        //                _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(mainTruseryMoneyAction);
+        //            }
 
-                    var companyCashFlow = new CompanyCashFlow()
-                    {
-                        CoinId = dto.CoinId,
-                        CompanyId = dto.SenderClientId.Value,
-                        Amount = dto.RecivingAmount.Value,
-                        MoneyActionId = moneyAction.Id,
-                        Matched = false,
-                        CreatedBy = _appSession.GetUserName()
-                    };
+        //            var companyCashFlow = new CompanyCashFlow()
+        //            {
+        //                CoinId = dto.CoinId,
+        //                CompanyId = dto.SenderClientId.Value,
+        //                Amount = dto.RecivingAmount.Value,
+        //                MoneyActionId = moneyAction.Id,
+        //                Matched = false,
+        //                CreatedBy = _appSession.GetUserName()
+        //            };
 
-                    _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(companyCashFlow);
+        //            _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(companyCashFlow);
 
-                    _unitOfWork.Save();
-                    _unitOfWork.Commit();
+        //            _unitOfWork.Save();
+        //            _unitOfWork.Commit();
 
-                }
+        //        }
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return false;
-            }
-        }
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _unitOfWork.Rollback();
+        //        return false;
+        //    }
+        //}
 
         private void DeleteIncomeBoxAction(MoneyAction moneyAction)
         {

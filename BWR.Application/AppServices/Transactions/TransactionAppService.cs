@@ -130,7 +130,7 @@ namespace BWR.Application.AppServices.Transactions
                         .FindBy(x => x.CoinId == transaction.CoinId && x.TreasuryId == treasuryId).FirstOrDefault();
                     if (treasuryCash != null)
                     {
-                        treasuryCash.Total -= transaction.Amount;
+                        //treasuryCash.Total -= transaction.Amount;
                         _unitOfWork.GenericRepository<TreasuryCash>().Update(treasuryCash);
                     }
 
@@ -151,7 +151,7 @@ namespace BWR.Application.AppServices.Transactions
                     var treuseryMoenyAction = new TreasuryMoneyAction()
                     {
                         Amount = -transaction.Amount,
-                        Total = treasuryCash.Total,
+                        //Total = treasuryCash.Total,
                         CoinId = transaction.CoinId,
                         TreasuryId = _appSession.GetCurrentTreasuryId(),
                         BranchCashFlow = branchCashFLow,
