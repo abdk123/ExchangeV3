@@ -98,6 +98,7 @@ namespace BWR.Application.AppServices.BoxActions
         }
 
         #region Insert
+
         public bool ExpenseFromTreasury(BoxActionExpensiveDto input)
         {
             try
@@ -108,7 +109,6 @@ namespace BWR.Application.AppServices.BoxActions
                 var branchId = BranchHelper.Id;
 
                 //var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(c => c.BranchId == branchId && c.CoinId == input.CoinId).First();
-
                 //branchCash.Total -= input.Amount;
                 //branchCash.ModifiedBy = _appSession.GetUserName();
                 //_unitOfWork.GenericRepository<BranchCash>().Update(branchCash);

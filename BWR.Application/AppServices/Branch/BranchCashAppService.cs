@@ -163,7 +163,6 @@ namespace BWR.Application.AppServices.Branch
                 if (branchCash != null)
                 {
                     branchCash.InitialBalance = dto.InitialBalance;
-                    branchCash.Total= dto.Total;
                     branchCash.ModifiedBy = _appSession.GetUserName();
                     if(dto.IsMainCoin == true && branchCash.IsMainCoin == false)
                     {
