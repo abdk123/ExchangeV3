@@ -153,58 +153,29 @@ namespace BWR.Application.AppServices.Treasuries
         {
             //هي كلها فيها خطأ برجع بكتبها بعدين
             TreasuryMoneyActionDto treasuryMoneyActionDto = null;
-            //try
-            //{
-            //    decimal total = 0;
+            try
+            {
+                decimal total = 0;
 
-            //    _unitOfWork.CreateTransaction();
+                _unitOfWork.CreateTransaction();
 
-            //    var treasuryCash = _unitOfWork.GenericRepository<TreasuryCash>()
-            //        .FindBy(x => x.CoinId == input.CoinId && x.TreasuryId == input.TreasuryId)
-            //        .FirstOrDefault();
-
-            //    if (treasuryCash != null)
-            //    {
-            //        treasuryCash.Total -= input.Amount;
-            //        _unitOfWork.GenericRepository<TreasuryCash>().Update(treasuryCash);
-            //        total = treasuryCash.Total;
-            //    }
-            //    else
-            //    {
-            //        var newTreasuryCash = new TreasuryCash()
-            //        {
-            //            CoinId = input.CoinId,
-            //            TreasuryId = input.TreasuryId,
-            //            Total = input.Amount,
-            //            CreatedBy = _appSession.GetUserName(),
-            //            Created = DateTime.Now
-            //        };
-            //        _unitOfWork.GenericRepository<TreasuryCash>().Insert(newTreasuryCash);
-            //        total = newTreasuryCash.Total;
-            //    }
-
-            //    var treasuryMoneyAction = new TreasuryMoneyAction()
-            //    {
-            //        //Total = total,
-            //        TreasuryId = input.TreasuryId,
-            //        CoinId = input.CoinId,
-            //        Amount = -input.Amount,
-            //        Created = DateTime.Now,
-            //        CreatedBy = _appSession.GetUserName()
-            //    };
-            //    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(treasuryMoneyAction);
-
-            //    _unitOfWork.Save();
-
-            //    _unitOfWork.Commit();
-
-            //    treasuryMoneyActionDto = Mapper.Map<TreasuryMoneyAction, TreasuryMoneyActionDto>(treasuryMoneyAction);
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    Tracing.SaveException(ex);
-            //}
+                var treasuryMoneyAction = new TreasuryMoneyAction()
+                {
+                    TreasuryId = input.TreasuryId,
+                    CoinId = input.CoinId,
+                    Amount = -input.Amount,
+                    Created = DateTime.Now,
+                    CreatedBy = _appSession.GetUserName()
+                };
+                _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(treasuryMoneyAction);
+                _unitOfWork.Save();
+                _unitOfWork.Commit();
+                treasuryMoneyActionDto = Mapper.Map<TreasuryMoneyAction, TreasuryMoneyActionDto>(treasuryMoneyAction);
+            }
+            catch (Exception ex)
+            {
+                Tracing.SaveException(ex);
+            }
             return treasuryMoneyActionDto;
         }
 
