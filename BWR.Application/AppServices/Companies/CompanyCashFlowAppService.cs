@@ -22,7 +22,7 @@ namespace BWR.Application.AppServices.Companies
     public class CompanyCashFlowAppService : ICompanyCashFlowAppService
     {
         private readonly IUnitOfWork<MainContext> _unitOfWork;
-        private readonly IMoneyActionAppService _moneyActionAppService;
+        //private readonly IMoneyActionAppService _moneyActionAppService;
         private readonly IAppSession _appSession;
 
         public CompanyCashFlowAppService(
@@ -31,7 +31,7 @@ namespace BWR.Application.AppServices.Companies
             IAppSession appSession)
         {
             _unitOfWork = unitOfWork;
-            _moneyActionAppService = moneyActionAppService;
+            //_moneyActionAppService = moneyActionAppService;
             _appSession = appSession;
         }
 
@@ -51,21 +51,17 @@ namespace BWR.Application.AppServices.Companies
                     }
                     var companyCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>()
                         .FindBy(x => x.CoinId.Equals(input.CoinId) && x.CompanyId.Equals(input.CompanyId)
-                        , c => c.MoenyAction.Clearing.FromClient
-                        , c => c.MoenyAction.Clearing.ToClient
-                        , c => c.MoenyAction.Clearing.ToCompany
-                        , c => c.MoenyAction.Clearing.ToCompany
-                        , c => c.MoenyAction.Clearing.FromCompany
-                        , c => c.MoenyAction.PublicMoney.PublicExpense
-                        , c => c.MoenyAction.PublicMoney.PublicIncome
-                        ).OrderBy(x => x.MoenyAction.Date);
+                        ,c => c.MoenyAction, c => c.MoenyAction.BoxAction, c => c.MoenyAction.Clearing.ToClient, c => c.MoenyAction.Clearing.ToCompany, c => c.MoenyAction.Clearing.FromClient, c => c.MoenyAction.Clearing.FromCompany
+                    , c => c.MoenyAction.Exchange.FirstCoin, c => c.MoenyAction.Exchange.SecoundCoin, c => c.MoenyAction.Exchange.MainCoin, c => c.MoenyAction.PublicMoney.PublicExpense, c => c.MoenyAction.PublicMoney.PublicIncome
+                    , c => c.MoenyAction.Transaction.ReciverClient, c => c.MoenyAction.Transaction.ReceiverCompany, c => c.MoenyAction.Transaction.SenderCompany, c => c.MoenyAction.Transaction.SenderClient, c => c.MoenyAction.Transaction.Coin
+                    , c => c.MoenyAction.ClientCashFlows, c => c.MoenyAction.CompanyCashFlows
+                        );
                     var companyCashFlowsBeforeFromDate = companyCashFlows.Where(x => x.MoenyAction.Date < input.From);
                     if (companyCashFlowsBeforeFromDate.Any())
                     {
                         var lastCompanyCashFlowBeforeFromDate = companyCashFlowsBeforeFromDate.Sum(c => c.Amount);
                         lastBalance = lastCompanyCashFlowBeforeFromDate;
                     }
-
                     companyCashFlowsDtos.Add(
                             new CompanyCashFlowOutputDto()
                             {
@@ -73,25 +69,19 @@ namespace BWR.Application.AppServices.Companies
                                 Type = "رصيد سابق"
                             });
 
-
-                    var dataCashFlows = new List<CompanyCashFlow>();
-
                     if (input.From != null && input.To != null)
                     {
-                        dataCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date >= input.From && x.MoenyAction.Date <= input.To).ToList();
+                        companyCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date >= input.From && x.MoenyAction.Date <= input.To);
                     }
                     else if (input.From == null && input.To != null)
                     {
-                        dataCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date <= input.To).ToList();
+                        companyCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date <= input.To);
                     }
                     else if (input.From != null && input.To == null)
                     {
-                        dataCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date >= input.From).ToList();
+                        companyCashFlows = companyCashFlows.Where(x => x.MoenyAction.Date >= input.From);
                     }
-                    else
-                    {
-                        dataCashFlows = companyCashFlows.ToList();
-                    }
+                    var dataCashFlows = companyCashFlows.OrderBy(c => c.MoenyAction.Date).ThenBy(c => c.Id).ToList();
                     foreach (var companyCashFlow in dataCashFlows)
                     {
                         var temp = new CompanyCashFlowOutputDto()
@@ -105,12 +95,15 @@ namespace BWR.Application.AppServices.Companies
                             SenderName = companyCashFlow.SenderName(Requester.Company, input.CompanyId),
                             CountryName = companyCashFlow.CountryName(),
                             Type = companyCashFlow.MoenyAction.GetTypeName(Requester.Company, companyCashFlow.CompanyId),
-                            Name = _moneyActionAppService.GetActionName(companyCashFlow.MoenyAction),
+                            Name = companyCashFlow.MoenyAction.GetActionName(),
                             Number = companyCashFlow.MoenyAction.GetActionId(),
                             Date = companyCashFlow.MoenyAction.Date != null ? companyCashFlow.MoenyAction.Date.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
                             Note = companyCashFlow.MoenyAction.GetNote(Requester.Company, companyCashFlow.CompanyId),
                             MoneyActionId = companyCashFlow.MoneyActionId,
-                            Matched = companyCashFlow.Matched
+                            Matched = companyCashFlow.Matched,
+                            Shaded = companyCashFlow.Shaded==true,
+                            UserMatched = companyCashFlow.User?.FullName??"",
+                             CompanyUserMatched = companyCashFlow.CompanyUser?.Name??""
                         };
                         //temp.Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.Amount;
                         temp.Balance += temp.Commission;
@@ -335,6 +328,21 @@ namespace BWR.Application.AppServices.Companies
             }
 
             return companyBalances;
+        }
+        public void Shaded(int id , bool value)
+        {
+            try
+            {
+                var companyCahsFlow = this._unitOfWork.GenericRepository<CompanyCashFlow>().GetById(id);
+                companyCahsFlow.Shaded = value;
+                _unitOfWork.GenericRepository<CompanyCashFlow>().Update(companyCahsFlow);
+                _unitOfWork.Save();
+            }
+            catch(Exception ex)
+            {
+                Tracing.SaveException(ex);
+                throw ex;
+            }
         }
     }
 }

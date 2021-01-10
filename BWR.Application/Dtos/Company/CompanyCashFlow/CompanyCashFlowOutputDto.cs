@@ -18,8 +18,9 @@ namespace BWR.Application.Dtos.Company.CompanyCashFlow
         public string Date { get; set; }
         public string Note { get; set; }
         public bool Matched { get; set; }
-
-
+        public bool Shaded { get; set; }
+        public string UserMatched { get; set; }
+        public string CompanyUserMatched { get; set; }
 
     }
 }

@@ -134,18 +134,16 @@
                     CoinId = dollar.Id,
                     BranchId = brancheId,
                     InitialBalance = total,
-                    Total = total,
                 };
                 var iBranchCash = new BranchCash()
                 {
                     BranchId = brancheId,
                     CoinId = irDinar.Id,
-                    Total = total,
                     InitialBalance = total
                 };
                 context.BranchCashs.AddRange(new[] { iBranchCash, sBranchCash });
                 context.SaveChanges();
-                var trusery = new Treasury()
+                var treasury = new Treasury()
                 {
                     Name = "الصندوق الرئيسي",
                     IsMainTreasury = true,
@@ -153,26 +151,47 @@
                     BranchId = brancheId,
                     IsEnabled = true,
                 };
-                context.Treasurys.Add(trusery);
+                context.Treasurys.Add(treasury);
+                context.SaveChanges();
                 var itruseryCash = new TreasuryCash()
                 {
                     CoinId = dollar.Id,
-                    Total = total,
+                    //Total = total,
                     IsEnabled = true,
                     IsDeleted = false,
+                    TreasuryId = treasury.Id
                 };
                 var struseryCash = new TreasuryCash()
                 {
                     CoinId = irDinar.Id,
-                    Total = total,
+                    //Total = total,
                     IsEnabled = true,
                     IsDeleted = false,
+                    TreasuryId = treasury.Id
+                };
+                var itruseryMoneyAction = new TreasuryMoneyAction()
+                {
+                    CoinId = dollar.Id,
+                    //Total = total,
+                    Amount = total,
+                    IsDeleted = false,
+                    TreasuryId = treasury.Id
+                };
+                var struseryMoneyAction = new TreasuryMoneyAction()
+                {
+                    CoinId = irDinar.Id,
+                    //Total = total,
+                    Amount = total,
+                    IsDeleted = false,
+                    TreasuryId = treasury.Id
                 };
                 context.TreasuryCashs.Add(itruseryCash);
                 context.TreasuryCashs.Add(struseryCash);
+                context.TreasuryMoneyActions.Add(itruseryMoneyAction);
+                context.TreasuryMoneyActions.Add(struseryMoneyAction);
                 var userTreusery = new UserTreasuery()
                 {
-                    TreasuryId = trusery.Id,
+                    TreasuryId = treasury.Id,
                     UserId = context.Users.First().UserId,
                     IsDeleted = false,
                     CreatedBy = "النظام",

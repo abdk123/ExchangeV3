@@ -21,7 +21,7 @@ namespace BWR.Application.AppServices.Companies
     public class ClientCashFlowAppService : IClientCashFlowAppService
     {
         private readonly IUnitOfWork<MainContext> _unitOfWork;
-        private readonly IMoneyActionAppService _moneyActionAppService;
+        //private readonly IMoneyActionAppService _moneyActionAppService;
         private readonly IAppSession _appSession;
         public ClientCashFlowAppService(
             IUnitOfWork<MainContext> unitOfWork,
@@ -31,7 +31,7 @@ namespace BWR.Application.AppServices.Companies
             IClientCashAppService clientCashAppService)
         {
             _unitOfWork = unitOfWork;
-            _moneyActionAppService = moneyActionAppService;
+            //_moneyActionAppService = moneyActionAppService;
             _appSession = appSession;
         }
 
@@ -54,12 +54,11 @@ namespace BWR.Application.AppServices.Companies
                         , c => c.MoenyAction.Clearing.FromCompany
                         , c => c.MoenyAction.Clearing.ToCompany
                         , c => c.MoenyAction.PublicMoney.PublicExpense
-                        , c => c.MoenyAction.PublicMoney.PublicIncome).OrderBy(x => x.MoenyAction.Date);
-                    var clientCashFlowsBeforeFromDate = clientCashFlows.Where(x => x.MoenyAction.Date < input.From);
+                        , c => c.MoenyAction.PublicMoney.PublicIncome);
+                    var clientCashFlowsBeforeFromDate = clientCashFlows.Where(x => x.MoenyAction.Date < input.From&&x.CoinId==input.CoinId);
                     if (clientCashFlowsBeforeFromDate.Any())
                     {
-                        var lastClientCashFlowBeforeFromDate = clientCashFlowsBeforeFromDate.LastOrDefault();
-                        lastBalance = lastClientCashFlowBeforeFromDate.Total;
+                        lastBalance = clientCashFlowsBeforeFromDate.Sum(c=>c.Amount)+lastBalance;
                     }
 
                     clientCashFlowsDtos.Add(
@@ -71,25 +70,23 @@ namespace BWR.Application.AppServices.Companies
                             });
 
 
-                    var dataCashFlows = new List<ClientCashFlow>();
+                    
 
                     if (input.From != null && input.To != null)
                     {
-                        dataCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date >= input.From && x.MoenyAction.Date <= input.To).ToList();
+                        clientCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date >= input.From && x.MoenyAction.Date <= input.To);
                     }
                     else if (input.From == null && input.To != null)
                     {
-                        dataCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date <= input.To).ToList();
+                        clientCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date <= input.To);
                     }   
                     else if (input.From != null && input.To == null)
                     {
-                        dataCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date >= input.From).ToList();
-                    }
-                    else
-                    {
-                        dataCashFlows = clientCashFlows.ToList();
+                        clientCashFlows = clientCashFlows.Where(x => x.MoenyAction.Date >= input.From);
                     }
 
+                    var dataCashFlows = clientCashFlows.OrderBy(c => c.MoenyAction.Date).ThenBy(c=>c.Id).ToList();
+                    
                     foreach (var clientCashFlow in dataCashFlows)
                     {
                         var temp = new ClientCashFlowOutputDto()

@@ -13,9 +13,6 @@ namespace BWR.Domain.Model.Common
         public BoxActionType BoxActionType { get; set; }
         public int CoinId { get; set; }
         [ForeignKey("CoinId")]
-        public virtual Coin Coin { get; set; }
-
-
-        
+        public virtual Coin Coin { get; set; }        
     }
 }

@@ -68,8 +68,12 @@ namespace BWR.Application.AppServices.Clients
             try
             {
                 var clientCashes = _unitOfWork.GenericRepository<ClientCash>().FindBy(x => x.ClientId == clientId).ToList();
+
                 foreach (var clientCash in clientCashes)
                 {
+
+                    var total = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.ClientId == clientId && c.CoinId == clientCash.CoinId).Sum(c => c.Amount);
+                    total += clientCash.InitialBalance;
                     var clientBalanceDto = new ClientCashesDto()
                     {
                         Id = clientCash.Id,
@@ -77,7 +81,7 @@ namespace BWR.Application.AppServices.Clients
                         CoinName = clientCash.Coin != null ? clientCash.Coin.Name : string.Empty,
                         ClientId = clientCash.ClientId,
                         InitialBalance = clientCash.InitialBalance,
-                        Total = clientCash.Total,
+                        Total = total,
                         MaxCreditor = clientCash.MaxCreditor,
                         MaxDebit = clientCash.MaxDebit
                     };

@@ -50,7 +50,7 @@ namespace BWR.Application.AppServices.Treasuries
             var treasuriesDtos = new List<TreasurysDto>();
             try
             {
-                var treasuries = _unitOfWork.GenericRepository<Treasury>().FindBy(c=>c.IsMainTreasury==false).ToList();
+                var treasuries = _unitOfWork.GenericRepository<Treasury>().FindBy(c=>c.IsMainTreasury==false, "TreasuryMoneyActions.BranchCashFlow", "TreasuryMoneyActions.Coin").ToList();
                 if (treasuries.Any())
                 {
                     treasuriesDtos = (from t in treasuries
@@ -60,7 +60,7 @@ namespace BWR.Application.AppServices.Treasuries
                                           IsAvilable = t.IsAvilable,
                                           IsEnabled = t.IsEnabled,
                                           Name = t.Name,            
-                                          Balances = GetTreasuryCashesForDto(t.TreasuryCashes),
+                                          Balances = GetTreasuryBalancesForDto(t.TreasuryMoneyActions),
                                       }).ToList();
                 }
             }
@@ -124,16 +124,22 @@ namespace BWR.Application.AppServices.Treasuries
                 treasury.IsAvilable = true;
                 _unitOfWork.CreateTransaction();
                 _unitOfWork.GenericRepository<Treasury>().Insert(treasury);
-                foreach (var item in treasury.TreasuryCashes)
+                foreach (var item in dto.TreasuryCashes)
                 {
-                    var treasuryMoneyAction = new TreasuryMoneyAction()
+                    //var treasuryMoneyAction = new TreasuryMoneyAction()
+                    //{
+                    //    //Total = item.Total,
+                    //    TreasuryId = treasury.Id,
+                    //    CoinId=  item.CoinId,
+                    //    //Amount = item.Total,
+                    //};
+                    var t = new TreasuryMoneyAction()
                     {
-                        Total = item.Total,
+                        CoinId = item.CoinId,
                         TreasuryId = treasury.Id,
-                        CoinId=  item.CoinId,
-                        Amount = item.Total,
+                        Amount = item.Amount
                     };
-                    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(treasuryMoneyAction);
+                    _unitOfWork.GenericRepository<TreasuryMoneyAction>().Insert(t);
                 }
                 _unitOfWork.Save();
 
@@ -219,18 +225,25 @@ namespace BWR.Application.AppServices.Treasuries
         }
 
 
-        private string GetTreasuryCashesForDto(IList<TreasuryCash> treasuryCashes)
+        private string GetTreasuryBalancesForDto(IList<TreasuryMoneyAction> treasuryMoneyActions)
         {
+
+            
             var balance = "";
-            foreach (var treasuryCash in treasuryCashes)
+            var treasuryMoneyActionsByCoin = treasuryMoneyActions.GroupBy(c => c.Coin);
+            foreach (var item in treasuryMoneyActionsByCoin)
             {
-                var total = treasuryCash.Total;
-                var coinName = treasuryCash.Coin != null ? treasuryCash.Coin.Name : string.Empty;
-                if (total != 0)
-                {
-                    balance += $"{total} {coinName} <br /> ";
-                }
+                balance +=$"{item.Key.Name} : {item.ToList().Sum(c=>c.Amount)} <br />";
             }
+            //foreach (var treasuryCash in treasuryCashes)
+            //{
+            //    //var total = treasuryCash.Total;
+            //    var coinName = treasuryCash.Coin != null ? treasuryCash.Coin.Name : string.Empty;
+            //    if (total != 0)
+            //    {
+            //        balance += $"{total} {coinName} <br /> ";
+            //    }
+            //}
             return balance;
         }
 

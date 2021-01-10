@@ -349,19 +349,11 @@ namespace BWR.Application.AppServices.Transactions
 
         private void CompanyBlanceArbitrage(InnerTransactionInsertDto dto, MoneyAction moneyAction)
         {
-            var companyCah = _unitOfWork.GenericRepository<CompanyCash>()
-                .FindBy(c => c.CoinId == dto.CoinId && c.CompanyId == dto.ReciverCompany.CompanyId)
-                .FirstOrDefault();
-
-            companyCah.Total += dto.Amount;
-            companyCah.Total += dto.ReciverCompany.CompanyCommission;
-            companyCah.ModifiedBy = _appSession.GetUserName();
-            _unitOfWork.GenericRepository<CompanyCash>().Update(companyCah);
+            
 
             var companyCahsFlow = new CompanyCashFlow()
             {
                 MoenyAction = moneyAction,
-                Total = companyCah.Total,
                 Amount = dto.Amount + dto.ReciverCompany.CompanyCommission,
                 Matched = false,
                 CompanyId = dto.ReciverCompany.CompanyId,
@@ -373,20 +365,11 @@ namespace BWR.Application.AppServices.Transactions
 
         private void AgentBalnaceArbitrage(InnerTransactionInsertDto dto, MoneyAction moneyAction)
         {
-            var clientCash = _unitOfWork.GenericRepository<ClientCash>()
-                .FindBy(c => c.CoinId == dto.CoinId && c.ClientId == dto.AgentId)
-                .FirstOrDefault();
-
-            clientCash.Total += dto.Amount;
-            clientCash.Total += dto.AgentCommission;
-            clientCash.ModifiedBy = _appSession.GetUserName();
-            _unitOfWork.GenericRepository<ClientCash>().Update(clientCash);
 
             var clientCashFlow = new ClientCashFlow()
             {
                 ClientId = dto.AgentId,
                 CoinId = dto.CoinId,
-                Total = clientCash.Total,
                 Amount = dto.Amount,
                 Matched = false,
                 MoenyAction = moneyAction
@@ -397,15 +380,12 @@ namespace BWR.Application.AppServices.Transactions
 
         private void MaiCompanyBalanceArbitrage(CompanyCash companyCash, InnerTransactionInsertDto dto, int mainCompanyId, MoneyAction moneyAction)
         {
-            companyCash.Total -= (dto.Amount + dto.OurComission);
-            companyCash.ModifiedBy = _appSession.GetUserName();
-            _unitOfWork.GenericRepository<CompanyCash>().Update(companyCash);
+            
 
             var companyCahsFlow = new CompanyCashFlow()
             {
                 CoinId = dto.CoinId,
                 CompanyId = mainCompanyId,
-                Total = companyCash.Total,
                 Amount = -dto.Amount,
                 Matched = false,
                 MoenyAction = moneyAction

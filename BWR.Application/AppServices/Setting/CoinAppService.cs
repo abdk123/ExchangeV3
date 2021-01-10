@@ -151,7 +151,8 @@ namespace BWR.Application.AppServices.Setting
                 _unitOfWork.GenericRepository<Coin>().Insert(coin);
 
                 CreateBranchCashForAllBranches(coin);
-                CreateTreasuryCashForAllTreasures(coin);
+                //CreateTreasuryCashForAllTreasures(coin);
+                CreateCoinForMainTrusery(coin);
                 CreateCompanyCashForAllCompanies(coin);
                 CreateClientCashForAllClients(coin);
 
@@ -248,6 +249,18 @@ namespace BWR.Application.AppServices.Setting
             }
         }
 
+        private void CreateCoinForMainTrusery(Coin coin)
+        {
+            var t = _unitOfWork.GenericRepository<Treasury>().FindBy(c => c.IsMainTreasury == true).First();
+            var treasuryCash = new TreasuryCash()
+            {
+                Coin = coin,
+                TreasuryId = t.Id,
+                IsEnabled = true,
+                CreatedBy = _appSession.GetUserName()
+            };
+            _unitOfWork.GenericRepository<TreasuryCash>().Insert(treasuryCash);
+        }
         private void CreateTreasuryCashForAllTreasures(Coin coin)
         {
             var treasuries = _unitOfWork.GenericRepository<Treasury>().GetAll();  

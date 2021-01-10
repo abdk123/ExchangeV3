@@ -115,6 +115,7 @@
         </div>
     </div>
     <button class="btn btn-primary" style="margin-top:10px" id="submit">حفظ</button>
+    <button class="btn btn-danger" style="margin-top:10px" id="delete"> حذف </button>
 </div>
 @section ScriptPath{
     <script src="~/Scripts/GlopalScript.js"></script>
@@ -991,5 +992,16 @@
             $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
         }
     }
+    $('#delete').click(function () {
+        $.post(
+            '/MoneyAction/DeleteMoenyAction', {
+                id:'@ViewBag.MoneyActionId'
+        },
+            function (data) {
+                alert('تم الحذف');
+                window.location.replace(document.referrer);
+            }
+        )
+    });
 
 </script>

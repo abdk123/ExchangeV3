@@ -21,7 +21,7 @@ namespace BWR.Application.Dtos.Client
         public string Address { get; set; }
 
         [Display(Name = "الحساب فعال")]
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled { get; set; } = true;
 
         //[Display(Name = "البلد")]
         //[Required(ErrorMessage = "اسم البلد مطلوب")]

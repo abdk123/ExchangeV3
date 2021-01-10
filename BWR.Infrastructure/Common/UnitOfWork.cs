@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BWR.Infrastructure.Common
@@ -69,7 +70,20 @@ where TContext : DbContext, new()
                     _context.Dispose();
             _disposed = true;
         }
+        IGenericRepository<T> PrivateGenericRepository<T>() where T : class
+        {
+            var type = typeof(T);
+            if (_repositories == null)
+                _repositories = new Dictionary<string, object>();
 
+            if (!_repositories.ContainsKey(type.Name))
+            {
+                var repositoryType = typeof(GenericRepository<T>);
+                var repositoryInstance = Activator.CreateInstance(repositoryType, _context);
+                _repositories.Add(type.Name, repositoryInstance);
+            }
+            return (GenericRepository<T>)_repositories[type.Name];
+        }
         IGenericRepository<T> IUnitOfWork<TContext>.GenericRepository<T>()
         {
             var type = typeof(T);
@@ -83,6 +97,10 @@ where TContext : DbContext, new()
                 _repositories.Add(type.Name, repositoryInstance);
             }
             return (GenericRepository<T>)_repositories[type.Name];
+        }
+        public void Delete<T>(T entity) where T : class
+        {
+            PrivateGenericRepository<T>().Delete(entity);  
         }
 
         public async Task SaveAsync()
@@ -99,5 +117,14 @@ where TContext : DbContext, new()
                 throw new Exception(_errorMessage, dbEx);
             }
         }
+        public void LoadCollection<T>(T t, params string[] propertySelectors) where T: class 
+        {
+            foreach (var item in propertySelectors)
+            {
+                this._context.Entry(t).Collection(item).Load();
+            }
+        }
+
+        
     }
 }

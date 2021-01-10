@@ -36,7 +36,22 @@ namespace BWR.Infrastructure.Context
             modelBuilder.Configurations.Add(new ClaimConfiguration());
             modelBuilder.Configurations.Add(new TreasuryConfiguration());
             modelBuilder.Configurations.Add(new ExchangeConfiguration());
-            
+            //modelBuilder.Entity<BranchCashFlow>()
+            //    .HasRequired(s => s.MoenyAction)
+            //    .WithMany()
+            //    .WillCascadeOnDelete(true);
+            //modelBuilder.Entity<ClientCashFlow>()
+            //    .HasRequired(s => s.MoenyAction)
+            //    .WithMany()
+            //    .WillCascadeOnDelete(true);
+            //modelBuilder.Entity<CompanyCashFlow>()
+            //    .HasRequired(s => s.MoenyAction)
+            //    .WithMany()
+            //    .WillCascadeOnDelete(true);
+            //modelBuilder.Entity<MoneyAction>()
+            //    .HasOptional(c => c.Clearing)
+            //    .WithOptionalDependent()
+            //    .WillCascadeOnDelete(true);
         }
 
         public override int SaveChanges()
@@ -51,7 +66,7 @@ namespace BWR.Infrastructure.Context
                 if (entry.State == EntityState.Modified)
                 {
                     entry.Property("Modified").CurrentValue = DateTime.Now;
-                    
+
                 }
             }
             return base.SaveChanges();

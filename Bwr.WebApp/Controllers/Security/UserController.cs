@@ -51,7 +51,7 @@ namespace Bwr.WebApp.Controllers
         {
             try
             {
-                var users = _userAppService.GetAll().AsQueryable();
+                var users = _userAppService.GetAll(c=>c.UserName!= "admin").AsQueryable();
 
                 var totalCount = users.Count();
 

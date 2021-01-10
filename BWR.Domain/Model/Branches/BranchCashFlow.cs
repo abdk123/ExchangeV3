@@ -9,7 +9,6 @@ namespace BWR.Domain.Model.Branches
 {
     public class BranchCashFlow: Entity
     {
-        public decimal Total { get; set; }
         public decimal Amount { get; set; }
 
         public int BranchId { get; set; }

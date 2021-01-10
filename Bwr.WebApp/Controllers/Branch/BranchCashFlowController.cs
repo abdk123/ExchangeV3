@@ -19,16 +19,17 @@ namespace Bwr.WebApp.Controllers.Branch
 
         public ActionResult Index(int? coinId,DateTime? from,DateTime? to)
         {
-            int branchId = BranchHelper.Id;
+            //int branchId = BranchHelper.Id;
 
-            var branchCashFlow = _branchCashFlowAppService.Get(x =>
-              x.BranchId == branchId &&
-              x.CoinId == coinId &&
-              (from != null ? x.Created >= from : true) &&
-              (to != null ? x.Created <= to : true)
-            ).FirstOrDefault();
+            //var branchCashFlow = _branchCashFlowAppService.Get(x =>
+            //  x.BranchId == branchId &&
+            //  x.CoinId == coinId &&
+            //  (from != null ? x.Created >= from : true) &&
+            //  (to != null ? x.Created <= to : true)
+            //).FirstOrDefault();
 
-            return View(branchCashFlow);
+            //return View(branchCashFlow);
+            return View();
         }
 
         [HttpGet]

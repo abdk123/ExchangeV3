@@ -38,7 +38,6 @@
                                 <li class="active">
                                     <a href="#currentBalance" data-toggle="tab" aria-expanded="true">الرصيد الحالي</a>
                                 </li>
-
                                 <li>
                                     <a href="#treasuryBalance" data-url="@Url.Action("TreasuryBalance","TreasuryMoneyAction")?treasuryId=@Model.Id" data-toggle="tab">كشف حساب الصندوق </a>
                                 </li>
@@ -72,6 +71,7 @@
                                     </div>
 
                                 </div>
+                                
                                 <div class="tab-pane" id="treasuryBalance"></div>
                                 <div class="tab-pane" id="treasuryActions"></div>
 
@@ -118,7 +118,7 @@
                             'columns': [
                                 { 'title': 'العملة', 'data': 'Coin.Name',  'searchable': true },
 
-                                {'title': 'له','data': "Total",'searchable': true,
+                                {'title': 'له','data': "Amount",'searchable': true,
                                     render: function (data, type, row) {
                                         if (data < 0) {
                                             return Math.abs(Number(data));
@@ -127,7 +127,7 @@
                                         }
                                     },
                                 },
-                                {'title': 'عليه','data': "Total",'searchable': true,
+                                {'title': 'عليه','data': "Amount",'searchable': true,
                                     render: function (data, type, row) {
                                         if (data > 0) {
                                             return data;

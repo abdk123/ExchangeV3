@@ -9,7 +9,7 @@ namespace BWR.Domain.Model.Clients
 {
     public class ClientCashFlow: Entity
     {
-        public decimal Total { get; set; }
+        //public decimal Total { get; set; }
         public decimal Amount { get; set; }
         public bool Matched { get; set; }
 
@@ -28,5 +28,6 @@ namespace BWR.Domain.Model.Clients
         public Guid? UserId { get; set; }
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
+        public bool? Shaded { get; set; }
     }
 }

@@ -15,13 +15,14 @@
     <div class="col-md-4">
         <div class="form-group">
             <label class="control-label" for="a-flow-from">من </label>
-            <input type="date" class="form-control" id="a-flow-from" onchange="$companyCashFlowDataTable.refresh();;" />
+            <input type="date" class="form-control" id="a-flow-from" onchange="ReFull();" />
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             <label class="control-label" for="a-flow-to">إلى </label>
-            <input type="date" class="form-control" id="a-flow-to" onchange="$companyCashFlowDataTable.refresh();;" />
+            @*$companyCashFlowDataTable.refresh();;*@
+            <input type="date" class="form-control" id="a-flow-to" onchange="ReFull();" />
         </div>
     </div>
 </div>
@@ -52,7 +53,6 @@
             init: function () {
                 dt = $('#companyCashFlowDataTable').DataTable({
                     'language': dataTableLocalizationArValue(),
-
                     'ajax': {
                         'url': '@Url.Action("Get","CompanyCashFlow")',
                         'method': 'POST',
@@ -62,6 +62,23 @@
                         }
                     },
                     'columns': [
+                        {
+                            'title': 'تظليل',
+                            'data': "Shaded",
+                            render: function (data, type, row) {
+                                if (row.Id != null) {
+                                    //return generateShededCheckBox(data, type, row);
+
+                                    var sf = "ShadeFunction(this," + row.Id + ")";
+                                    if(!data)
+                                        return '<input type="checkbox" class="flat" onchange="' + sf + '" > ';
+                                    else
+                                        return '<input type="checkbox" checked class="flat" onchange="' +sf+ '" > ';
+                                }
+                                return '';
+                            },
+                            className: "dt-body-center"
+                        },
                         {
                             'title': 'مطابقة',
                             'data': "Matched",
@@ -136,6 +153,7 @@
                         { 'title': 'النوع', 'data': 'Type', 'searchable': true },
                         //{ 'title': 'الرقم', 'data': 'Number', 'searchable': true },
                         { 'title': 'ملاحظات', 'data': 'Note', 'searchable': true },
+                        
                         {
                             'title': 'تفاصيل',
                             'data': 'MoneyActionId',
@@ -145,7 +163,9 @@
                                 return '<a href="@Url.Action("Index", "MoneyAction")?id=' + data + '" class="btn btn-defult editCompanyCommission"><span class="glyphicon glyphicon-eye"></span>  تفاصيل</a>';
 
                             }
-                        }
+                        },
+                        { 'title': 'المطابق', 'data': 'UserMatched', 'searchable': true },
+                          { 'title': 'المطابق من قبل الشركة', 'data': 'CompanyUserMatched', 'searchable': true }
                     ],
                     'lengthMenu': [10, 25, 50, 100],
 
@@ -162,26 +182,30 @@
 
 
 
+        function ReFull() {
+                        $inputDto = getData();
+            $companyCashFlowDataTable.refresh();
+        }
         $('#a-flow-coinId').on("change", function (e) {
             $inputDto = getData();
             $companyCashFlowDataTable.refresh();
 
             setTimeout(function () {
 
-                $('input.a-coins-checkbox').iCheck({
+                $('input.Matched').iCheck({
                     checkboxClass: 'icheckbox_flat-green',
                     radioClass: 'iradio_flat-green'
                 });
 
                 initialCheckBoxes();
 
-                $('input.a-coins-checkbox').on('ifChecked', function (e) {
+                $('input.Matched').on('ifChecked', function (e) {
                     var eleId = e.currentTarget.id;
                     var id = eleId.replace('check-', '');
                     matchOrUnMatchCompanyCashFlow(id, true);
                 });
 
-                $('input.a-coins-checkbox').on('ifUnchecked', function (e) {
+                $('input.Matched').on('ifUnchecked', function (e) {
                     var eleId = e.currentTarget.id;
                     var id = eleId.replace('check-', '');
                     matchOrUnMatchCompanyCashFlow(id, false);
@@ -193,12 +217,12 @@
 
         });
 
-        
+
 
     });
 
     function matchOrUnMatchCompanyCashFlow(id,value) {
-        
+
         $.post('@Url.Action("ConvertMatchingStatus", "CompanyCashFlow")',
             { CompanyCashFlowId: id, Matched: value}, function (data) {
                 if (data.Success) {
@@ -255,10 +279,21 @@
 
     function generateCheckBox(data, type, row) {
 
-        return '<input type="checkbox" id="check-' + row.Id + '" class="flat a-coins-checkbox" />';
+        return '<input type="checkbox" id="check-' + row.Id + '" class="flat a-coins-checkbox Matched" />';
 
     }
+    //function generateShededCheckBox(data, type, row) {
+    //    return '<input type="checkbox" id="shaded-' + row.Id + '" class="flat a-coins-checkbox Shaded" />';
+    //}
+    function ShadeFunction(element, id) {
 
+        $.post(
+            '/CompanyCashFlow/Shaded', {
+                id: id,
+                value: element.checked
+        }
+        );   
+    }
     function initialCheckBoxes() {
         var tableData = $('#companyCashFlowDataTable').DataTable().data();
         for (var i = 0; i < tableData.length; i++) {

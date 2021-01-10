@@ -7,7 +7,7 @@ namespace BWR.Domain.Model.Branches
     public class BranchCash: Entity
     {
         public decimal InitialBalance { get; set; }
-        public decimal Total { get; set; }
+        //public decimal Total { get; set; }
         public bool IsMainCoin { get; set; }
         public decimal? ExchangePrice { get; set; }
         public decimal? PurchasingPrice { get; set; }

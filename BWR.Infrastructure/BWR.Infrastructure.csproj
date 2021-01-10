@@ -86,6 +86,14 @@
     <Compile Include="Migrations\202011272350184_Create_sp_EmptyDB_Porc.designer.cs">
       <DependentUpon>202011272350184_Create_sp_EmptyDB_Porc.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202101031821488_Add_Shaded_Cloumn_For_CompanyCashFlow.cs" />
+    <Compile Include="Migrations\202101031821488_Add_Shaded_Cloumn_For_CompanyCashFlow.designer.cs">
+      <DependentUpon>202101031821488_Add_Shaded_Cloumn_For_CompanyCashFlow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101031849289_Add_Shaded_Cloumn_For_ClientCahsFlow.cs" />
+    <Compile Include="Migrations\202101031849289_Add_Shaded_Cloumn_For_ClientCahsFlow.designer.cs">
+      <DependentUpon>202101031849289_Add_Shaded_Cloumn_For_ClientCahsFlow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\ExternalLoginRepository.cs" />
@@ -124,6 +132,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202011272350184_Create_sp_EmptyDB_Porc.resx">
       <DependentUpon>202011272350184_Create_sp_EmptyDB_Porc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101031821488_Add_Shaded_Cloumn_For_CompanyCashFlow.resx">
+      <DependentUpon>202101031821488_Add_Shaded_Cloumn_For_CompanyCashFlow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101031849289_Add_Shaded_Cloumn_For_ClientCahsFlow.resx">
+      <DependentUpon>202101031849289_Add_Shaded_Cloumn_For_ClientCahsFlow.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

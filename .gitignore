@@ -6,7 +6,12 @@
 /obj
 /bin
 /BWR.Application/obj
+/BWR.Application/bin
 /BWR.Domain/obj
+/BWR.Domain/bin
 /BWR.Infrastructure/obj
+/BWR.Infrastructure/bin
 /BWR.ShareKernel/obj
+/BWR.ShareKernel/bin
 /Bwr.WebApp/obj
+/Bwr.WebApp/bin

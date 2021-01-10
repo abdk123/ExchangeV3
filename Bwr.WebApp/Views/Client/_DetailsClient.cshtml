@@ -88,31 +88,47 @@
 <script>
     var $clientBalanceDT;
     var $clientCoinDT;
-    $(function () {       
+    $(function () {
 
-        
+
         $('input.flat').iCheck({
             checkboxClass: 'icheckbox_flat-green',
             radioClass: 'iradio_flat-green'
         });
         var clientId = '@Model.Id';
-        
+
         initialClientBalanceDT(clientId);
-        
+
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             var url = $(e.target).attr('data-url');
             var id = e.target.href.split("#")[1];
             $('#' + id).load(url);
         });
     });
+    @*$.ajax({
+        url: '@Url.Action("Get", "ClientCash")',
+        method: 'POST',
+        data: { 'clientId': 6 },
+        sucess: function (data) {
+
+            console.log(data);
+        }
+    });*@
+    $.post(
+        '@Url.Action("Get", "ClientCash")', {
+            clientId:6
+    },
+        function (data) {
+            console.log(data);
+        }
+    )
     function initialClientBalanceDT(clientId) {
-        
+
         $clientBalanceDT = {
                 dt: null,
                 init: function () {
                     dt = $('#clientBalance').DataTable({
                         'language': dataTableLocalizationArValue(),
-
                         'ajax': {
                             'url': '@Url.Action("Get", "ClientCash")',
                             method: 'POST',
@@ -121,8 +137,14 @@
                         'columns': [
                             { 'title': 'معرف العملة', 'data': 'CoinId', "visible": false},
                             { 'title': 'العملة', 'data': 'CoinName', "width": "20%", 'searchable': true },
-                            { 'title': 'له', 'data': 'ForHim', "width": "20%", 'searchable': true },
-                            { 'title': 'عليه', 'data': 'OnHim', "width": "20%", 'searchable': true },
+                            {
+                                'title': 'له', 'data': 'ForHim', "width": "20%", 'searchable': true, render: function (data) {
+                                    return Math.abs( data);
+                                }    },
+                            {
+                                'title': 'عليه', 'data': 'OnHim', "width": "20%", 'searchable': true, render: function (data) {
+                                    return Math.abs(data);
+                                }    },
                             { 'title': 'أكبر قيمة دائن', 'data': 'MaxCreditor', "width": "20%", 'searchable': true },
                             { 'title': 'أكبر قيمة مدين', 'data': 'MaxDebit', "width": "20%",'searchable': true },
 

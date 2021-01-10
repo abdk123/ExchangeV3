@@ -1,14 +1,15 @@
 ﻿using BWR.Domain.Model.Branches;
 using BWR.Domain.Model.Settings;
 using BWR.ShareKernel.Common;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BWR.Domain.Model.Treasures
 {
-    public class TreasuryMoneyAction: Entity
+    public class TreasuryMoneyAction : Entity
     {
-        public decimal Amount { get; set; }
-        public decimal Total { get; set; }
+        public decimal? Amount { get; set; }
+        //public decimal Total { get; set; }
 
         public int CoinId { get; set; }
         [ForeignKey("CoinId")]
@@ -21,5 +22,19 @@ namespace BWR.Domain.Model.Treasures
         public int? BranchCashFlowId { get; set; }
         [ForeignKey("BranchCashFlowId")]
         public virtual BranchCashFlow BranchCashFlow { get; set; }
+        public decimal RealAmount
+        {
+            get
+            {
+                return this.BranchCashFlow?.Amount ?? this.Amount ?? 0;
+            }
+        }
+        public DateTime? RealDate
+        {
+            get
+            {
+                return this.BranchCashFlow?.MoenyAction.Date ?? Created;
+            }
+        }
     }
 }

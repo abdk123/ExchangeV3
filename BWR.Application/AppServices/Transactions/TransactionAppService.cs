@@ -119,18 +119,18 @@ namespace BWR.Application.AppServices.Transactions
                     transaction.ModifiedBy = _appSession.GetUserName();
                     _unitOfWork.GenericRepository<Transaction>().Update(transaction);
 
-                    var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(x => x.CoinId == transaction.CoinId).FirstOrDefault();
-                    if (branchCash != null)
-                    {
-                        branchCash.Total -= transaction.Amount;
-                        _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
-                    }
+                    //var branchCash = _unitOfWork.GenericRepository<BranchCash>().FindBy(x => x.CoinId == transaction.CoinId).FirstOrDefault();
+                    //if (branchCash != null)
+                    //{
+                    //    branchCash.Total -= transaction.Amount;
+                    //    _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
+                    //}
 
                     var treasuryCash = _unitOfWork.GenericRepository<TreasuryCash>()
                         .FindBy(x => x.CoinId == transaction.CoinId && x.TreasuryId == treasuryId).FirstOrDefault();
                     if (treasuryCash != null)
                     {
-                        treasuryCash.Total -= transaction.Amount;
+                        //treasuryCash.Total -= transaction.Amount;
                         _unitOfWork.GenericRepository<TreasuryCash>().Update(treasuryCash);
                     }
 
@@ -138,7 +138,7 @@ namespace BWR.Application.AppServices.Transactions
 
                     var branchCashFLow = new BranchCashFlow()
                     {
-                        Total = branchCash.Total,
+                        //Total = branchCash.Total,
                         Amount = -transaction.Amount,
                         MonyActionId = moneyActinId,
                         BranchId = BranchHelper.Id,
@@ -151,7 +151,7 @@ namespace BWR.Application.AppServices.Transactions
                     var treuseryMoenyAction = new TreasuryMoneyAction()
                     {
                         Amount = -transaction.Amount,
-                        Total = treasuryCash.Total,
+                        //Total = treasuryCash.Total,
                         CoinId = transaction.CoinId,
                         TreasuryId = _appSession.GetCurrentTreasuryId(),
                         BranchCashFlow = branchCashFLow,

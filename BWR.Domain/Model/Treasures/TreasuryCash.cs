@@ -6,7 +6,7 @@ namespace BWR.Domain.Model.Treasures
 {
     public class TreasuryCash: Entity
     {
-        public decimal Total { get; set; }
+        //public decimal Total { get; set; }
         public bool IsEnabled { get; set; }
 
         public int CoinId { get; set; }
@@ -16,5 +16,6 @@ namespace BWR.Domain.Model.Treasures
         public int TreasuryId { get; set; }
         [ForeignKey("TreasuryId")]
         public virtual Treasury Treasury { get; set; }
+        
     }
 }

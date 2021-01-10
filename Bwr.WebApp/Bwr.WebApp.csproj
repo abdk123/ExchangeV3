@@ -6310,7 +6310,7 @@
     <Content Include="Scripts\Clasess\IncomeTransaction.js" />
     <Content Include="Scripts\GlopalScript.js" />
     <Content Include="Content\assets\global\plugins\datatables\DataTables-1.10.12\images\Sorting icons.psd" />
-    <None Include="Properties\PublishProfiles\Publish v1.pubxml" />
+    <None Include="Properties\PublishProfiles\PublishNewYear.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

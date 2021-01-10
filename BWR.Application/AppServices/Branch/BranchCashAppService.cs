@@ -26,21 +26,22 @@ namespace BWR.Application.AppServices.Branch
             _appSession = appSession;
         }
         
+
         public dynamic GetActualBalance(int coinId, int branchId)
         {
+            //و هي كلها بدها إعادة كتابة
             dynamic treasuryCashsTotal = 0;
 
-            var branchCash = _unitOfWork.GenericRepository<BranchCash>()
-                .FindBy(x => x.CoinId == coinId && x.BranchId == branchId).FirstOrDefault();
+            //var branchCash = _unitOfWork.GenericRepository<BranchCash>()
+            //    .FindBy(x => x.CoinId == coinId && x.BranchId == branchId).FirstOrDefault();
 
             
-            var treasuryCashs = _unitOfWork.GenericRepository<TreasuryCash>()
-                .FindBy(c => c.CoinId == coinId);
-            if (treasuryCashs.Any())
-                treasuryCashsTotal = treasuryCashs.Sum(x => x.Total);
+            //var treasuryCashs = _unitOfWork.GenericRepository<TreasuryCash>()
+            //    .FindBy(c => c.CoinId == coinId);
+            //if (treasuryCashs.Any())
+            //    treasuryCashsTotal = treasuryCashs.Sum(x => x.Total);
 
             return treasuryCashsTotal;
-
         }
 
         public IList<BranchCashDto> GetAll()
@@ -163,7 +164,6 @@ namespace BWR.Application.AppServices.Branch
                 if (branchCash != null)
                 {
                     branchCash.InitialBalance = dto.InitialBalance;
-                    branchCash.Total= dto.Total;
                     branchCash.ModifiedBy = _appSession.GetUserName();
                     if(dto.IsMainCoin == true && branchCash.IsMainCoin == false)
                     {
@@ -188,9 +188,9 @@ namespace BWR.Application.AppServices.Branch
                 _unitOfWork.GenericRepository<BranchCash>().Update(branchCash);
                 _unitOfWork.Save();
                 var mainTreasury = _appSession.GetMainTreasury();
-                var treasuryCash = _unitOfWork.GenericRepository<TreasuryCash>().FindBy(c => c.TreasuryId == mainTreasury&&c.CoinId== branchCash.CoinId).First();
-                treasuryCash.Total = branchCash.InitialBalance;
-                _unitOfWork.GenericRepository<TreasuryCash>().Update(treasuryCash);
+                //var treasuryCash = _unitOfWork.GenericRepository<TreasuryCash>().FindBy(c => c.TreasuryId == mainTreasury&&c.CoinId== branchCash.CoinId).First();
+                //treasuryCash.Total = branchCash.InitialBalance;
+                //_unitOfWork.GenericRepository<TreasuryCash>().Update(treasuryCash);
                 _unitOfWork.Save();
                 _unitOfWork.Commit();
 

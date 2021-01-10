@@ -33,6 +33,7 @@ namespace BWR.Application.AppServices.Companies
                 var companyCashs = _unitOfWork.GenericRepository<CompanyCash>().GetAll().ToList();
                 foreach (var companyCash in companyCashs)
                 {
+                    var total = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == companyCash.CompanyId && c.CoinId == companyCash.CoinId).Sum(c => c.Amount);
                     var companyBalanceDto = new CompanyCashesDto()
                     {
                         Id = companyCash.Id,
@@ -40,7 +41,7 @@ namespace BWR.Application.AppServices.Companies
                         CoinName = companyCash.Coin != null ? companyCash.Coin.Name : string.Empty,
                         CompanyId = companyCash.CompanyId,
                         InitialBalance = companyCash.InitialBalance,
-                        Total = companyCash.Total,
+                        Total = total+companyCash.InitialBalance,
                         MaxCreditor = companyCash.MaxCreditor,
                         MaxDebit = companyCash.MaxDebit
                     };
@@ -76,8 +77,10 @@ namespace BWR.Application.AppServices.Companies
             try
             {
                 var companyCashs = _unitOfWork.GenericRepository<CompanyCash>().FindBy(x => x.CompanyId == companyId).ToList();
+
                 foreach(var companyCash in companyCashs)
                 {
+                    var total = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == companyCash.CompanyId && c.CoinId == companyCash.CoinId).Sum(c => c.Amount);
                     var companyBalanceDto = new CompanyCashesDto()
                     {
                         Id= companyCash.Id,
@@ -85,7 +88,7 @@ namespace BWR.Application.AppServices.Companies
                         CoinName = companyCash.Coin != null ? companyCash.Coin.Name : string.Empty,
                         CompanyId = companyCash.CompanyId,
                         InitialBalance = companyCash.InitialBalance,
-                        Total = companyCash.Total,
+                        Total = total+companyCash.InitialBalance,
                         MaxCreditor = companyCash.MaxCreditor,
                         MaxDebit=companyCash.MaxDebit
                     };
