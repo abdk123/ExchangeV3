@@ -117,7 +117,7 @@ namespace BWR.Application.AppServices.Clients
 
                 var client = Mapper.Map<ClientInsertDto, Client>(dto);
                 client.CreatedBy = _appSession.GetUserName();
-                client.IsEnabled = true;
+                //client.IsEnabled = true;
                 //client.ClientType = ClientType.Client;
                 client.BranchId = BranchHelper.Id;
 
