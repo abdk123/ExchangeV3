@@ -39,11 +39,17 @@ namespace BWR.Application.AppServices.Treasuries
                 var group = treasuryMoneyAction.GroupBy(c => c.Coin);
                 foreach (var item in group)
                 {
+                    
                     var moenyActions = item.ToList();
+                    decimal amount = 0;
+                    for (int i = 0; i < moenyActions.Count(); i++)
+                    {
+                        amount += moenyActions[i].RealAmount;
+                    }
                     treasuryCashsDto.Add(new TreasuryCashDto()
                     {
-                        Coin = Mapper.Map<BWR.Domain.Model.Settings.Coin, CoinDto>(item.Key),
-                        Amount = moenyActions.Sum(c => c.RealAmount),
+                        Coin = Mapper.Map<Domain.Model.Settings.Coin, CoinDto>(item.Key),
+                        Amount = amount,
                         CoinId = item.Key.Id,                         
                     });
                 }

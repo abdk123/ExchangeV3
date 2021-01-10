@@ -44,18 +44,7 @@ namespace BWR.Application.AppServices.Treasuries
                 var treasuryMoneyActions = _unitOfWork.GenericRepository<TreasuryMoneyAction>()
                     .FindBy(x => x.TreasuryId == input.TreasuryId && x.CoinId == input.CoinId, "BranchCashFlow.MoenyAction");
 
-                //if (input.From == null && input.To != null)
-                //{
-                //    treasuryMoneyActions = treasuryMoneyActions.Where(x => x.Created < input.To);
-                //}
-                //else if (input.From != null && input.To == null)
-                //{
-                //    treasuryMoneyActions = treasuryMoneyActions.Where(x => x.Created > input.From);
-                //}
-                //else if (input.From != null && input.To != null)
-                //{
-                //    treasuryMoneyActions = treasuryMoneyActions.Where(x => x.Created > input.From && x.Created < input.To);
-                //}
+
                 decimal privousRecoredTotal = 0;
                 if (input.From != null)
                 {
@@ -68,6 +57,7 @@ namespace BWR.Application.AppServices.Treasuries
                 treasuryMoneyActionsDto = (from o in ordered
                                            select new TreasuryMoneyActionDto()
                                            {
+                                               Total  = (privousRecoredTotal+=o.RealAmount),
                                                Amount = o.RealAmount,
                                                BranchCashFlowId = o.BranchCashFlowId,
                                                CoinId = o.CoinId,
@@ -75,18 +65,6 @@ namespace BWR.Application.AppServices.Treasuries
                                                TreasuryId = o.TreasuryId,
                                                Id = o.Id,
                                            }).ToList();
-                //treasuryMoneyActionsDto = (from t in treasuryMoneyActions
-                //                           select new TreasuryMoneyActionDto()
-                //                           {
-                //                               Amount = t.Amount ?,
-                //                               BranchCashFlowId = t.BranchCashFlowId,
-                //                               CoinId = t.CoinId,
-                //                               Created = t.Created != null ? t.Created.Value.ToString("dd/MM/yyyy", new CultureInfo("ar-AE")) : string.Empty,
-                //                               //Total = t.Total,
-                //                               TreasuryId = t.TreasuryId,
-                //                               Id = t.Id
-
-                //                           }).ToList();
             }
             catch (Exception ex)
             {
@@ -102,32 +80,39 @@ namespace BWR.Application.AppServices.Treasuries
             try
             {
                 var treasuryMoneyActions = _unitOfWork.GenericRepository<TreasuryMoneyAction>()
-                    .FindBy(x => x.TreasuryId == input.TreasuryId && x.CoinId == input.CoinId, c => c.BranchCashFlow);
+                    .FindBy(x => x.TreasuryId == input.TreasuryId && x.CoinId == input.CoinId, c => c.BranchCashFlow.MoenyAction);
 
-
-                if (input.From == null && input.To != null)
+                decimal total = 0;
+                //if (input.From == null && input.To != null)
+                //{
+                //    treasuryMoneyActions = treasuryMoneyActions.Where(x => x.Created < input.To);
+                //}
+                //else if (input.From != null && input.To == null)
+                //{
+                //    treasuryMoneyActions = treasuryMoneyActions.Where(x => x.Created > input.From);
+                //}
+                //else if (input.From != null && input.To != null)
+                //{
+                //    treasuryMoneyActions = treasuryMoneyActions.Where(x => x.Created > input.From && x.Created < input.To);
+                //}
+                if (input.From != null)
                 {
-                    treasuryMoneyActions = treasuryMoneyActions.Where(x => x.Created < input.To);
+                    treasuryMoneyActions = treasuryMoneyActions.Where(x => x.Created >= input.From);
+                    total = treasuryMoneyActions.Where(c => c.Created < input.From).ToList().Sum(c => c.RealAmount);
                 }
-                else if (input.From != null && input.To == null)
-                {
-                    treasuryMoneyActions = treasuryMoneyActions.Where(x => x.Created > input.From);
-                }
-                else if (input.From != null && input.To != null)
-                {
-                    treasuryMoneyActions = treasuryMoneyActions.Where(x => x.Created > input.From && x.Created < input.To);
-                }
-
                 foreach (var treasuryMoneyAction in treasuryMoneyActions.ToList())
                 {
                     if (treasuryMoneyAction.BranchCashFlowId != null)
                     {
+
                         var moneyAction = treasuryMoneyAction.BranchCashFlow.MoenyAction;
+                        total += treasuryMoneyAction.BranchCashFlow.Amount;
                         treasuryMoneyActionsDto.Add(new TreasuryActionsDto()
                         {
                             //Amount = treasuryMoneyAction.Amount,
                             Amount = treasuryMoneyAction.BranchCashFlow.Amount,
                             //Total = treasuryMoneyAction.Total,
+                            Total = total,
                             Id = treasuryMoneyAction.Id,
                             Type = moneyAction.GetTypeName(Requester.Branch, null),
                             Name = _moneyActionAppService.GetActionName(moneyAction),
@@ -140,9 +125,11 @@ namespace BWR.Application.AppServices.Treasuries
                     }
                     else
                     {
+                        total += (decimal)treasuryMoneyAction.Amount;
                         treasuryMoneyActionsDto.Add(new TreasuryActionsDto()
                         {
                             Amount = treasuryMoneyAction.Amount ?? 0,
+                            Total = total,
                             //Total = treasuryMoneyAction.Total,
                             Id = treasuryMoneyAction.Id,
                             Type = treasuryMoneyAction.Amount > 0 ? "إعطاء" : "اخذ",
