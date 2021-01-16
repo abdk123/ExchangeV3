@@ -1,4 +1,5 @@
-﻿@model BWR.Application.Dtos.Company.CompanyCashFlow.CompanyCashFlowInputDto
+﻿
+@model BWR.Application.Dtos.Company.CompanyCashFlow.CompanyCashFlowInputDto
 @{
     /**/
 
@@ -64,7 +65,7 @@
                     },
                     "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                         if (aData.Shaded) {
-                                        $('td', nRow).css('background-color', 'Red');
+                                        $('td', nRow).css('background-color', '#808080');
                         }
                         },  
                     'columns': [
@@ -302,7 +303,7 @@
             }
         } else {
             for (var i = 0; i < tds.length; i++) {
-                tds[i].style = "background-color: red;";
+                tds[i].style = "background-color: #808080;";
             }
             
         }
