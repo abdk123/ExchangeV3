@@ -5,6 +5,7 @@
 
     Layout = "";
 }
+
 <div class="row">
     <div class="col-md-4">
         <div class="form-group">
@@ -59,8 +60,13 @@
                         'cash': false,
                         'data': function (d) {
                             d.inputDto = $inputDto;
-                        }
+                        },
                     },
+                    "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                        if (aData.Shaded) {
+                                        $('td', nRow).css('background-color', 'Red');
+                        }
+                        },  
                     'columns': [
                         {
                             'title': 'تظليل',
@@ -68,7 +74,6 @@
                             render: function (data, type, row) {
                                 if (row.Id != null) {
                                     //return generateShededCheckBox(data, type, row);
-
                                     var sf = "ShadeFunction(this," + row.Id + ")";
                                     if(!data)
                                         return '<input type="checkbox" class="flat" onchange="' + sf + '" > ';
@@ -153,19 +158,21 @@
                         { 'title': 'النوع', 'data': 'Type', 'searchable': true },
                         //{ 'title': 'الرقم', 'data': 'Number', 'searchable': true },
                         { 'title': 'ملاحظات', 'data': 'Note', 'searchable': true },
-                        
+
                         {
                             'title': 'تفاصيل',
                             'data': 'MoneyActionId',
                             'searchable': false,
                             'sortable': false,
                             'render': function (data, type, full, meta) {
+                                if (data == null)
+                                    return "";
                                 return '<a href="@Url.Action("Index", "MoneyAction")?id=' + data + '" class="btn btn-defult editCompanyCommission"><span class="glyphicon glyphicon-eye"></span>  تفاصيل</a>';
 
                             }
                         },
                         { 'title': 'المطابق', 'data': 'UserMatched', 'searchable': true },
-                          { 'title': 'المطابق من قبل الشركة', 'data': 'CompanyUserMatched', 'searchable': true }
+                        { 'title': 'المطابق من قبل الشركة', 'data': 'CompanyUserMatched', 'searchable': true },
                     ],
                     'lengthMenu': [10, 25, 50, 100],
 
@@ -286,13 +293,26 @@
     //    return '<input type="checkbox" id="shaded-' + row.Id + '" class="flat a-coins-checkbox Shaded" />';
     //}
     function ShadeFunction(element, id) {
-
+        
+        var row = element.parentElement.parentElement;
+        var tds = row.getElementsByTagName('td');
+        if (!element.checked) {
+            for (var i = 0; i < tds.length; i++) {
+                tds[i].style = "";
+            }
+        } else {
+            for (var i = 0; i < tds.length; i++) {
+                tds[i].style = "background-color: red;";
+            }
+            
+        }
+        //style="";
         $.post(
             '/CompanyCashFlow/Shaded', {
                 id: id,
                 value: element.checked
         }
-        );   
+        );
     }
     function initialCheckBoxes() {
         var tableData = $('#companyCashFlowDataTable').DataTable().data();
