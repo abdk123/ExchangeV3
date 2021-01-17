@@ -35,6 +35,11 @@
     </div>
 </div>
 <script type="text/javascript">
+    function ReFull() {
+
+                        $inputDto = getData();
+            $companyCashFlowDataTable.refresh();
+        }
     var $companyCashFlowDataTable;
     var $companyId;
     var $inputDto;
@@ -188,12 +193,6 @@
 
             $companyCashFlowDataTable.init();
 
-
-
-        function ReFull() {
-                        $inputDto = getData();
-            $companyCashFlowDataTable.refresh();
-        }
         $('#a-flow-coinId').on("change", function (e) {
             $inputDto = getData();
             $companyCashFlowDataTable.refresh();

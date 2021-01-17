@@ -35,6 +35,10 @@
     var $clientCashFlowDataTable;
     var $clientId;
     var $inputDto;
+    function onChangeDate(e) {
+        $inputDto = getData();
+        $clientCashFlowDataTable.refresh();
+    }
     $(function () {
 
         initialCoins();
@@ -239,10 +243,7 @@
 
     }
 
-    function onChangeDate(e) {
-        $inputDto = getData();
-        $clientCashFlowDataTable.refresh();
-    }
+    
 
     function generateCheckBox(data, type, row) {
 
