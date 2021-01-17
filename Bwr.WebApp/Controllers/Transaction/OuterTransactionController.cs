@@ -46,7 +46,7 @@ namespace Bwr.WebApp.Controllers.Transaction
         }
         
         // GET: OuterTransaction
-        public ActionResult Index(TypeOfPay typeOfPay, int? coinId, int? countryId, int? receiverClientId, int? senderClientId, DateTime? from, DateTime? to, int? page)
+        public ActionResult Index(TypeOfPay typeOfPay, int? coinId, int? countryId, int? receiverClientId, int? senderClientId,int? companyId ,DateTime? from, DateTime? to, int? page)
         {
             var outerTransactionInputDto = new OuterTransactionInputDto()
             {
@@ -56,7 +56,8 @@ namespace Bwr.WebApp.Controllers.Transaction
                 ReceiverClientId = receiverClientId,
                 SenderClientId = senderClientId,
                 To = to,
-                TypeOfPay = typeOfPay
+                TypeOfPay = typeOfPay,
+                CompanyId = companyId
             };
 
             var outerTransactionsDto = _outerTransactionAppService.GetTransactions(outerTransactionInputDto).ToPagedList(page ?? 1, 10);

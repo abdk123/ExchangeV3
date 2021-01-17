@@ -16,5 +16,6 @@ namespace BWR.Application.Dtos.Transaction.OuterTransaction
         public DateTime? From { get; set; }
         public DateTime? To { get; set; }
         public TypeOfPay TypeOfPay { get; set; }
+        public int? CompanyId { get; set; }
     }
 }

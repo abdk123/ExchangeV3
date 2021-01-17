@@ -76,7 +76,14 @@ namespace BWR.Application.AppServices.Transactions
                 {
                     outerTransactions = outerTransactions.Where(x => x.Created <= input.To);
                 }
-
+                if (input.TypeOfPay != TypeOfPay.None)
+                {
+                    outerTransactions = outerTransactions.Where(x => x.TypeOfPay == input.TypeOfPay);
+                }
+                if (input.CompanyId != null)
+                {
+                    outerTransactions = outerTransactions.Where(x =>x.SenderCompanyId==input.CompanyId);
+                }
                 outerTransactionsDto = Mapper.Map<List<Transaction>, List<OuterTransactionDto>>(outerTransactions.ToList());
             }
             catch (Exception ex)
