@@ -4,6 +4,12 @@
     Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
 }
 <div class="container">
+    <div class="row>">
+        <div class="col-lg-4">
+            <label>تاريخ الحركة</label>
+            <input type="date" class="form-control" id="date" />
+        </div>
+    </div>
     <div class="row">
         <div class="col-lg-4">
             <label>نوع الحركة</label>
@@ -123,7 +129,7 @@
                             <br />
                             <span class="label label-primary" id="secondcopanynewBalnce"></span>
                             <span class="label label-primary" id="secondcompanynewBalanceStatus"></span>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -197,7 +203,7 @@
         var agentId;
         if ($('#agents').val() == "") {
             agentId = null;
-        } else {    
+        } else {
             agentId = $('#agents').val();
         }
         if ($('#companies').val() == "") {
@@ -560,7 +566,7 @@
         if (type == 2) {
             CalcSecoundAgentCurrentBalcne();
         } else if (type == 3) {
-            
+
             calcSecoundCompanyCurrentBalance();
         }
     }
@@ -656,11 +662,11 @@
     }
     function calcSecoundCompanyCurrentBalance() {
         var amount = parseFloat(deleteCommaFromNumber($('#amout').val()));
-        
+
         if (isNaN(amount)) {
             amount = 0;
         }
-        
+
         var typeOfAtionVal = $('#typeOfAction').val();
         var total = 0;
         if (typeOfAtionVal != 1) {
@@ -688,6 +694,10 @@
                 toastr["error"]("يجب عليك ان تحدد العميل", "خطاْ");
                 return false;
             }
+        }
+        if ($('#date').val() == "") {
+            toastr["error"]("يجب عليك ملئ حقل التاريخ", "خطاء");
+            return false;
         }
         if (firstAcountType == 4) {
             if ($('#companies').val() == "") {
@@ -721,7 +731,8 @@
                 ExpensiveId: publicExpenses,
                 CoinId: coinId,
                 Amount: amount,
-                Note: note
+                Note: note,
+                date:$('#date').val()
             }, function (data) {
                 if (data.Success) {
                     toastr["success"]("تم");
@@ -740,7 +751,8 @@
                 IncomeId: publicIncomeId,
                 CoinId: coinId,
                 Amount: amount,
-                Note: note
+                Note: note,
+                date:$('#date').val()
             }, function (data) {
                 if (data.Success) {
                     toastr["success"]("تم");
@@ -759,7 +771,8 @@
                 ClientId: clientId,
                 CoinId: coinId,
                 Amount: amount,
-                Note: note
+                Note: note,
+                date:$('#date').val()
             }, function (data) {
                 if (data.Success) {
                     toastr["success"]("تم");
@@ -776,7 +789,8 @@
                 ClientId: clientId,
                 CoinId: coinId,
                 Amount: amount,
-                Note: note
+                Note: note,
+                date:$('#date').val()
             }, function (data) {
                 if (data.Success) {
                     toastr["success"]("تم");
@@ -795,7 +809,8 @@
                 CompanyId: companyId,
                 CoinId: coinId,
                 Amount: amount,
-                Note: not
+                Note: not,
+                date:$('#date').val()
             }
             , function (data) {
                 if (data.Success) {
@@ -813,7 +828,8 @@
                 CompanyId: companyId,
                 CoinId: coinId,
                 Amount: amount,
-                Note: note
+                Note: note,
+                date:$('#date').val()
             }, function (data) {
                 if (data.Success) {
                     toastr["success"]("تم");
@@ -833,7 +849,8 @@
                 SecondClientId: clientSecondAcount,
                 CoinId: coinId,
                 Amount: amount,
-                Note: note
+                Note: note,
+                date:$('#date').val()
             },
             function (data) {
                 if (data.Success) {
@@ -854,7 +871,8 @@
                 ClientId: clientSecondAcount,
                 CoinId: coinId,
                 Amount: amount,
-                Note: note
+                Note: note,
+                date:$('#date').val()
             }, function (data) {
                 if (data.Success) {
                     toastr["success"]("تم");
@@ -873,7 +891,8 @@
                 CompanyId: secoundCompanyId,
                 CoinId: coinId,
                 Amount: amount,
-                Note: note
+                Note: note,
+                date:$('#date').val()
             },
             function (data) {
                 if (data.Success) {
@@ -897,7 +916,8 @@
                         SecondCompanyId: secondCompanyId,
                         CoinId: coinId,
                         Amount: amount,
-                        Note: note
+                        Note: note,
+                        date:$('#date').val()
                     },
                     function (data) {
                         if (data.Success) {
@@ -916,7 +936,8 @@
                 ClientId: clientId,
                 PublicExpenseId: publicExpenseId,
                 Amount: amount,
-                Note: note
+                Note: note,
+                date:$('#date').val()
             },
             function (data) {
                 if (data.Success) {
@@ -935,7 +956,8 @@
                 ClientId: clientId,
                 PublicIncomeId: publicIncomeId,
                 Amount: amount,
-                Note: note
+                Note: note,
+                date:$('#date').val()
             },
             function (data) {
                 if (data.Success) {
@@ -954,7 +976,8 @@
                 CompanyId: companyId,
                 PublicExpenseId: publicExpenseId,
                 Amount: amount,
-                Note: note
+                Note: note,
+                date:$('#date').val()
             },
             function (data) {
                 if (data.Success) {
@@ -974,7 +997,8 @@
                 CompanyId:companyId,
                 PublicIncomeId: publicIncomeId,
                 Amount: amount,
-                Note: note
+                Note: note,
+                date:$('#date').val()
             },
             function (data) {
                 if (data.Success) {
@@ -1019,5 +1043,5 @@
             }
         );
     }
-
+        
 </script>
