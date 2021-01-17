@@ -22,7 +22,6 @@ namespace BWR.Application.AppServices.Branches
     public class BranchCashFlowAppService : IBranchCashFlowAppService
     {
         private readonly IUnitOfWork<MainContext> _unitOfWork;
-        //private readonly IMoneyActionAppService _moneyActionAppService;
         private readonly IAppSession _appSession;
 
         public BranchCashFlowAppService(IUnitOfWork<MainContext> unitOfWork,
@@ -30,7 +29,6 @@ namespace BWR.Application.AppServices.Branches
             IAppSession appSession)
         {
             _unitOfWork = unitOfWork;
-            //_moneyActionAppService = moneyActionAppService;
             _appSession = appSession;
         }
 
@@ -51,27 +49,6 @@ namespace BWR.Application.AppServices.Branches
             return branchcashflowsDtos;
         }
 
-        //public IList<BranchCashFlowDto> Get(Expression<Func<BranchCashFlow, bool>> predicate)
-        //{
-        //    var branchcashflowsDtos = new List<BranchCashFlowDto>();
-        //    try
-        //    {
-        //        var branchcashflows = _unitOfWork.GenericRepository<BranchCashFlow>()
-        //            .FindBy(predicate,c=>c.MoenyAction)
-        //            .OrderBy(x => x.MoenyAction.Date).ToList();
-        //        if (branchcashflows.Any())
-        //        {
-        //            branchcashflowsDtos = Mapper.Map<List<BranchCashFlow>, List<BranchCashFlowDto>>(branchcashflows);
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Tracing.SaveException(ex);
-        //    }
-
-        //    return branchcashflowsDtos;
-        //}
 
         public IList<BranchCashFlowOutputDto> Get(int? branchId, int coinId, DateTime? from, DateTime? to)
         {
@@ -108,7 +85,6 @@ namespace BWR.Application.AppServices.Branches
                     );
                 if (allBranchCashFlows.Any())
                 {
-                    //var branchCashFlows = new List<BranchCashFlow>();
 
                     if (from != null || to != null)
                     {

@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_BlankPageLayout.cshtml";
 }
 <div class="container">
-    <div class="row>">
+    <div class="row">
         <div class="col-lg-4">
             <label>تاريخ الحركة</label>
             <input type="date" class="form-control" id="date" />
@@ -1043,5 +1043,7 @@
             }
         );
     }
-        
+    var date = new Date().toISOString().split('T')[0];
+        $('#date').val(date);
+
 </script>
