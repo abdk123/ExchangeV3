@@ -33,7 +33,7 @@
     </div>
 </div>
 <div class="modal fade" id="deleteBranchCashModal" tabindex="-1" role="dialog" aria-labelledby="DeleteBranchCashModal" aria-hidden="true" data-backdrop="static">
-    <div id="deleteBranchCashContainer">
+    <div id="deleteBranchCas    hContainer">
     </div>
 </div>
 
@@ -56,8 +56,18 @@
                         },
                         'columns': [
                             { 'title': 'اسم العملة', 'data': 'Coin.Name', "width": "20%", 'searchable': true },
-                            { 'title': 'الرصيد الاولي', 'data': 'InitialBalance', "width": "20%", 'searchable': true },
-                            { 'title': 'الرصيد الحالي', 'data': 'Total', "width": "20%", 'searchable': true },
+                            {
+                                'title': 'الرصيد الاولي', 'data': 'InitialBalance', "width": "20%", 'searchable': true,
+                                render: function (data, type, row) {
+                                    return numberWithCommas(data);
+                                }
+                            },
+                            {
+                                'title': 'الرصيد الحالي', 'data': 'Total', "width": "20%", 'searchable': true,
+                                render: function (data, type, row) {
+                                    return numberWithCommas(data);
+                                }
+                            },
                             {
                                 'title': 'هي عملة اساسية',
                                 'data': "IsMainCoin",
@@ -81,7 +91,7 @@
                                         + '<a href="@Url.Action("Delete", "BranchCash")?id=' + data + '" class="btn btn-danger deleteBranchCash"><span class="glyphicon glyphicon-trash"></span>  حذف</a>';
                                 }
                             }
-                        ],
+                        ],  
                         'lengthMenu': [10, 25, 50, 100],
                     });
                 },

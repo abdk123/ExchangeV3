@@ -11,6 +11,7 @@ using BWR.ShareKernel.Permisions;
 using DataTables.Mvc;
 using System;
 using System.Web.Mvc;
+using System.Linq;
 
 namespace Bwr.WebApp.Controllers.Transaction
 {
@@ -39,7 +40,9 @@ namespace Bwr.WebApp.Controllers.Transaction
             var innerTransactionInitialDto = _innerTransactionAppService.InitialInputData();
             ViewBag.Companies = new SelectList(innerTransactionInitialDto.Companies, "Id", "Name");
             ViewBag.Coin = new SelectList(innerTransactionInitialDto.Coins, "Id", "Name");
-            ViewBag.Clients = new SelectList(innerTransactionInitialDto.Clients, "Id", "FullName");
+
+            //ViewBag.Clients = new SelectList(innerTransactionInitialDto.Clients, "Id", "FullName", null, null,innerTransactionInitialDto.Clients.Where(c => c.IsEnabled == false));
+            ViewData["Clients"] = innerTransactionInitialDto.Clients.ToList();
             ViewData["NormalClient"] = innerTransactionInitialDto.NormalClients;
             return View();
         }

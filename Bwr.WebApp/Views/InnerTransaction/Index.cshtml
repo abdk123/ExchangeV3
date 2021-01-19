@@ -87,10 +87,10 @@
                 </td>
                 <td>
                     @{
-                        var clients = (List<ClientDto>)ViewData["NormalClient"];
+                        var normalclients = (List<ClientDto>)ViewData["NormalClient"];
                         <select class="normalClientSelect" style="width:150px">
                             <option value="">اختر او اكتب </option>
-                            @foreach (var client in clients)
+                            @foreach (var client in normalclients)
                             {
                                 <option value="@client.Id">@client.FullName</option>
                             }
@@ -113,7 +113,7 @@
                         <select class="normalClientSelect form-control" onchange="GetClientInfo(this)" style ="width:100%;">
                             <option value="">اختر او اكتب الأسم </option>
                             @{
-                                foreach (var client in clients)
+                                foreach (var client in normalclients)
                                 {
                                     <option value="@client.Id">@client.FullName</option>
                                 }
@@ -123,7 +123,19 @@
                         <input type="text" class="form-control" placeholder="رقم الإتصال" style ="width:50%;float:right;" name="clientPhone" />
                     </div>
                     <div name="Agent" hidden>
-                        @Html.DropDownList("Clients", null, "اختر العمليل", htmlAttributes: new { @style = "width:100%;", @onfocusout = "validateRowAfterAnyEvent(this)", @class = "agentSelect" })
+                        <select id="Clients" class="agentSelect">
+                            <option value=""></option>
+                            @{
+                                var clients = (List<ClientDto>)ViewData["Clients"];
+                                foreach (var item in clients)
+                                {
+                                    <option value="@item.Id" @if (!item.IsEnabled) { Write("disabled"); }>
+                                        @item.FullName
+                                    </option>
+                                }
+                            }
+                        </select>
+                        @*@Html.DropDownList("Clients", null, "اختر العمليل", htmlAttributes: new { @style = "width:100%;", @onfocusout = "validateRowAfterAnyEvent(this)", @class = "agentSelect" })*@
                         @*<br />*@
                         <input type="number" class="form-control" style ="width:100%;float:right;" placeholder="عمولة العميل" onkeypress="validation(this, event);" onkeyup="FormaittingNumber(this);" onkeydown="PriventEmptytext(this, event)" onfocusout="validateRowAfterAnyEvent(this)" />
                     </div>
@@ -131,7 +143,7 @@
                         <select class="normalClientSelect form-control" onchange="GetClientInfo(this)" style="width:100%;">
                             <option value="">اختر او اكتب الأسم </option>
                             @{
-                                foreach (var client in clients)
+                                foreach (var client in normalclients)
                                 {
                                     <option value="@client.Id">@client.FullName</option>
                                 }
