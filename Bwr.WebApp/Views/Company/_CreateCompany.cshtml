@@ -59,7 +59,7 @@
                     <div class="tab-pane" id="addCoinSection">
                         
                         <div class="row a-coins">
-                            
+
                         </div>
                     </div>
                 </div>
@@ -148,7 +148,7 @@
         var coinInputs = $('.a-coins-inputs');
         for (var i = 0; i < coinInputs.length ; i++) {
             var id = $(coinInputs[i]).attr('data-coin-id');
-            var value = $(coinInputs[i]).val();
+            var value = deleteCommaFromNumber( $(coinInputs[i]).val());
 
             var isCheck = getCheckBoxValueForAdd(id);
             if (!isCheck)
@@ -178,13 +178,12 @@
         $.get('@Url.Action("GetCoinsForDropdown","Coin")', { term: "" }, function (data) {
 
             var coins = data.Coins;
-            console.log(data);
             for (var i = 0; i < coins.length; i++) {
                 var ele = '<div class="form-group">' +
                     '<label class="control-label col-md-3 col-sm-3">' + coins[i].Name + ':</label>' +
                     '<div class="col-md-6 col-sm-6">' +
                     '<div class="input-group">' +
-                    '<input  type="number" data-coin-id="' + coins[i].Id+'" class="form-control a-coins-inputs" value="0" />' +
+                    '<input  type="text" data-coin-id="' + coins[i].Id+'" class="form-control a-coins-inputs" value="0"  onkeypress="validation(this, event); " onkeyup="FormaittingNumber(this);"/>' +
                     '<span class="input-group-addon">' + coins[i].Code + '</span>' +
 
                     '</div>' +

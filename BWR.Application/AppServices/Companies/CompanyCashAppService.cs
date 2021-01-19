@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using BWR.Application.Dtos.Company;
+using BWR.Application.Extensions;
 using BWR.Application.Interfaces.Company;
 using BWR.Application.Interfaces.Shared;
 using BWR.Domain.Model.Companies;
@@ -33,7 +34,12 @@ namespace BWR.Application.AppServices.Companies
                 var companyCashs = _unitOfWork.GenericRepository<CompanyCash>().GetAll().ToList();
                 foreach (var companyCash in companyCashs)
                 {
-                    var total = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == companyCash.CompanyId && c.CoinId == companyCash.CoinId).Sum(c => c.Amount);
+                    var companyCahsFLowIE = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == companyCash.CompanyId && c.CoinId == companyCash.CoinId, c => c.MoenyAction.Transaction);
+                    var total = companyCahsFLowIE.Sum(c => c.Amount);
+                    companyCahsFLowIE.Where(c => c.MoenyAction.Transaction != null).ToList().ForEach(c =>
+                    {
+                        total += c.Commission() ?? 0;
+                    });
                     var companyBalanceDto = new CompanyCashesDto()
                     {
                         Id = companyCash.Id,
@@ -41,7 +47,7 @@ namespace BWR.Application.AppServices.Companies
                         CoinName = companyCash.Coin != null ? companyCash.Coin.Name : string.Empty,
                         CompanyId = companyCash.CompanyId,
                         InitialBalance = companyCash.InitialBalance,
-                        Total = total+companyCash.InitialBalance,
+                        Total = total + companyCash.InitialBalance,
                         MaxCreditor = companyCash.MaxCreditor,
                         MaxDebit = companyCash.MaxDebit
                     };
@@ -78,19 +84,19 @@ namespace BWR.Application.AppServices.Companies
             {
                 var companyCashs = _unitOfWork.GenericRepository<CompanyCash>().FindBy(x => x.CompanyId == companyId).ToList();
 
-                foreach(var companyCash in companyCashs)
+                foreach (var companyCash in companyCashs)
                 {
                     var total = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == companyCash.CompanyId && c.CoinId == companyCash.CoinId).Sum(c => c.Amount);
                     var companyBalanceDto = new CompanyCashesDto()
                     {
-                        Id= companyCash.Id,
+                        Id = companyCash.Id,
                         CoinId = companyCash.CoinId,
                         CoinName = companyCash.Coin != null ? companyCash.Coin.Name : string.Empty,
                         CompanyId = companyCash.CompanyId,
                         InitialBalance = companyCash.InitialBalance,
-                        Total = total+companyCash.InitialBalance,
+                        Total = total + companyCash.InitialBalance,
                         MaxCreditor = companyCash.MaxCreditor,
-                        MaxDebit=companyCash.MaxDebit
+                        MaxDebit = companyCash.MaxDebit
                     };
 
                     decimal onHim = 0;
@@ -110,7 +116,7 @@ namespace BWR.Application.AppServices.Companies
                     companyBalanceDtos.Add(companyBalanceDto);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Tracing.SaveException(ex);
             }
