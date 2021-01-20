@@ -68,7 +68,12 @@
                         },
                         'columns': [
                             { 'title': 'اسم الصندوق', 'data': 'Name', "width": "25%", 'searchable': true },
-                            { 'title': 'الرصيد', 'data': 'Balances', "width": "30%", 'searchable': true },
+                            {
+                                'title': 'الرصيد', 'data': 'Balances', "width": "30%", 'searchable': true,
+                                render: function (data, type, row) {
+                                    return numberWithCommas(data);
+                                }
+                            },
                             {
                                 'title': 'هل هو فعال',
                                 'data': "IsEnabled",

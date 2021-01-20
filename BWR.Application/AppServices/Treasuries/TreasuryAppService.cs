@@ -233,17 +233,8 @@ namespace BWR.Application.AppServices.Treasuries
             var treasuryMoneyActionsByCoin = treasuryMoneyActions.GroupBy(c => c.Coin);
             foreach (var item in treasuryMoneyActionsByCoin)
             {
-                balance +=$"{item.Key.Name} : {item.ToList().Sum(c=>c.Amount)} <br />";
+                balance +=$"{item.Key.Name} : {((item.ToList().Sum(c=>c.Amount)??0).ToString("C0")).Split('$')[1]} <br />";
             }
-            //foreach (var treasuryCash in treasuryCashes)
-            //{
-            //    //var total = treasuryCash.Total;
-            //    var coinName = treasuryCash.Coin != null ? treasuryCash.Coin.Name : string.Empty;
-            //    if (total != 0)
-            //    {
-            //        balance += $"{total} {coinName} <br /> ";
-            //    }
-            //}
             return balance;
         }
 

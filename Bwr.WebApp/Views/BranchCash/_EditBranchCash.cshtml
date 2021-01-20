@@ -21,8 +21,9 @@
                         <div class="form-group">
                             <label class="control-label col-md-2" for="Name">الرصيد الاولي <span class="text-danger">*</span></label>
                             <div class="col-md-10">
-                                @Html.EditorFor(model => model.InitialBalance, new { htmlAttributes = new { @class = "form-control", id = "e-initialBalance" } })
-                                @Html.ValidationMessageFor(model => model.InitialBalance, "", new { @class = "text-danger" })
+                                @*@Html.EditorFor(model => model.InitialBalance, new { htmlAttributes = new { @class = "form-control", id = "e-initialBalance" } })
+                                @Html.ValidationMessageFor(model => model.InitialBalance, "", new { @class = "text-danger" })*@
+                                <input type="text" id="e-initialBalance" onkeypress="validation(this, event); " onkeyup="FormaittingNumber(this);"  class="form-control"/>
                             </div>
                         </div>
 
@@ -53,6 +54,8 @@
 <script>
 
     $(function () {
+        var initialBalacne = @Model.InitialBalance;
+        $('#e-initialBalance').val(numberWithCommas(initialBalacne));
         $('input.flat').iCheck({
             checkboxClass: 'icheckbox_flat-green',
             radioClass: 'iradio_flat-green'
@@ -69,8 +72,7 @@
 
                 var dto = {
                     Id: '@Html.Raw(Model.Id)',
-                    InitialBalance: $('#e-initialBalance').val(),
-                    Total: $('#e-initialBalance').val(),
+                    InitialBalance:deleteCommaFromNumber( $('#e-initialBalance').val()),
                     IsMainCoin: getIsMainCoinValue()
                 };
 
