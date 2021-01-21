@@ -122,6 +122,10 @@ namespace BWR.Application.AppServices.Transactions
                 var outerTransaction = _unitOfWork.GenericRepository<Transaction>().GetById(id);
 
                 outerTransactionUpdateDto = Mapper.Map<Transaction, OuterTransactionUpdateDto>(outerTransaction);
+                var mainMoneyAction = outerTransaction.MoenyActions[0];
+                var senederCompanyTotalAmount= this._unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.SenderCompanyId&&c.MoenyAction.Date<= mainMoneyAction.Date&&c.MoneyActionId<mainMoneyAction.Id).Sum(c => c.Amount);
+                var senderCompanyinitBalance = this._unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.SenderCompanyId).First().InitialBalance;
+                outerTransactionUpdateDto.SenderCompanyBalanceBeFroeAction = senderCompanyinitBalance + senederCompanyTotalAmount;
             }
             catch (Exception ex)
             {
@@ -163,6 +167,25 @@ namespace BWR.Application.AppServices.Transactions
             };
 
             return outerTransactionInsertInputDto;
+        }
+        public OuterTransactionEditInitialDto InitialInputDataForEdit(int transactionId)
+        {
+            var initData = this.InitialInputData();
+            OuterTransactionEditInitialDto initEditData = new OuterTransactionEditInitialDto()
+            {
+                Coins = initData.Coins,
+                Countries = initData.Countries,
+                Agents = initData.Agents,
+                Clients = initData.Clients ,
+                TreasuryId = initData.TreasuryId ,
+                Companies = initData.Companies,
+                Attachments = initData.Attachments
+            };
+            var transaction= this._unitOfWork.GenericRepository<Transaction>().FindBy(c => c.TreaseryId == transactionId,c=>c.MoenyActions).First();
+            var mainMoneyAction = transaction.MoenyActions.First();
+            initEditData.SenderCompanyId =(int) transaction.SenderCompanyId;
+
+            return initEditData;
         }
         #endregion
 

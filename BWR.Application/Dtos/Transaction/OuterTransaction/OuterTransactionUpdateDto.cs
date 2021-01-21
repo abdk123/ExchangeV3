@@ -34,6 +34,7 @@ namespace BWR.Application.Dtos.Transaction.OuterTransaction
         public virtual BranchDto SenderBranch { get; set; }
 
         public int? SenderClientId { get; set; }
+        public decimal SenderClientBalanceBeFroeAction { get; set; }
 
         public virtual ClientDto SenderClient { get; set; }
 
@@ -42,8 +43,9 @@ namespace BWR.Application.Dtos.Transaction.OuterTransaction
         public int? SenderCompanyId { get; set; }
 
         public virtual CompanyDto SenderCompany { get; set; }
-
+       
         public decimal? SenderCompanyComission { get; set; }
+        public decimal SenderCompanyBalanceBeFroeAction { get; set; }
         #endregion
 
         #region Receiver Info

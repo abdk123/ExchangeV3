@@ -110,7 +110,7 @@
                     <div class="row" style="margin-bottom:10px">
                         <div class="col-lg-12">
                             <select class="form-control" id="reciverCompany">
-                                <option >الشركة المرسلة</option>
+                                <option>الشركة المرسلة</option>
                                 @foreach (var company in Model.Companies)
                                 {
                                     <option value="@company.Id">@company.Name</option>
@@ -340,7 +340,7 @@
     var currentStream;
     var senderNormalClientCanvas = document.getElementById('senderNormalClientCanvas');
     var senderNormalClientImg = document.getElementById('senderNormalClientImg');
-    
+
 
     $(document).ready(function () {
 
@@ -431,6 +431,7 @@
             $('#senderCompanyCurrentBalance').empty();
             return;
         }
+        
         var companyBlance = parseFloat(deleteCommaFromNumber($('#senderCompanyBlance').text()));
         if ($('#sendetCompanyBlanceStatuse').text() == 'عليه') {
             companyBlance *= -1;
@@ -443,7 +444,6 @@
             newBlance += parseFloat(deleteCommaFromNumber($('#companycomission').val()));
         }
         SetSenderCompanyCurrentBalance(newBlance)
-        //$('#senderCompanyCurrentBalance').text(numberWithCommas());
         calcReciverCompanyCurrentBalnce();
     });
     $('#comission').keyup(() => {
@@ -453,30 +453,47 @@
         if (this.value == "") {
             ClearSenderCompanyBalnce();
             $('#reciverCompany').empty();
-        } else {
+        }
+        else {
             FillSecoundCompany(this.value);
         }
         var coinId = $('#CoinId').val();
-        $.post(
-            '@Url.Action("GetCompanyBalance", "CompanyCash")', {
+
+        if (coinId != $outerTransactionForEdit.CoinId) {
+            $.post(
+                '@Url.Action("GetCompanyBalance", "CompanyCash")', {
                 companyId: this.value,
                 coinId: coinId
             },
-            function (data) {
-                senderCompanyBalnce = data;
-                var balance = parseFloat(data);
-                var status = balance > 0 ? "له" : "عليه";
-                if (balance == 0) {
-                    status = "";
-                }
-                balance = Math.abs(balance);
-                $('#senderCompanyBlance').text(numberWithCommas(balance));
+                function (data) {
+                    senderCompanyBalnce = data;
+                    var balance = parseFloat(data);
+                    var status = balance > 0 ? "له" : "عليه";
+                    if (balance == 0) {
+                        status = "";
+                    }
+                    balance = Math.abs(balance);
+                    $('#senderCompanyBlance').text(numberWithCommas(balance));
 
-                $('#senderCompanyCurrentBalance').text(numberWithCommas(balance));
-                $('#sendetCompanyBlanceStatuse').text(status);
-                $('#senderCompanyCurrentBalanceStatuse').text(status);
-            }
-        )
+                    $('#senderCompanyCurrentBalance').text(numberWithCommas(balance));
+                    $('#sendetCompanyBlanceStatuse').text(status);
+                    $('#senderCompanyCurrentBalanceStatuse').text(status);
+                }
+            )
+        } else {
+            senderCompanyBalnce = $outerTransactionForEdit.SenderCompanyBalanceBeFroeAction;
+                    var balance = parseFloat(senderCompanyBalnce);
+                    var status = balance > 0 ? "له" : "عليه";
+                    if (balance == 0) {
+                        status = "";
+                    }
+            balance = Math.abs(balance);
+                    $('#senderCompanyBlance').text(numberWithCommas(balance));
+
+                    $('#senderCompanyCurrentBalance').text(numberWithCommas(balance));
+                    $('#sendetCompanyBlanceStatuse').text(status);
+                    $('#senderCompanyCurrentBalanceStatuse').text(status);
+        }
 
         if (this.value != "" && this.value != null) {
             $.post(
@@ -849,24 +866,12 @@
             toastr["error"]("يجب تحديد العميل");
             return false;
         }
-        //var allAmount = parseFloat(deleteCommaFromNumber($('#transactionAmount').val())) + parseFloat(deleteCommaFromNumber($('#comission').val()));
-        //allAmount -= parseFloat(deleteCommaFromNumber($('#RecivingAmount').val()));
-        //allAmount -= parseFloat(deleteCommaFromNumber($('#AgetComission').val()));
-        //if ((agentTotal * -1) + allAmount > agentMaxCreditor) {
-        //    if (HavePrivlege(priveleges.breakTheWall)) {
-        //        var ans = confirm("سوف يتم تجاوز الحد المسوح به للعميل");
-        //        return ans;
-        //    } else {
-        //        alert('لا يمكنك تخطي الحد المسموح به للعميل');
-        //        return false;
-        //    }
-        //}
 
         return true;
     }
 
     $('#submit').click(async function () {
-        
+
         var CountryId = document.getElementById('countryId');
         if (CountryId.value == "") {
             toastr["error"]("يجب ان تحدد الوجهة", "خطاْ");
@@ -883,7 +888,7 @@
         var transactionAmount = document.getElementById('transactionAmount');
         var comission = document.getElementById('comission');
         var companycomission = document.getElementById('companycomission');
-        
+
         var date = $('#transactionDate').val();
         var moneyActions = $outerTransactionForEdit.MoenyActions;
         for (var i = 0; i < moneyActions.length; i++) {
@@ -907,7 +912,7 @@
         var reciverAddress = document.getElementById('reciverAddress');
         var reciverPhone = document.getElementById('reciverPhone');
 
-        
+
         if (TypeOfPayId.value == 1) {
             var senderNameSelect = document.getElementById('clientSelect');
             //var reciverName = document.getElementById('reciverName');
@@ -1062,9 +1067,8 @@
             )
         }
 
-       
+
         else if (TypeOfPayId.value == 2) {
-            debugger;
             var seldnerId = document.getElementById('agentSelect').value;
             if (seldnerId == undefined || seldnerId == "")
                 return;
@@ -1239,21 +1243,23 @@
             $('#senderCompanyCurrentBalance').empty();
             return;
         }
+        setCurrentBalacneForSenederCompany();
+    });
+    function setCurrentBalacneForSenederCompany() {
         var companyBlance = parseFloat(deleteCommaFromNumber($('#senderCompanyBlance').text()));
         if ($('#sendetCompanyBlanceStatuse').text() == "عليه") {
             companyBlance *= -1;
         }
         var newBlance = companyBlance;
-        if ($(this).val() != "") {
-            newBlance += parseFloat(deleteCommaFromNumber($(this).val()));
+        if ($('#companycomission').val() != "") {
+            newBlance += parseFloat(deleteCommaFromNumber($('#companycomission').val()));
         }
         if ($('#transactionAmount').val() != "") {
             newBlance += parseFloat(deleteCommaFromNumber($('#transactionAmount ').val()));
         }
-        //2
-        SetSenderCompanyCurrentBalance(newBlance)
-        //$('#senderCompanyCurrentBalance').text(numberWithCommas(newBlance));
-    });
+        SetSenderCompanyCurrentBalance(newBlance);
+    }
+
     function GetAgentBalance() {
         var coinId = $('#CoinId').val();
         var agentId = $('#agentSelect').val();
@@ -1262,7 +1268,7 @@
             agentMaxCreditor = null;
             return;
         }
-        
+
         if (agentId != "" && coinId != "") {
             $.post(
             '@Url.Action("GetClientCashByCoin", "ClientCash")', {
@@ -1329,7 +1335,7 @@
         )
     }
     function CallcBalanceForClient(clientId, coinId) {
-        
+
         if (clientId != "" && coinId != "") {
             $.post(
             '@Url.Action("GetClientCashByCoin", "ClientCash")', {
@@ -1488,84 +1494,81 @@
         $('#senderCompanyCurrentBalanceStatuse').text(status);
     }
 
-    function initialOuterTransactionValue() {
-        
-        getOuterTransactionForInit('@ViewBag.TransactionId');
-        setTimeout(function () {
-           
-            var date = $outerTransactionForEdit.MoenyActions[0].Date;
-            var transactionDate = convertJsonToDate(date);
-            $('#transactionDate').val(transactionDate)
-            //Main Info
-            $('#countryId').val($outerTransactionForEdit.CountryId);
-            $('#CoinId').val($outerTransactionForEdit.CoinId);
-            $('#sendByCompanySelect').val($outerTransactionForEdit.SenderCompanyId);
+  async  function initialOuterTransactionValue() {
 
-            //Money Info
-            $('#transactionAmount').val($outerTransactionForEdit.Amount);
-            $('#comission').val($outerTransactionForEdit.OurComission);
-            $('#companycomission').val($outerTransactionForEdit.SenderCompanyComission);
-            
-            if ($outerTransactionForEdit.TypeOfPay == 3) {
+      await getOuterTransactionForInit('@ViewBag.TransactionId');
 
-                //FillSecoundCompany($outerTransactionForEdit.SenderCompanyId);
-                $("#TypeOfPay").val('3').trigger("change");
-                $('#secoundCompanyCommission').val($outerTransactionForEdit.ReceiverCompanyComission);
-                setTimeout(function ()
-                {
-                    $('#reciverCompany').val($outerTransactionForEdit.ReceiverCompanyId).trigger('change');
-                }, 500);
+      var date = $outerTransactionForEdit.MoenyActions[0].Date;
+      var transactionDate = convertJsonToDate(date);
+      $('#CoinId').val($outerTransactionForEdit.CoinId);
+      $('#transactionDate').val(transactionDate);
+      $('#countryId').val($outerTransactionForEdit.CountryId);
+      $('#sendByCompanySelect').val($outerTransactionForEdit.SenderCompanyId).trigger('change');
+      //Money Info
+      
 
-                //Sender Info
-                $('#clientSenderByCompant').val($outerTransactionForEdit.SenderClientId).trigger('change');
-                if ($outerTransactionForEdit.SenderClient != null
-                    && $outerTransactionForEdit.SenderClient.ClientPhones
-                    && $outerTransactionForEdit.SenderClient.ClientPhones.length > 0) {
+    if ($outerTransactionForEdit.TypeOfPay == 3) {
 
-                    $('#senderPhoneByCompany').val($outerTransactionForEdit.SenderClient.ClientPhones[0].Phone);
-                }
-
-            } else if ($outerTransactionForEdit.TypeOfPay == 2) {
-                
-                $("#TypeOfPay").val('2').trigger("change");
-                $('#RecivingAmount').val($outerTransactionForEdit.RecivingAmount);
-                $('#AgetComission').val($outerTransactionForEdit.SenderCleirntCommission);
-
-                $('#agentSelect').val($outerTransactionForEdit.SenderClientId).trigger('change');
-
-            } else {
-                $("#TypeOfPay").val('1').trigger("change");
-
-                //Sender Info
-                $('#clientSelect').val($outerTransactionForEdit.SenderClientId).trigger('change');
-                if ($outerTransactionForEdit.SenderClient != null
-                    && $outerTransactionForEdit.SenderClient.ClientPhones
-                    && $outerTransactionForEdit.SenderClient.ClientPhones.length > 0) {
-
-                    $('#sendrPhone').val($outerTransactionForEdit.SenderClient.ClientPhones[0].Phone);
-                }
-
-            } 
-
-            //Receiver Info
-            $('#reciverClientSelect').val($outerTransactionForEdit.ReciverClientId).trigger("change");
-            if ($outerTransactionForEdit.ReciverClient != null) {
-                $('#reciverAddress').val($outerTransactionForEdit.ReciverClient.Address);
-
-                if ($outerTransactionForEdit.ReciverClient.ClientPhones != null && $outerTransactionForEdit.ReciverClient.ClientPhones.length > 0) {
-                    $('#reciverPhone').val($outerTransactionForEdit.ReciverClient.ClientPhones[0].Phone);
-                }
-            }
-
-            $('#reason').val($outerTransactionForEdit.Reason);
-            $('#note').val($outerTransactionForEdit.Note);
-
+        //FillSecoundCompany($outerTransactionForEdit.SenderCompanyId);
+        $("#TypeOfPay").val('3').trigger("change");
+        $('#secoundCompanyCommission').val(numberWithCommas( $outerTransactionForEdit.ReceiverCompanyComission));
+        setTimeout(function ()
+        {
+            $('#reciverCompany').val($outerTransactionForEdit.ReceiverCompanyId).trigger('change');
         }, 500);
-        
+
+        //Sender Info
+        $('#clientSenderByCompant').val($outerTransactionForEdit.SenderClientId).trigger('change');
+        if ($outerTransactionForEdit.SenderClient != null
+            && $outerTransactionForEdit.SenderClient.ClientPhones
+            && $outerTransactionForEdit.SenderClient.ClientPhones.length > 0) {
+
+            $('#senderPhoneByCompany').val($outerTransactionForEdit.SenderClient.ClientPhones[0].Phone);
+        }
+
+    } else if ($outerTransactionForEdit.TypeOfPay == 2) {
+
+        $("#TypeOfPay").val('2').trigger("change");
+        $('#RecivingAmount').val(numberWithCommas( $outerTransactionForEdit.RecivingAmount));
+        $('#AgetComission').val(numberWithCommas( $outerTransactionForEdit.SenderCleirntCommission));
+
+        $('#agentSelect').val($outerTransactionForEdit.SenderClientId).trigger('change');
+
+    } else {
+        $("#TypeOfPay").val('1').trigger("change");
+
+        //Sender Info
+        $('#clientSelect').val($outerTransactionForEdit.SenderClientId).trigger('change');
+        if ($outerTransactionForEdit.SenderClient != null
+            && $outerTransactionForEdit.SenderClient.ClientPhones
+            && $outerTransactionForEdit.SenderClient.ClientPhones.length > 0) {
+
+            $('#sendrPhone').val($outerTransactionForEdit.SenderClient.ClientPhones[0].Phone);
+        }
+
     }
 
-    function getOuterTransactionForInit(id) {
-        $.post(
+    //Receiver Info
+    $('#reciverClientSelect').val($outerTransactionForEdit.ReciverClientId).trigger("change");
+    if ($outerTransactionForEdit.ReciverClient != null) {
+        $('#reciverAddress').val($outerTransactionForEdit.ReciverClient.Address);
+
+        if ($outerTransactionForEdit.ReciverClient.ClientPhones != null && $outerTransactionForEdit.ReciverClient.ClientPhones.length > 0) {
+            $('#reciverPhone').val($outerTransactionForEdit.ReciverClient.ClientPhones[0].Phone);
+        }
+    }
+
+    $('#reason').val($outerTransactionForEdit.Reason);
+      $('#note').val($outerTransactionForEdit.Note);
+      $('#transactionAmount').val(numberWithCommas( $outerTransactionForEdit.Amount));
+      $('#comission').val(numberWithCommas( $outerTransactionForEdit.OurComission));
+      $('#companycomission').val(numberWithCommas( $outerTransactionForEdit.SenderCompanyComission));
+      CallcRequierdMoney();
+      setCurrentBalacneForSenederCompany();
+    }
+
+   async function getOuterTransactionForInit(id) {
+       await $.post(
             '@Url.Action("GetOuterTransactionForEdit", "OuterTransaction")', {
                 'transactionId': id
             },
@@ -1577,7 +1580,7 @@
     }
 
     function initOuterTransactionData(data) {
-        
+
         $outerTransactionForEdit = data;
     }
 

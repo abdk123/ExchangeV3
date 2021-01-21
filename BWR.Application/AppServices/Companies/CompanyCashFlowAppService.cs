@@ -319,6 +319,10 @@ namespace BWR.Application.AppServices.Companies
 
             return companyBalances;
         }
+        public decimal GetCompanyBalanceBeforeAction(int coinId, int companyId , int moneyActionId)
+        {
+            return 0;
+        }
         public void Shaded(int id, bool value)
         {
             try

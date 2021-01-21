@@ -77,6 +77,12 @@ namespace BWR.Application.AppServices.Branches
 
                 #endregion
 
+                //var allBranchCashFlows = _unitOfWork.GenericRepository<BranchCashFlow>()
+                //    .FindBy(c => c.CoinId == coinId && c.BranchId == branchId, c => c.MoenyAction, c => c.MoenyAction.BoxAction, c => c.MoenyAction.Clearing.ToClient, c => c.MoenyAction.Clearing.ToCompany, c => c.MoenyAction.Clearing.FromClient, c => c.MoenyAction.Clearing.FromCompany
+                //    , c => c.MoenyAction.Exchange.FirstCoin, c => c.MoenyAction.Exchange.SecoundCoin, c => c.MoenyAction.Exchange.MainCoin, c => c.MoenyAction.PublicMoney.PublicExpense, c => c.MoenyAction.PublicMoney.PublicIncome
+                //    , c => c.MoenyAction.Transaction.ReciverClient, c => c.MoenyAction.Transaction.ReceiverCompany, c => c.MoenyAction.Transaction.SenderCompany, c => c.MoenyAction.Transaction.SenderClient, c => c.MoenyAction.Transaction.Coin
+                //    , c => c.MoenyAction.ClientCashFlows, c => c.MoenyAction.CompanyCashFlows
+                //    );
                 var allBranchCashFlows = _unitOfWork.GenericRepository<BranchCashFlow>()
                     .FindBy(c => c.CoinId == coinId && c.BranchId == branchId, c => c.MoenyAction, c => c.MoenyAction.BoxAction, c => c.MoenyAction.Clearing.ToClient, c => c.MoenyAction.Clearing.ToCompany, c => c.MoenyAction.Clearing.FromClient, c => c.MoenyAction.Clearing.FromCompany
                     , c => c.MoenyAction.Exchange.FirstCoin, c => c.MoenyAction.Exchange.SecoundCoin, c => c.MoenyAction.Exchange.MainCoin, c => c.MoenyAction.PublicMoney.PublicExpense, c => c.MoenyAction.PublicMoney.PublicIncome

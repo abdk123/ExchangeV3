@@ -86,7 +86,6 @@ namespace Bwr.WebApp.Controllers.Transaction
         {
             if (!CheckTreasury())
                 return RedirectToAction("NoTreasury", "Home");
-
             var initialData = _outerTransactionAppService.InitialInputData();
             ViewBag.TransactionId = id;
             return View(initialData);
