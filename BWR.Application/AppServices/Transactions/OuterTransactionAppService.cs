@@ -82,7 +82,7 @@ namespace BWR.Application.AppServices.Transactions
                 }
                 if (input.CompanyId != null)
                 {
-                    outerTransactions = outerTransactions.Where(x =>x.SenderCompanyId==input.CompanyId);
+                    outerTransactions = outerTransactions.Where(x => x.SenderCompanyId == input.CompanyId);
                 }
                 outerTransactionsDto = Mapper.Map<List<Transaction>, List<OuterTransactionDto>>(outerTransactions.ToList());
             }
@@ -123,14 +123,21 @@ namespace BWR.Application.AppServices.Transactions
 
                 outerTransactionUpdateDto = Mapper.Map<Transaction, OuterTransactionUpdateDto>(outerTransaction);
                 var mainMoneyAction = outerTransaction.MoenyActions[0];
-                var senederCompanyTotalAmount= this._unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.SenderCompanyId&&c.MoenyAction.Date<= mainMoneyAction.Date&&c.MoneyActionId<mainMoneyAction.Id).Sum(c => c.Amount);
-                var senderCompanyinitBalance = this._unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.SenderCompanyId).First().InitialBalance;
+                var companyCashIQ = this._unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.SenderCompanyId && c.MoenyAction.Date <= mainMoneyAction.Date && c.MoneyActionId < mainMoneyAction.Id);
+                var senederCompanyTotalAmount = companyCashIQ.Sum(c => c.Amount);
+                var senderCompanyinitBalance = this._unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.SenderCompanyId).First().InitialBalance ;
                 outerTransactionUpdateDto.SenderCompanyBalanceBeFroeAction = senderCompanyinitBalance + senederCompanyTotalAmount;
                 if (outerTransactionUpdateDto.TypeOfPay == TypeOfPay.ClientsReceivables)
                 {
                     var clientTotalAmount = this._unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.ClientId == outerTransaction.SenderClientId && c.MoenyAction.Date <= mainMoneyAction.Date && c.MoenyActionId < mainMoneyAction.Id).Sum(c => c.Amount);
                     var clientinitBalance = this._unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.ClientId == outerTransaction.SenderClientId).First().InitialBalance;
                     outerTransactionUpdateDto.SenderClientBalanceBeFroeAction = clientinitBalance + clientTotalAmount;
+                }
+                if (outerTransactionUpdateDto.TypeOfPay == TypeOfPay.CompaniesReceivables)
+                {
+                    var secoundCompanyTotalAmount = this._unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.ReceiverCompanyId && c.MoenyAction.Date <= mainMoneyAction.Date && c.MoneyActionId < mainMoneyAction.Id).Sum(c => c.Amount);
+                    var secoundCompanyinitBalance = this._unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.ReceiverCompanyId).First().InitialBalance;
+                    outerTransactionUpdateDto.ReciverCompanyBalanceBeforeAction = secoundCompanyTotalAmount + secoundCompanyinitBalance;
                 }
             }
             catch (Exception ex)
@@ -336,7 +343,7 @@ namespace BWR.Application.AppServices.Transactions
                 #endregion
 
 
-                
+
 
                 #region Company Cash Flow
                 var companyCashFlow = new CompanyCashFlow()
@@ -363,7 +370,7 @@ namespace BWR.Application.AppServices.Transactions
                 }
                 #endregion
 
-                
+
 
                 #region Client Cash Flow
                 var clientCashFlow = new ClientCashFlow()
@@ -442,7 +449,7 @@ namespace BWR.Application.AppServices.Transactions
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
                 #endregion
 
-                
+
 
                 #region Sender Company Cash Flow
                 var senderCompanyCashFlow = new CompanyCashFlow()
@@ -468,7 +475,7 @@ namespace BWR.Application.AppServices.Transactions
                 }
                 #endregion
 
-                
+
 
                 #region Receiver Company Cash Flow
                 var receiverCompanyCashFlow = new CompanyCashFlow()
@@ -1025,7 +1032,7 @@ namespace BWR.Application.AppServices.Transactions
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(receiverCompanyCashFlow);
                 #endregion
                 var senderCompanyMatchedCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.MoenyAction.Date >= lesserDate && c.Matched == true && c.CoinId == companyCashFlow.CoinId && c.CompanyId == companyCashFlow.CompanyId).ToList();
-                var reciverCompanyMatchedCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.MoenyAction.Date >= lesserDate && c.Matched == true && c.CoinId == companyCashFlow.CoinId && c.CompanyId == receiverCompanyCashFlow.CompanyId).ToList(); 
+                var reciverCompanyMatchedCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.MoenyAction.Date >= lesserDate && c.Matched == true && c.CoinId == companyCashFlow.CoinId && c.CompanyId == receiverCompanyCashFlow.CompanyId).ToList();
                 foreach (var item in senderCompanyMatchedCashFlow.Union(reciverCompanyMatchedCashFlow))
                 {
                     item.Matched = false;
@@ -1070,7 +1077,7 @@ namespace BWR.Application.AppServices.Transactions
                 var branchId = BranchHelper.Id;
                 var treasuryId = _appSession.GetCurrentTreasuryId();
                 var mainTreasury = _appSession.GetMainTreasury();
-               
+
                 var boxAction = new BoxAction()
                 {
                     Amount = (decimal)dto.RecivingAmount,
@@ -1089,13 +1096,13 @@ namespace BWR.Application.AppServices.Transactions
                 };
 
                 _unitOfWork.GenericRepository<MoneyAction>().Insert(moneyAction);
-                
+
 
                 var branchCashFlow = new BranchCashFlow()
                 {
                     BranchId = branchId,
                     CoinId = dto.CoinId,
-                //    Total = branchCash.Total,
+                    //    Total = branchCash.Total,
                     Amount = (decimal)dto.RecivingAmount,
                     MonyActionId = moneyAction.Id,
                     TreasuryId = treasuryId,

@@ -64,6 +64,7 @@ namespace BWR.Application.Dtos.Transaction.OuterTransaction
         public virtual CompanyDto ReceiverCompany { get; set; }
 
         public decimal? ReceiverCompanyComission { get; set; }
+        public decimal? ReciverCompanyBalanceBeforeAction { get; set; }
 
         #endregion
 

@@ -354,7 +354,7 @@ namespace BWR.Application.AppServices.Transactions
             var companyCahsFlow = new CompanyCashFlow()
             {
                 MoenyAction = moneyAction,
-                Amount = dto.Amount + dto.ReciverCompany.CompanyCommission,
+                Amount = dto.Amount,
                 Matched = false,
                 CompanyId = dto.ReciverCompany.CompanyId,
                 CoinId = dto.CoinId,

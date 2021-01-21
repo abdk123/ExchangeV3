@@ -378,28 +378,41 @@
         $('#reciverCompanyBalanceStatus').text('');
         $('#reciverCompanyCurrentBalance').text('');
         $('#reciverCompanyCurrentBalanceStatus').text('');
-        var companyId = $(this).val();
+        var companyId = $('#reciverCompany').val();
+        if (coinId != $outerTransactionForEdit.CoinId || $outerTransactionForEdit.ReceiverCompanyId != companyId) {
+            if (companyId != null && companyId != "") {
+                $.post(
+                    '@Url.Action("GetCompanyMaxAndDeptByCoin","CompanyCash")', {
+                    coinId: coinId,
+                    companyId: companyId,
+                }, function (data) {
 
-        if (companyId != null && companyId != "") {
-            $.post(
-            '@Url.Action("GetCompanyMaxAndDeptByCoin","CompanyCash")', {
-                coinId: coinId,
-                companyId: companyId,
-            }, function (data) {
-
-                var total = parseFloat(data.Total);
-                var status = total > 0 ? "له" : "عليه";
-                if (total == 0) {
-                    status = "";
+                    var total = parseFloat(data.Total);
+                    var status = total > 0 ? "له" : "عليه";
+                    if (total == 0) {
+                        status = "";
+                    }
+                    reciverCompanyTotal = data.Total;
+                    reciverCompanyMaxCreditor = data.MaxCreditor;
+                    total = Math.abs(total);
+                    $('#reciverCompanyBalance').text(total);
+                    $('#reciverCompanyBalanceStatus').text(status);
+                    calcReciverCompanyCurrentBalnce();
                 }
-                reciverCompanyTotal = data.Total;
-                reciverCompanyMaxCreditor = data.MaxCreditor;
-                total = Math.abs(total);
-                $('#reciverCompanyBalance').text(total);
-                $('#reciverCompanyBalanceStatus').text(status);
-                calcReciverCompanyCurrentBalnce();
+                );
             }
-        );
+        }
+        else {
+            var total = parseFloat($outerTransactionForEdit.ReciverCompanyBalanceBeforeAction);
+                    var status = total > 0 ? "له" : "عليه";
+                    if (total == 0) {
+                        status = "";
+                    }
+                    reciverCompanyTotal = total;
+                    total = Math.abs(total);
+                    $('#reciverCompanyBalance').text(total);
+                    $('#reciverCompanyBalanceStatus').text(status);
+                    calcReciverCompanyCurrentBalnce();
         }
     });
 
@@ -431,7 +444,7 @@
             $('#senderCompanyCurrentBalance').empty();
             return;
         }
-        
+
         var companyBlance = parseFloat(deleteCommaFromNumber($('#senderCompanyBlance').text()));
         if ($('#sendetCompanyBlanceStatuse').text() == 'عليه') {
             companyBlance *= -1;
@@ -511,13 +524,13 @@
 
     });
 
-    function FillSecoundCompany(companyId) {
+   async function FillSecoundCompany(companyId) {
         var reciverCompany = document.getElementById('reciverCompany');
         var mainOption = document.createElement('option');
         mainOption.value = "";
         mainOption.innerText = "الرجاء اختيار الشركة";
 
-        $.post(
+       await $.post(
             '@Url.Action("GetCompaniesExceptRelatedId", "Company")', {
                 id: companyId
             }, function (data) {
@@ -529,9 +542,7 @@
                     option.innerText = data[i].Name;
                     reciverCompany.appendChild(option);
                 }
-
                 if (reciverCompany.value == "") {
-
                     var reciverCompanyObject = $(reciverCompany);
                     reciverCompanyObject.change();
                 }
@@ -633,7 +644,7 @@
             sendrPhone.value = "";
         }
     });
-    $('#TypeOfPay').change(function () {
+    $('#TypeOfPay').change(async function () {
         clearAgentBalance();
         $('#compayMoney').css('display', 'none');
         hiddAll();
@@ -645,7 +656,7 @@
             $('#companySenderDiv').css('display', 'block');
             $('#clientSenderByCompant').select2({ tags: true, });
             $('#compayMoney').css('display', 'block');
-            FillSecoundCompany($('#sendByCompanySelect').val());
+           await FillSecoundCompany($('#sendByCompanySelect').val());
             return;
         }
         $('#AgentClient,#AgentMoney').css('display', 'block');
@@ -691,7 +702,7 @@
 
         CallcRequierdMoney();
     });
-    function hiddAll() {
+   async function hiddAll() {
         $('#normalClient,#companySenderDiv,#AgentClient,#AgentMoney').css("display", "none");
     }
     function ClearSenderCompanyBalnce() {
@@ -1296,7 +1307,7 @@
         CallcBalanceForClient($(this).val(), coinId);
         GetAgentBalance();
     });
-    function clearAgentBalance() {
+   async function clearAgentBalance() {
         $('#agentBalnce').empty();
         $('#agentClientBalnce').empty();
         $('#agentCurrentBalance').empty();
@@ -1519,16 +1530,22 @@
       $('#CoinId').val($outerTransactionForEdit.CoinId);
       $('#transactionDate').val(transactionDate);
       $('#countryId').val($outerTransactionForEdit.CountryId);
+      $('#transactionAmount').val(numberWithCommas( $outerTransactionForEdit.Amount));
+      $('#comission').val(numberWithCommas( $outerTransactionForEdit.OurComission));
+      $('#companycomission').val(numberWithCommas( $outerTransactionForEdit.SenderCompanyComission));
       $('#sendByCompanySelect').val($outerTransactionForEdit.SenderCompanyId).trigger('change');
-      //Money Info
       
+      //Money Info
+
 
     if ($outerTransactionForEdit.TypeOfPay == 3) {
 
-        $("#TypeOfPay").val('3').trigger("change");
-        $('#secoundCompanyCommission').val(numberWithCommas($outerTransactionForEdit.ReceiverCompanyComission));
-
+        //$('#reciverCompany').val($outerTransactionForEdit.ReceiverCompanyId).trigger('change')
+        
+        $("#TypeOfPay").val('3').change();
         $('#reciverCompany').val($outerTransactionForEdit.ReceiverCompanyId).trigger('change');
+        $('#secoundCompanyCommission').val(numberWithCommas($outerTransactionForEdit.ReceiverCompanyComission));
+        setTimeout(function(){ $('#reciverCompany').val($outerTransactionForEdit.ReceiverCompanyId).trigger('change'); }, 500);
 
         //Sender Info
         $('#clientSenderByCompant').val($outerTransactionForEdit.SenderClientId).trigger('change');
@@ -1574,9 +1591,7 @@
 
     $('#reason').val($outerTransactionForEdit.Reason);
       $('#note').val($outerTransactionForEdit.Note);
-      $('#transactionAmount').val(numberWithCommas( $outerTransactionForEdit.Amount));
-      $('#comission').val(numberWithCommas( $outerTransactionForEdit.OurComission));
-      $('#companycomission').val(numberWithCommas( $outerTransactionForEdit.SenderCompanyComission));
+      
       CallcRequierdMoney();
       setCurrentBalacneForSenederCompany();
     }
