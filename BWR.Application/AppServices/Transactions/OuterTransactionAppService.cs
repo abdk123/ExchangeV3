@@ -168,25 +168,6 @@ namespace BWR.Application.AppServices.Transactions
 
             return outerTransactionInsertInputDto;
         }
-        public OuterTransactionEditInitialDto InitialInputDataForEdit(int transactionId)
-        {
-            var initData = this.InitialInputData();
-            OuterTransactionEditInitialDto initEditData = new OuterTransactionEditInitialDto()
-            {
-                Coins = initData.Coins,
-                Countries = initData.Countries,
-                Agents = initData.Agents,
-                Clients = initData.Clients ,
-                TreasuryId = initData.TreasuryId ,
-                Companies = initData.Companies,
-                Attachments = initData.Attachments
-            };
-            var transaction= this._unitOfWork.GenericRepository<Transaction>().FindBy(c => c.TreaseryId == transactionId,c=>c.MoenyActions).First();
-            var mainMoneyAction = transaction.MoenyActions.First();
-            initEditData.SenderCompanyId =(int) transaction.SenderCompanyId;
-
-            return initEditData;
-        }
         #endregion
 
         #region Insert

@@ -478,6 +478,7 @@
                     $('#senderCompanyCurrentBalance').text(numberWithCommas(balance));
                     $('#sendetCompanyBlanceStatuse').text(status);
                     $('#senderCompanyCurrentBalanceStatuse').text(status);
+                    setCurrentBalacneForSenederCompany();
                 }
             )
         } else {
@@ -492,7 +493,8 @@
 
                     $('#senderCompanyCurrentBalance').text(numberWithCommas(balance));
                     $('#sendetCompanyBlanceStatuse').text(status);
-                    $('#senderCompanyCurrentBalanceStatuse').text(status);
+            $('#senderCompanyCurrentBalanceStatuse').text(status);
+            setCurrentBalacneForSenederCompany();
         }
 
         if (this.value != "" && this.value != null) {

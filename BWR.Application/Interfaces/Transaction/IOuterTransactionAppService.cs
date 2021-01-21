@@ -15,6 +15,5 @@ namespace BWR.Application.Interfaces.Transaction
         bool EditOuterTransactionForClient(OuterTransactionUpdateDto input);
         bool EditOuterTransactionForAgent(OuterTransactionUpdateDto input);
         bool EditOuterTranasctionForCompany(OuterTransactionUpdateDto input);
-         OuterTransactionEditInitialDto InitialInputDataForEdit(int transactionId);
     }
 }
