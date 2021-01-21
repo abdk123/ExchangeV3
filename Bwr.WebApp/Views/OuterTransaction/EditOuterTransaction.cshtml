@@ -459,7 +459,7 @@
         }
         var coinId = $('#CoinId').val();
 
-        if (coinId != $outerTransactionForEdit.CoinId) {
+        if (coinId != $outerTransactionForEdit.CoinId||$('#sendByCompanySelect').val()!=$outerTransactionForEdit.SenderCompanyId) {
             $.post(
                 '@Url.Action("GetCompanyBalance", "CompanyCash")', {
                 companyId: this.value,
@@ -1339,26 +1339,40 @@
     function CallcBalanceForClient(clientId, coinId) {
 
         if (clientId != "" && coinId != "") {
-            $.post(
-            '@Url.Action("GetClientCashByCoin", "ClientCash")', {
-                'clientId': clientId,
-                'coinId': coinId
-            },
-            function (data) {
+            if (coinId != $outerTransactionForEdit.CoinId||$outerTransactionForEdit.SenderClientId!=clientId) {
+                $.post(
+                    '@Url.Action("GetClientCashByCoin", "ClientCash")', {
+                    'clientId': clientId,
+                    'coinId': coinId
+                },
+                    function (data) {
 
-                var balance = parseFloat(data.Total);
-                var status = balance > 0 ? "له" : "عليه";
-                if (!balance) {
-                    status = "";
-                }
-                balance = Math.abs(balance);
-                balance = numberWithCommas(balance);
-                $('#agentBalnce').text(balance);
-                $('#agentBalnceStatus').text(status);
-                $('#agentCurrentBalance').text(balance);
-                $('#agentCurrentBalanceStatus').text(status);
+                        var balance = parseFloat(data.Total);
+                        var status = balance > 0 ? "له" : "عليه";
+                        if (!balance) {
+                            status = "";
+                        }
+                        balance = Math.abs(balance);
+                        balance = numberWithCommas(balance);
+                        $('#agentBalnce').text(balance);
+                        $('#agentBalnceStatus').text(status);
+                        $('#agentCurrentBalance').text(balance);
+                        $('#agentCurrentBalanceStatus').text(status);
+                    }
+                );
+            } else {
+                var balance = parseFloat($outerTransactionForEdit.SenderClientBalanceBeFroeAction);
+                        var status = balance > 0 ? "له" : "عليه";
+                        if (!balance) {
+                            status = "";
+                        }
+                        balance = Math.abs(balance);
+                        balance = numberWithCommas(balance);
+                        $('#agentBalnce').text(balance);
+                        $('#agentBalnceStatus').text(status);
+                        $('#agentCurrentBalance').text(balance);
+                        $('#agentCurrentBalanceStatus').text(status);
             }
-        );
         }
 
     }
@@ -1367,7 +1381,7 @@
         var amount = deleteCommaFromNumber($('#transactionAmount').val());
         amount = parseFloat(amount);
         if (isNaN(amount)) {
-            amount = 0;
+             amount = 0;
         }
         var commission = deleteCommaFromNumber($('#comission').val());
         commission = parseFloat(commission);
@@ -1511,13 +1525,10 @@
 
     if ($outerTransactionForEdit.TypeOfPay == 3) {
 
-        //FillSecoundCompany($outerTransactionForEdit.SenderCompanyId);
         $("#TypeOfPay").val('3').trigger("change");
-        $('#secoundCompanyCommission').val(numberWithCommas( $outerTransactionForEdit.ReceiverCompanyComission));
-        setTimeout(function ()
-        {
-            $('#reciverCompany').val($outerTransactionForEdit.ReceiverCompanyId).trigger('change');
-        }, 500);
+        $('#secoundCompanyCommission').val(numberWithCommas($outerTransactionForEdit.ReceiverCompanyComission));
+
+        $('#reciverCompany').val($outerTransactionForEdit.ReceiverCompanyId).trigger('change');
 
         //Sender Info
         $('#clientSenderByCompant').val($outerTransactionForEdit.SenderClientId).trigger('change');
@@ -1535,6 +1546,7 @@
         $('#AgetComission').val(numberWithCommas( $outerTransactionForEdit.SenderCleirntCommission));
 
         $('#agentSelect').val($outerTransactionForEdit.SenderClientId).trigger('change');
+
 
     } else {
         $("#TypeOfPay").val('1').trigger("change");

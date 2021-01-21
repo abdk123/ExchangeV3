@@ -126,6 +126,12 @@ namespace BWR.Application.AppServices.Transactions
                 var senederCompanyTotalAmount= this._unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.SenderCompanyId&&c.MoenyAction.Date<= mainMoneyAction.Date&&c.MoneyActionId<mainMoneyAction.Id).Sum(c => c.Amount);
                 var senderCompanyinitBalance = this._unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.SenderCompanyId).First().InitialBalance;
                 outerTransactionUpdateDto.SenderCompanyBalanceBeFroeAction = senderCompanyinitBalance + senederCompanyTotalAmount;
+                if (outerTransactionUpdateDto.TypeOfPay == TypeOfPay.ClientsReceivables)
+                {
+                    var clientTotalAmount = this._unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.ClientId == outerTransaction.SenderClientId && c.MoenyAction.Date <= mainMoneyAction.Date && c.MoenyActionId < mainMoneyAction.Id).Sum(c => c.Amount);
+                    var clientinitBalance = this._unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.ClientId == outerTransaction.SenderClientId).First().InitialBalance;
+                    outerTransactionUpdateDto.SenderClientBalanceBeFroeAction = clientinitBalance + clientTotalAmount;
+                }
             }
             catch (Exception ex)
             {
