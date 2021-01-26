@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using BWR.Domain.Model.Enums;
 
 namespace BWR.Application.Dtos.BoxAction
@@ -19,5 +19,6 @@ namespace BWR.Application.Dtos.BoxAction
         public bool IsIncome { get; set; }
         public decimal FirstBalanceFeforeAction { get; set; }
         public decimal SecondBalanceFeforeAction { get; set; }
+        public DateTime Date { get; set; }
     }
 }

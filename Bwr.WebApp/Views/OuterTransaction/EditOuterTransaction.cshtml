@@ -1526,6 +1526,7 @@
       await getOuterTransactionForInit('@ViewBag.TransactionId');
 
       var date = $outerTransactionForEdit.MoenyActions[0].Date;
+      
       var transactionDate = convertJsonToDate(date);
       $('#CoinId').val($outerTransactionForEdit.CoinId);
       $('#transactionDate').val(transactionDate);
@@ -1602,7 +1603,6 @@
             },
             function (data) {
                 initOuterTransactionData(data);
-                console.log(data);
             }
         );
     }

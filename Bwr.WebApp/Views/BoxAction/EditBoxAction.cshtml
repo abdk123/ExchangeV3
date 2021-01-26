@@ -347,7 +347,7 @@
             }
             await getCompanyBalnceByCoin($(this).val(), $('#coins').val());
             calcAllFirstBalance();
-            fillSecoundSelect();
+           await fillSecoundSelect();
         });
         $('#secoundCompanySelect').change(async function () {
             if (!$(this).val()) {
@@ -365,10 +365,10 @@
             }
             await getClientBalanceByCoin($(this).val(), $('#coins').val());
             calcAllFirstBalance();
-            fillSecoundSelect();
+           await fillSecoundSelect();
         });
         $('#typeOfAction').change(function () {
-            showFromAcount($(this).val(), $("#firstAcountSelect").val());            
+            showFromAcount($(this).val(), $("#firstAcountSelect").val());
         });
         $('#firstAcountSelect').change(function () {
 
@@ -1131,28 +1131,28 @@
 
             case 'None': {
                 if ($boxActionDto.FirstClientId != null && $boxActionDto.SecondClientId != null) {
-                    
+
                     displayAndHideElements({ firstAccount: 3, secoundAccount: 2, agent: 'block', expence: 'none', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
-                    $('#agents').val($boxActionDto.FirstClientId).trigger("change");
+                 await $('#agents').val($boxActionDto.FirstClientId).trigger("change");
                     await fillSecoundSelect();
                     $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
 
 
                 } else if ($boxActionDto.FirstClientId != null && $boxActionDto.SecondCompanyId != null) {
                     displayAndHideElements({ firstAccount: 3, secoundAccount: 3, agent: 'block', expence: 'none', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'block', secondClient: 'none' });
-                    $('#agents').val($boxActionDto.FirstClientId).trigger("change");
+                 await   $('#agents').val($boxActionDto.FirstClientId).trigger("change");
                     await fillSecoundSelect();
                     $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
-                    
+
 
                 } else if ($boxActionDto.FirstCompanyId != null && $boxActionDto.SecondCompanyId != null) {
                     displayAndHideElements({ firstAccount: 4, secoundAccount: 3, agent: 'none', expence: 'none', income: 'none', company: 'block', secondAccountDetial: 'block', secoundCompany: 'block', secondClient: 'none' });
-                    $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
+                  await  $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
                     await fillSecoundSelect();
                     $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
                 } else if ($boxActionDto.FirstCompanyId != null && $boxActionDto.SecondClientId != null) {
                     displayAndHideElements({ firstAccount: 4, secoundAccount: 2, agent: 'none', expence: 'none', income: 'none', company: 'block', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
-                    $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
+                  await  $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
                     await fillSecoundSelect();
                     $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
                 }
@@ -1162,7 +1162,7 @@
                 displayAndHideElements({ firstAccount: 1, secoundAccount: 2, agent: 'none', expence: 'block', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
                 $('#publicExpenses').val($boxActionDto.ExpensiveId);
                 await fillSecoundSelect();
-                $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change"); 
+                $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
 
             } break;
             case 'ReceiveFromPublicToClient': {
@@ -1184,11 +1184,11 @@
                 $('#publicIncomes').val($boxActionDto.IncomeId);
                 await fillSecoundSelect();
                 $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
-                
-            } break;
-        }
 
-    } 
+            } break;
+      }
+      $('#date').val(convertJsonToDate( $boxActionDto.Date));
+    }
     function displayAndHideElements(data) {
 
         $boxActionDto.Amount = Math.abs($boxActionDto.Amount);
@@ -1199,7 +1199,7 @@
         $('#typeOfAction').val(typeOfAction);
         $('#note').val($boxActionDto.Note);
         $('#amout').val(numberWithCommas($boxActionDto.Amount));
-        
+
         oldAmount = numberWithCommas($boxActionDto.Amount);
 
         $('#agentDiv').css('display', data.agent);
@@ -1401,14 +1401,14 @@
         if ($boxActionDto.SecondClientId != $('#secoundAgentSelect').val())
             return false;
         if ($boxActionDto.CoinId != $('#coins').val())
-            return false; 
+            return false;
         return true;
     }
     function isSameSecAccountAndSameCoinForCompany() {
         if ($boxActionDto.SecondCompanyId  != $('#secoundCompanySelect').val())
             return false;
         if ($boxActionDto.CoinId != $('#coins').val())
-            return false; 
+            return false;
         return true;
     }
 </script>

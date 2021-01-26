@@ -57,7 +57,8 @@ namespace BWR.Application.AppServices.BoxActions
                         IncomeId = moneyAction.PublicMoney != null ? moneyAction.PublicMoney.IncomeId : null,
                         Note = boxAction.Note,
                         MoneyActionId = moneyAction.Id,
-                        BoxActionType = boxAction.BoxActionType.ToString()
+                        BoxActionType = boxAction.BoxActionType.ToString(),
+                        Date = moneyAction.Date
                     };
 
                     if (moneyAction.CompanyCashFlows.Any())
@@ -112,7 +113,8 @@ namespace BWR.Application.AppServices.BoxActions
                         FirstClientId = moneyAction.Clearing.FromClientId,
                         SecondClientId = moneyAction.Clearing.ToClientId,
                         FirstCompanyId = moneyAction.Clearing.FromCompanyId,
-                        SecondCompanyId = moneyAction.Clearing.ToCompanyId
+                        SecondCompanyId = moneyAction.Clearing.ToCompanyId,
+                        Date = moneyAction.Date
                     };
                     if (dto.FirstClientId != null)
                     {
