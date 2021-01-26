@@ -81,7 +81,7 @@ namespace BWR.Application.AppServices.Companies
                         var temp = new ClientCashFlowOutputDto()
                         {
                             Id = clientCashFlow.Id,
-                            Balance = clientCashFlowsDtos.Last().Balance + clientCashFlow.Amount,
+                            //Balance = clientCashFlowsDtos.Last().Balance + clientCashFlow.Amount,
                             Amount = clientCashFlow.Amount,
                             SecondCommission = clientCashFlow.MoenyAction.ClientComission(input.ClientId),
                             Commission = clientCashFlow.MoenyAction.OurCommission(),
@@ -92,9 +92,7 @@ namespace BWR.Application.AppServices.Companies
                             MoneyActionId = clientCashFlow.MoenyActionId,
                             Matched = clientCashFlow.Matched
                         };
-                        temp.Balance += temp.SecondCommission;
-                        temp.Balance -= temp.Commission??0;
-                        
+                        temp.Balance = clientCashFlowsDtos.Last().Balance + clientCashFlow.RealAmount;
                         clientCashFlowsDtos.Add(temp);
                     }
                 }

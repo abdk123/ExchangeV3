@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BWR.Domain.Model.Companies
 {
-    public class CompanyCashFlow: Entity
+    public class CompanyCashFlow : Entity
     {
         public decimal Amount { get; set; }
         public bool Matched { get; set; }
@@ -31,7 +31,28 @@ namespace BWR.Domain.Model.Companies
         public Guid? UserMatched { get; set; }
         [ForeignKey("UserMatched")]
         public virtual User User { get; set; }
-        
-        
+        public decimal RealAmount
+        {
+            get
+            {
+                if (this.MoenyAction.Transaction != null)
+                {
+                    var transaction = this.MoenyAction.Transaction;
+                    if (transaction.TransactionType == Transactions.TransactionType.ExportTransaction)
+                    {
+                        if (transaction.SenderCompanyId == this.CompanyId)
+                            return this.Amount + (transaction.SenderCompanyComission ?? 0);
+                        if (transaction.ReceiverCompanyId == this.CompanyId)
+                            return this.Amount + (transaction.ReceiverCompanyComission ?? 0)-transaction.OurComission;
+                    }
+                    else
+                    {
+                        if (transaction.ReceiverCompanyId == this.CompanyId)
+                            return this.Amount - (transaction.OurComission);
+                    }
+                }
+                return this.Amount;
+            }
+        }
     }
 }

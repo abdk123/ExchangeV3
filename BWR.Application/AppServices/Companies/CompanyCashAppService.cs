@@ -87,11 +87,11 @@ namespace BWR.Application.AppServices.Companies
                 foreach (var companyCash in companyCashs)
                 {
                     var companyCahsFLowIE = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == companyCash.CompanyId && c.CoinId == companyCash.CoinId, c => c.MoenyAction.Transaction);
-                    var total = companyCahsFLowIE.Sum(c => c.Amount);
-                    companyCahsFLowIE.Where(c => c.MoenyAction.Transaction != null).ToList().ForEach(c =>
-                    {
-                        total += c.Commission() ?? 0;
-                    });
+                    var total = companyCahsFLowIE.Sum(c => c.RealAmount);
+                    //companyCahsFLowIE.Where(c => c.MoenyAction.Transaction != null).ToList().ForEach(c =>
+                    //{
+                    //    total += c.Commission() ?? 0;
+                    //});
                     var companyBalanceDto = new CompanyCashesDto()
                     {
                         Id = companyCash.Id,

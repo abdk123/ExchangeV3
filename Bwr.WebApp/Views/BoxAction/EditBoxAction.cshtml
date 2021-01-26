@@ -6,6 +6,12 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-4">
+            <label>تاريخ الحركة</label>
+            <input type="date" class="form-control" id="date" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
             <label>نوع الحركة</label>
             <select class="form-control" id="typeOfAction">
                 <option value="-1">
@@ -83,7 +89,7 @@
     <div class="row">
         <div class="col-lg-6">
             <label>المبلغ</label>
-            <input type="text" class="form-control" onkeypress="validation(this, event); " onkeyup="FormaittingNumber(this);" onchange="" id="amout" />
+            <input type="text" class="form-control" onkeypress="validation(this, event); " onkeyup="FormaittingNumber(this);" id="amout" />
         </div>
         <div class="col-lg-6">
             <label>الملاحظات</label>
@@ -164,7 +170,7 @@
 
     $(function () {
         getBoxAxtionById('@ViewBag.MoneyActionId');
-        
+
         $('#secoundAcount').change(function () {
             hideAllSecoundDiv();
 
@@ -305,7 +311,6 @@
 
         });
         $('#amout').keyup(() => {
-
             calcAllFirstBalance();
             calcAllSecoundBalances();
         });
@@ -340,7 +345,7 @@
                 resetCompanyBalnce();
                 return;
             }
-             getCompanyBalnceByCoin($(this).val(), $('#coins').val());
+            await getCompanyBalnceByCoin($(this).val(), $('#coins').val());
             calcAllFirstBalance();
             fillSecoundSelect();
         });
@@ -349,8 +354,7 @@
                 resetSecoundCompanyBalnace();
                 return;
             }
-             getSecoundCompanyCompanyBalnceByCoin($(this).val(), $('#coins').val());
-            console.log(secoundCompanyBalcne);
+            await getSecoundCompanyCompanyBalnceByCoin($(this).val(), $('#coins').val());
             calcAllSecoundBalances();
 
         });
@@ -359,21 +363,12 @@
                 resetAgentBlance();
                 return;
             }
-             getClientBalanceByCoin($(this).val(), $('#coins').val());
+            await getClientBalanceByCoin($(this).val(), $('#coins').val());
             calcAllFirstBalance();
             fillSecoundSelect();
         });
         $('#typeOfAction').change(function () {
-            //var firstAcountSelect = document.getElementById('firstAcountSelect');
-            //firstAcountSelect.getElementsByTagName('option')[1].hidden = !firstAcountSelect.getElementsByTagName('option')[1].hidden;
-            showFromAcount($(this).val(), $("#firstAcountSelect").val());
-            //if ($('#typeOfAction').val() == 1) {
-            //    $('secoundAcountLabel').text('');
-            //    $('secoundAcountLabel').text('جهة القبض');
-            //} else {
-            //    $('secoundAcountLabel').text('');
-            //    $('secoundAcountLabel').text('جهة الصرف');
-            //}
+            showFromAcount($(this).val(), $("#firstAcountSelect").val());            
         });
         $('#firstAcountSelect').change(function () {
 
@@ -381,14 +376,9 @@
 
         });
         $('#secoundAgentSelect').change(async function () {
-            getSecoundClientBalanceByCoin($(this).val(), $('#coins').val());
+           await getSecoundClientBalanceByCoin($(this).val(), $('#coins').val());
             calcAllSecoundBalances();
         });
-
-        //setTimeout(function () {
-        //    calcAllFirstBalance();
-        //    calcAllSecoundBalances();
-        //}, 500);
     });
 
     function hideAllSecoundDiv() {
@@ -397,7 +387,7 @@
         secoundCompanyDiv.style.display = 'none';
     }
 
-    function fillSecoundSelect() {
+   async function fillSecoundSelect() {
 
         $('#secoundAgentSelect').html('');
         $('#secoundCompanySelect').html('');
@@ -415,7 +405,7 @@
         } else {
             companyId = $('#companies').val();
         }
-        $.post(
+       await $.post(
             '@Url.Action("GetCompanyWithoutSpecific", "Company")',
             {
                 'companyId': companyId,
@@ -423,12 +413,12 @@
             function (data) {
                 for (var i = 0; i < data.length; i++) {
                     var newOption = new Option(data[i].Name, data[i].Id, false, false);
-                    $('#secoundCompanySelect').append(newOption).trigger('change');
+                    $('#secoundCompanySelect').append(newOption);
                 }
-                //$('#secoundCompanySelect').val(null).trigger('change');
+                $('#secoundCompanySelect').val(null).trigger('change');
             }
         )
-        $.post(
+       await $.post(
             '@Url.Action("GetAllWithoutSpecific", "Client")',
             {
                 'clientId': agentId,
@@ -437,9 +427,9 @@
                 for (var i = 0; i < data.length; i++) {
                     var newOption = new Option(data[i].FullName, data[i].Id, false, false);
 
-                    $('#secoundAgentSelect').append(newOption).trigger('change');
+                    $('#secoundAgentSelect').append(newOption);
                 }
-                //$('#secoundAgentSelect').val(null).trigger('change');
+                $('#secoundAgentSelect').val(null).trigger('change');
             }
         )
 
@@ -473,16 +463,74 @@
         }
     }
 
-    function getClientBalanceByCoin(clientId, coinId) {
-        console.log("clientId:" + clientId + "-coinId:" + coinId);
-        $.post(
-            '@Url.Action("GetClientCashByCoin", "ClientCash")',
-            {
-                clientId: clientId,
+   async function getClientBalanceByCoin(clientId, coinId) {
+        if ($boxActionDto.CoinId == coinId && $boxActionDto.FirstClientId == clientId) {
+            var total = $boxActionDto.FirstBalanceFeforeAction;
+
+                    var status = "";
+                    if (total > 0) {
+                        status = "له";
+                    }
+                    else if (total < 0) {
+                        status = "عليه";
+                    }
+                    var balnce = numberWithCommas(Math.abs(total));
+                    $('#agentnewBalnce').text(balnce);
+                    $('#agentcurrentBalnceStatus').text(status);
+                    $('#agentcurrentBalnce').text(balnce);
+                    $('#agentnewBalnceStatus').text(status);
+        }
+        else {
+        await    $.post(
+                '@Url.Action("GetClientCashByCoin", "ClientCash")',
+                {
+                    clientId: clientId,
+                    coinId: coinId
+                }, function (data) {
+                    clientBalnae = data;
+                    var total = data.Total;
+                    var status = "";
+                    if (total > 0) {
+                        status = "له";
+                    }
+                    else if (total < 0) {
+                        status = "عليه";
+                    }
+                    var balnce = numberWithCommas(Math.abs(parseFloat(data.Total)));
+                    $('#agentnewBalnce').text(balnce);
+                    $('#agentcurrentBalnceStatus').text(status);
+                    $('#agentcurrentBalnce').text(balnce);
+                    $('#agentnewBalnceStatus').text(status);
+                }
+            );
+        }
+    }
+
+    async function getCompanyBalnceByCoin(companyId, coinId) {
+        if (isSameFirstAccountAndSameCoinForCompany()) {
+            var total = $boxActionDto.FirstBalanceFeforeAction;
+            var status = "";
+                if (total > 0) {
+                    status = "له";
+                }
+                else if (total < 0) {
+                    status = "عليه";
+                }
+                total = numberWithCommas(Math.abs(total));
+                $('#companycurrentBalnce').text(total);
+                $('#companycurrentBalnceStatus').text(status);
+                $('#copanynewBalnce').text(total);
+                $('#companynewBalanceStatus').text(status);
+        }
+        else {
+            await $.post(
+                '@Url.Action("GetCompanyMaxAndDeptByCoin", "CompanyCash")', {
+                companyId: companyId,
                 coinId: coinId
             }, function (data) {
-                clientBalnae = data;
-                var total = data.Total;
+                companyBalnce = data;
+
+                var total = parseFloat(data.Total);
                 var status = "";
                 if (total > 0) {
                     status = "له";
@@ -490,71 +538,62 @@
                 else if (total < 0) {
                     status = "عليه";
                 }
-                var balnce = numberWithCommas(Math.abs(parseFloat(data.Total)));
-                $('#agentnewBalnce').text(balnce);
-                $('#agentcurrentBalnceStatus').text(status);
-                $('#agentcurrentBalnce').text(balnce);
-                $('#agentnewBalnceStatus').text(status);
-            }
-        );
+                total = numberWithCommas(Math.abs(total));
+                $('#companycurrentBalnce').text(total);
+                $('#copanynewBalnce').text(total);
+                $('#companycurrentBalnceStatus').text(status);
+                $('#companynewBalanceStatus').text(status);
+            });
+        }
     }
 
-    function getCompanyBalnceByCoin(companyId, coinId) {
-        $.post(
-            '@Url.Action("GetCompanyMaxAndDeptByCoin", "CompanyCash")', {
-            companyId: companyId,
-            coinId: coinId
-        }, function (data) {
-            companyBalnce = data;
-
-            var total = parseFloat(data.Total);
-            var status = "";
-            if (total > 0) {
-                status = "له";
-            }
-            else if (total < 0) {
-                status = "عليه";
-            }
-            total = numberWithCommas(Math.abs(total));
-            $('#companycurrentBalnce').text(total);
-            $('#copanynewBalnce').text(total);
-            $('#companycurrentBalnceStatus').text(status);
-            $('#companynewBalanceStatus').text(status);
-        });
-    }
-
-    function getSecoundClientBalanceByCoin(clientId, coinId) {
+  async  function getSecoundClientBalanceByCoin(clientId, coinId) {
                 $('#secoundagentnewBalnce').text('');
                 $('#secoundagentcurrentBalnceStatus').text('');
                 $('#secoundagentcurrentBalnce').text('');
                 $('#secoundagentnewBalnceStatus').text('');
-        secoundClientBalnce = null;
-        console.log("clientId:" + clientId + "-coinId:" + coinId);
-        $.post(
-            '@Url.Action("GetClientCashByCoin", "ClientCash")',
-            {
-                clientId: clientId,
-                coinId: coinId
-            }, function (data) {
-                secoundClientBalnce = data;
-                var total = data.Total;
-                var status = "";
-                if (total > 0) {
-                    status = "له";
-                }
-                else if (total < 0) {
-                    status = "عليه";
-                }
-                var balnce = numberWithCommas(Math.abs(parseFloat(data.Total)));
-                $('#secoundagentnewBalnce').text(balnce);
-                $('#secoundagentcurrentBalnceStatus').text(status);
-                $('#secoundagentcurrentBalnce').text(balnce);
-                $('#secoundagentnewBalnceStatus').text(status);
-            }
-        );
+      secoundClientBalnce = null;
+      if (!isSameSecAccountAndSameCoinForClient() && clientId != null && coinId != null) {
+          await $.post(
+              '@Url.Action("GetClientCashByCoin", "ClientCash")',
+              {
+                  clientId: clientId,
+                  coinId: coinId
+              }, function (data) {
+                  secoundClientBalnce = data;
+                  var total = data.Total;
+                  var status = "";
+                  if (total > 0) {
+                      status = "له";
+                  }
+                  else if (total < 0) {
+                      status = "عليه";
+                  }
+                  var balnce = numberWithCommas(Math.abs(parseFloat(data.Total)));
+                  $('#secoundagentnewBalnce').text(balnce);
+                  $('#secoundagentcurrentBalnceStatus').text(status);
+                  $('#secoundagentcurrentBalnce').text(balnce);
+                  $('#secoundagentnewBalnceStatus').text(status);
+              }
+          );
+      } else {
+          secoundClientBalnce = null;
+          var total = $boxActionDto.SecondBalanceFeforeAction;
+                  var status = "";
+                  if (total > 0) {
+                      status = "له";
+                  }
+                  else if (total < 0) {
+                      status = "عليه";
+                  }
+                  var balnce = numberWithCommas(Math.abs(parseFloat(total)));
+                  $('#secoundagentnewBalnce').text(balnce);
+                  $('#secoundagentcurrentBalnceStatus').text(status);
+                  $('#secoundagentcurrentBalnce').text(balnce);
+                  $('#secoundagentnewBalnceStatus').text(status);
+      }
     }
     function initialSecoundClientBalance(clientId, coinId) {
-        console.log("clientId:" + clientId + "-coinId:" + coinId);
         $.post(
             '@Url.Action("GetClientCashByCoin", "ClientCash")',
             {
@@ -562,17 +601,17 @@
                 coinId: coinId
             }, function (data) {
                 secoundClientBalnce = data;
-
             }
         );
     }
 
-    function getSecoundCompanyCompanyBalnceByCoin(companyId, coinId) {
-        $.post(
-            '@Url.Action("GetCompanyMaxAndDeptByCoin", "CompanyCash")', {
+    async function getSecoundCompanyCompanyBalnceByCoin(companyId, coinId) {
+        if (!isSameSecAccountAndSameCoinForCompany()) {
+            await $.post(
+                '@Url.Action("GetCompanyMaxAndDeptByCoin", "CompanyCash")', {
                 companyId: companyId,
                 coinId: coinId
-        }, function (data) {
+            }, function (data) {
                 secoundCompanyBalcne = data;
 
                 var total = parseFloat(data.Total);
@@ -589,7 +628,22 @@
                 $('#secondcompanycurrentBalnceStatus').text(status);
                 $('#secondcompanynewBalanceStatus').text(status);
             }
-        )
+            )
+        } else {
+            var total = parseFloat($boxActionDto.SecondBalanceFeforeAction);
+                var status = "";
+                if (total > 0) {
+                    status = "له";
+                }
+                else if (total < 0) {
+                    status = "عليه";
+                }
+                total = numberWithCommas(Math.abs(total));
+                $('#secondcompanycurrentBalnce').text(total);
+                $('#secondcopanynewBalnce').text(total);
+                $('#secondcompanycurrentBalnceStatus').text(status);
+                $('#secondcompanynewBalanceStatus').text(status);
+        }
     }
 
     function initialSecoundCompanyBalcne(companyId, coinId) {
@@ -606,41 +660,56 @@
         $('#agentcurrentBalnce').empty();
         $('#agentnewBalnce').empty();
     }
-
     function resetCompanyBalnce() {
         $('#companycurrentBalnce').empty();
         $('#copanynewBalnce').empty();
     }
 
     function clacAgentCurrentBalcne() {
-
         var amount = parseFloat(deleteCommaFromNumber($('#amout').val()));
-        debugger;
-        amount = amount - oldAmount;
         if (isNaN(amount)) {
             amount = 0;
         }
-
         var typeOfAtionVal = $('#typeOfAction').val();
-        if (clientBalnae != null) {
-            var total;
+        if (!isSameFirstAccountAndSameCoinForClient()) {
+            if (clientBalnae != null) {
+                var total;
+                if (typeOfAtionVal == 1) {
+                    total = clientBalnae.Total + amount;
+                } else {
+                    total = clientBalnae.Total - amount;
+                }
+                var status = "";
+                if (total > 0) {
+                    status = "له";
+                } else if (total < 0) {
+                    status = "عليه";
+                }
+                total = Math.abs(total);
+                total = numberWithCommas(total);
+
+                $('#agentnewBalnce').text(total);
+                $('#agentnewBalnceStatus').text(status);
+
+            }
+        } else {
+             var total;
             if (typeOfAtionVal == 1) {
-                total = clientBalnae.Total + amount;
-            } else {
-                total = clientBalnae.Total - amount;
-            }
-            var status = "";
-            if (total > 0) {
-                status = "له";
-            } else if (total < 0) {
-                status = "عليه";
-            }
-            total = Math.abs(total);
-            total = numberWithCommas(total);
+                total = $boxActionDto.FirstBalanceFeforeAction + amount;
+                } else {
+                    total = $boxActionDto.FirstBalanceFeforeAction - amount;
+                }
+                var status = "";
+                if (total > 0) {
+                    status = "له";
+                } else if (total < 0) {
+                    status = "عليه";
+                }
+                total = Math.abs(total);
+                total = numberWithCommas(total);
 
-            $('#agentnewBalnce').text(total);
-            $('#agentnewBalnceStatus').text(status);
-
+                $('#agentnewBalnce').text(total);
+                $('#agentnewBalnceStatus').text(status);
         }
     }
 
@@ -650,22 +719,43 @@
             amount = 0;
         }
         var typeOfAtionVal = $('#typeOfAction').val();
-        var total = 0;
-        if (typeOfAtionVal == 1) {
-            total = parseFloat(companyBalnce.Total) + amount;
+        if (!isSameFirstAccountAndSameCoinForCompany()) {
+            if (companyBalnce != null) {
+                var total = 0;
+                if (typeOfAtionVal == 1) {
+                    total = parseFloat(companyBalnce.Total) + amount;
+                } else {
+                    total = parseFloat(companyBalnce.Total) - amount;
+                }
+                var status = "";
+                if (total > 0) {
+                    status = "له";
+                }
+                else if (total < 0) {
+                    status = "عليه";
+                }
+                total = numberWithCommas(Math.abs(total));
+                $('#copanynewBalnce').text(total);
+                $('#companynewBalanceStatus').text(status);
+            }
         } else {
-            total = parseFloat(companyBalnce.Total) - amount;
+            var total = 0;
+                if (typeOfAtionVal == 1) {
+                    total = $boxActionDto.FirstBalanceFeforeAction + amount;
+                } else {
+                    total = $boxActionDto.FirstBalanceFeforeAction - amount;
+                }
+                var status = "";
+                if (total > 0) {
+                    status = "له";
+                }
+                else if (total < 0) {
+                    status = "عليه";
+                }
+                total = numberWithCommas(Math.abs(total));
+                $('#copanynewBalnce').text(total);
+                $('#companynewBalanceStatus').text(status);
         }
-        var status = "";
-        if (total > 0) {
-            status = "له";
-        }
-        else if (total < 0) {
-            status = "عليه";
-        }
-        total = numberWithCommas(Math.abs(total));
-        $('#copanynewBalnce').text(total);
-        $('#companynewBalanceStatus').text(status);
     }
 
     function validate() {
@@ -873,7 +963,6 @@
                 Note: note
             },
             function (data) {
-                console.log(data);
                 if (data.Success) {
                     toastr["success"]("تم");
                     emptyForm();
@@ -1000,13 +1089,13 @@
                 moneyActionId: id,
             }, function (data) {
                 $boxActionDto = data;
-
+                console.log(data);
                 initialElement();
             }
         );
     }
 
-    function initialElement() {
+  async  function initialElement() {
 
         switch ($boxActionDto.BoxActionType) {
             case 'ExpenseFromTreasury': {
@@ -1045,80 +1134,61 @@
                 if ($boxActionDto.FirstClientId != null && $boxActionDto.SecondClientId != null) {
                     displayAndHideElements({ firstAccount: 3, secoundAccount: 2, agent: 'block', expence: 'none', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
                     $('#agents').val($boxActionDto.FirstClientId).trigger("change");
-                    fillSecoundSelect();
+                    await fillSecoundSelect();
+                    $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
 
-                    setTimeout(function () {
-                        $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
-                    }, 1000);
 
                 } else if ($boxActionDto.FirstClientId != null && $boxActionDto.SecondCompanyId != null) {
                     displayAndHideElements({ firstAccount: 3, secoundAccount: 3, agent: 'block', expence: 'none', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'block', secondClient: 'none' });
                     $('#agents').val($boxActionDto.FirstClientId).trigger("change");
-                    fillSecoundSelect();
-
-                    setTimeout(function () {
-                        $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
-                    }, 1000);
+                    await fillSecoundSelect();
+                    $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
+                    
 
                 } else if ($boxActionDto.FirstCompanyId != null && $boxActionDto.SecondCompanyId != null) {
                     displayAndHideElements({ firstAccount: 4, secoundAccount: 3, agent: 'none', expence: 'none', income: 'none', company: 'block', secondAccountDetial: 'block', secoundCompany: 'block', secondClient: 'none' });
                     $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
-                    fillSecoundSelect();
-
-                    setTimeout(function () {
-                        $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
-                    }, 1000);
+                    await fillSecoundSelect();
+                    $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
                 } else if ($boxActionDto.FirstCompanyId != null && $boxActionDto.SecondClientId != null) {
                     displayAndHideElements({ firstAccount: 4, secoundAccount: 2, agent: 'none', expence: 'none', income: 'none', company: 'block', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
                     $('#companies').val($boxActionDto.FirstCompanyId).trigger("change");
-                    fillSecoundSelect();
-
-                    setTimeout(function () {
-                        $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
-                    }, 1000);
+                    await fillSecoundSelect();
+                    $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
                 }
 
             } break;
             case 'ExpenseFromClientToPublic': {
                 displayAndHideElements({ firstAccount: 1, secoundAccount: 2, agent: 'none', expence: 'block', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
                 $('#publicExpenses').val($boxActionDto.ExpensiveId);
-                fillSecoundSelect();
-                setTimeout(function () {
-                    $('#secoundAgentSelect').val($boxActionDto.FirstClientId).trigger("change");
-                }, 1000);
+                await fillSecoundSelect();
+                $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change"); 
 
             } break;
             case 'ReceiveFromPublicToClient': {
                 displayAndHideElements({ firstAccount: 1, secoundAccount: 2, agent: 'none', expence: 'none', income: 'block', company: 'none', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
                 $('#publicIncomes').val($boxActionDto.IncomeId);
-                fillSecoundSelect();
-                setTimeout(function () {
-                    $('#secoundAgentSelect').val($boxActionDto.FirstClientId).trigger("change");
-                }, 1000);
+                await fillSecoundSelect();
+                $('#secoundAgentSelect').val($boxActionDto.SecondClientId).trigger("change");
 
             } break;
             case 'ExpenseFromCompanyToPublic': {
                 displayAndHideElements({ firstAccount: 1, secoundAccount: 3, agent: 'none', expence: 'block', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'block', secondClient: 'none' });
                 $('#publicExpenses').val($boxActionDto.ExpensiveId);
-                fillSecoundSelect();
-                setTimeout(function () {
-                    $('#secoundCompanySelect').val($boxActionDto.FirstCompanyId).trigger("change");
-                }, 1000);
+                await fillSecoundSelect();
+                $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
 
             } break;
             case 'ReceiveFromPublicToCompany': {
                 displayAndHideElements({ firstAccount: 1, secoundAccount: 3, agent: 'none', expence: 'none', income: 'block', company: 'none', secondAccountDetial: 'block', secoundCompany: 'block', secondClient: 'none' });
                 $('#publicIncomes').val($boxActionDto.IncomeId);
-                fillSecoundSelect();
-                setTimeout(function () {
-                    $('#secoundCompanySelect').val($boxActionDto.FirstCompanyId).trigger("change");
-                }, 1000);
-
+                await fillSecoundSelect();
+                $('#secoundCompanySelect').val($boxActionDto.SecondCompanyId).trigger("change");
+                
             } break;
         }
-        
-    }
 
+    } 
     function displayAndHideElements(data) {
 
         $boxActionDto.Amount = Math.abs($boxActionDto.Amount);
@@ -1129,6 +1199,7 @@
         $('#typeOfAction').val(typeOfAction);
         $('#note').val($boxActionDto.Note);
         $('#amout').val(numberWithCommas($boxActionDto.Amount));
+        
         oldAmount = numberWithCommas($boxActionDto.Amount);
 
         $('#agentDiv').css('display', data.agent);
@@ -1138,6 +1209,7 @@
         $('#secounAcountDetials').css('display', data.secondAccountDetial);
         $('#secoundCompanyDiv').css('display', data.secoundCompany);
         $('#secoundAgentDiv').css('display', data.secondClient);
+        $('#amout').keyup();
     }
 
     function displayAndHideElementsForCleaning() {
@@ -1189,59 +1261,95 @@
 
     function calcSecoundAgentCurrentBalcne() {
         var amount = parseFloat(deleteCommaFromNumber($('#amout').val()));
-        amount = amount - oldAmount;
         if (isNaN(amount)) {
             amount = 0;
         }
-
         var typeOfAtionVal = $('#typeOfAction').val();
-        if (secoundClientBalnce != null) {
+        if (!isSameSecAccountAndSameCoinForClient()) {
+            if (secoundClientBalnce != null) {
+                var total;
+                if (typeOfAtionVal != 1) {
+                    total = secoundClientBalnce.Total + amount;
+                } else {
+                    total = secoundClientBalnce.Total - amount;
+                }
+                var status = "";
+                if (total > 0) {
+                    status = "له";
+                } else if (total < 0) {
+                    status = "عليه";
+                }
+                total = Math.abs(total);
+                total = numberWithCommas(total);
+
+                $('#secoundagentnewBalnce').text(total);
+                $('#secoundagentnewBalnceStatus').text(status);
+            }
+        } else {
             var total;
             if (typeOfAtionVal != 1) {
-                total = secoundClientBalnce.Total + amount;
-            } else {
-                total = secoundClientBalnce.Total - amount;
-            }
-            var status = "";
-            if (total > 0) {
-                status = "له";
-            } else if (total < 0) {
-                status = "عليه";
-            }
-            total = Math.abs(total);
-            total = numberWithCommas(total);
+                total = $boxActionDto.SecondBalanceFeforeAction + amount;
+                } else {
+                    total = $boxActionDto.SecondBalanceFeforeAction - amount;
+                }
+                var status = "";
+                if (total > 0) {
+                    status = "له";
+                } else if (total < 0) {
+                    status = "عليه";
+                }
+                total = Math.abs(total);
+                total = numberWithCommas(total);
 
-            $('#secoundagentnewBalnce').text(total);
-            $('#secoundagentnewBalnceStatus').text(status);
+                $('#secoundagentnewBalnce').text(total);
+                $('#secoundagentnewBalnceStatus').text(status);
         }
     }
 
 
     function calcSecoundCompanyCurrentBalance() {
         var amount = parseFloat(deleteCommaFromNumber($('#amout').val()));
-        amount = amount - oldAmount;
         if (isNaN(amount)) {
             amount = 0;
         }
 
         var typeOfAtionVal = $('#typeOfAction').val();
-        var total = 0;
-        if (typeOfAtionVal != 1) {
-            console.log("secoundCompanyBalcne:" + secoundCompanyBalcne);
-            total = parseFloat(secoundCompanyBalcne.Total) + amount;
-        } else {
-            total = parseFloat(secoundCompanyBalcne.Total) - amount;
+        if (!isSameSecAccountAndSameCoinForCompany()&&secoundCompanyBalcne!=null) {
+            var total = 0;
+            if (typeOfAtionVal != 1) {
+                total = parseFloat(secoundCompanyBalcne.Total) + amount;
+            } else {
+                total = parseFloat(secoundCompanyBalcne.Total) - amount;
+            }
+            var status = "";
+            if (total > 0) {
+                status = "له";
+            }
+            else if (total < 0) {
+                status = "عليه";
+            }
+            total = numberWithCommas(Math.abs(total));
+            $('#secondcopanynewBalnce').text(total);
+            $('#secondcompanynewBalanceStatus').text(status);
         }
-        var status = "";
-        if (total > 0) {
-            status = "له";
+        else {
+            var total = 0;
+            if (typeOfAtionVal != 1) {
+                total = parseFloat($boxActionDto.SecondBalanceFeforeAction) + amount;
+            } else {
+                total = parseFloat($boxActionDto.SecondBalanceFeforeAction) - amount;
+            }
+            var status = "";
+            if (total > 0) {
+                status = "له";
+            }
+            else if (total < 0) {
+                status = "عليه";
+            }
+            total = numberWithCommas(Math.abs(total));
+            $('#secondcopanynewBalnce').text(total);
+            $('#secondcompanynewBalanceStatus').text(status);
         }
-        else if (total < 0) {
-            status = "عليه";
-        }
-        total = numberWithCommas(Math.abs(total));
-        $('#secondcopanynewBalnce').text(total);
-        $('#secondcompanynewBalanceStatus').text(status);
     }
 
     function calcAllFirstBalance() {
@@ -1249,6 +1357,7 @@
         if (type == 3) {
             clacAgentCurrentBalcne();
         } else if (type == 4) {
+
             calcCompanyCurrentBalnce();
         }
     }
@@ -1257,7 +1366,6 @@
         if (type == 2) {
             calcSecoundAgentCurrentBalcne();
         } else if (type == 3) {
-
             calcSecoundCompanyCurrentBalance();
         }
     }
@@ -1273,5 +1381,34 @@
         $('#secoundagentcurrentBalnce').text('');
         $('#secoundagentnewBalnceStatus').text('');
     }
-
+    function isSameFirstAccountAndSameCoinForClient() {
+        var coinId = $('#coins').val();
+        if (coinId != $boxActionDto.CoinId)
+            return false;
+        if ($boxActionDto.FirstClientId != $('#agents').val())
+            return false;
+        return true;
+    }
+    function isSameFirstAccountAndSameCoinForCompany() {
+        var coinId = $('#coins').val();
+        if (coinId != $boxActionDto.CoinId)
+            return false;
+        if ($boxActionDto.FirstCompanyId != $('#companies').val())
+            return false;
+        return true;
+    }
+    function isSameSecAccountAndSameCoinForClient() {
+        if ($boxActionDto.SecondClientId != $('#secoundAgentSelect').val())
+            return false;
+        if ($boxActionDto.CoinId != $('#coins').val())
+            return false; 
+        return true;
+    }
+    function isSameSecAccountAndSameCoinForCompany() {
+        if ($boxActionDto.SecondCompanyId  != $('#secoundCompanySelect').val())
+            return false;
+        if ($boxActionDto.CoinId != $('#coins').val())
+            return false; 
+        return true;
+    }
 </script>

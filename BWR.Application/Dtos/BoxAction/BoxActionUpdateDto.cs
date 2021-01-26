@@ -17,5 +17,7 @@ namespace BWR.Application.Dtos.BoxAction
         public string Note { get; set; }
         public string BoxActionType { get; set; }
         public bool IsIncome { get; set; }
+        public decimal FirstBalanceFeforeAction { get; set; }
+        public decimal SecondBalanceFeforeAction { get; set; }
     }
 }

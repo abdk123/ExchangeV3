@@ -50,11 +50,13 @@ namespace BWR.Application.AppServices.Companies
                         lastBalance = companyCash.InitialBalance;
                     }
                     var companyCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>()
-                        .FindBy(x => x.CoinId.Equals(input.CoinId) && x.CompanyId.Equals(input.CompanyId)
-                        , c => c.MoenyAction, c => c.MoenyAction.BoxAction, c => c.MoenyAction.Clearing.ToClient, c => c.MoenyAction.Clearing.ToCompany, c => c.MoenyAction.Clearing.FromClient, c => c.MoenyAction.Clearing.FromCompany
-                    , c => c.MoenyAction.Exchange.FirstCoin, c => c.MoenyAction.Exchange.SecoundCoin, c => c.MoenyAction.Exchange.MainCoin, c => c.MoenyAction.PublicMoney.PublicExpense, c => c.MoenyAction.PublicMoney.PublicIncome
-                    , c => c.MoenyAction.Transaction.ReciverClient, c => c.MoenyAction.Transaction.ReceiverCompany, c => c.MoenyAction.Transaction.SenderCompany, c => c.MoenyAction.Transaction.SenderClient, c => c.MoenyAction.Transaction.Coin
-                    , c => c.MoenyAction.ClientCashFlows, c => c.MoenyAction.CompanyCashFlows
+                        .FindBy(
+                        x => x.CoinId.Equals(input.CoinId) 
+                        && x.CompanyId.Equals(input.CompanyId)
+                    //    , c => c.MoenyAction, c => c.MoenyAction.BoxAction, c => c.MoenyAction.Clearing.ToClient, c => c.MoenyAction.Clearing.ToCompany, c => c.MoenyAction.Clearing.FromClient, c => c.MoenyAction.Clearing.FromCompany
+                    //, c => c.MoenyAction.Exchange.FirstCoin, c => c.MoenyAction.Exchange.SecoundCoin, c => c.MoenyAction.Exchange.MainCoin, c => c.MoenyAction.PublicMoney.PublicExpense, c => c.MoenyAction.PublicMoney.PublicIncome
+                    //, c => c.MoenyAction.Transaction.ReciverClient, c => c.MoenyAction.Transaction.ReceiverCompany, c => c.MoenyAction.Transaction.SenderCompany, c => c.MoenyAction.Transaction.SenderClient, c => c.MoenyAction.Transaction.Coin
+                    //, c => c.MoenyAction.ClientCashFlows, c => c.MoenyAction.CompanyCashFlows
                         );
                     if (input.From != null)
                     {
@@ -71,13 +73,14 @@ namespace BWR.Application.AppServices.Companies
                                 Balance = lastBalance,
                                 Type = "رصيد سابق"
                             });
+                    var list = companyCashFlows.ToList();
                     var dataCashFlows = companyCashFlows.OrderBy(c => c.MoenyAction.Date).ThenBy(c => c.MoneyActionId).ToList();
                     foreach (var companyCashFlow in dataCashFlows)
                     {
                         var temp = new CompanyCashFlowOutputDto()
                         {
                             Id = companyCashFlow.Id,
-                            Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.Amount,
+                            //Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.Amount,
                             Amount = companyCashFlow.Amount,
                             Commission = companyCashFlow.Commission(),
                             SecondCommission = companyCashFlow.SecounCommission(),
@@ -95,8 +98,9 @@ namespace BWR.Application.AppServices.Companies
                             UserMatched = companyCashFlow.User?.FullName ?? "",
                             CompanyUserMatched = companyCashFlow.CompanyUser?.Name ?? ""
                         };
-                        //temp.Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.Amount;
-                        temp.Balance += temp.Commission;
+                        temp.Balance = companyCashFlowsDtos.Last().Balance + companyCashFlow.RealAmount;
+                        //temp.Balance += temp.Commission;
+                        //temp.Balance += temp.SecondCommission;
                         companyCashFlowsDtos.Add(temp);
 
                     }

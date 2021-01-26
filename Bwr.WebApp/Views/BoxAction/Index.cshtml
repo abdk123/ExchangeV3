@@ -232,9 +232,9 @@
             function (data) {
                 for (var i = 0; i < data.length; i++) {
                     var newOption = new Option(data[i].Name, data[i].Id, false, false);
-                    $('#secoundCompanySelect').append(newOption).trigger('change');
+                    $('#secoundCompanySelect').append(newOption);
                 }
-               // $('#secoundCompanySelect').val(null).trigger('change');
+                $('#secoundCompanySelect').val(null).trigger('change');
             }
         )
         $.post(
@@ -247,7 +247,7 @@
                     var newOption = new Option(data[i].FullName, data[i].Id, false, false);
                     if (!data[i].IsEnabled)
                         $(newOption).attr('disabled', 'disabled');
-                    $('#secoundAgentSelect').append(newOption).trigger('change');
+                    $('#secoundAgentSelect').append(newOption);
 
                 }
                 $('#secoundAgentSelect').val(null).trigger('change');
@@ -1036,6 +1036,7 @@
                 $('#secoundagentcurrentBalnce').text('');
                 $('#secoundagentnewBalnceStatus').text('');
         secoundClientBalnce = null;
+        if (clientId == null) { return; }
         await $.post(
             '@Url.Action("GetClientCashByCoin", "ClientCash")',
             {

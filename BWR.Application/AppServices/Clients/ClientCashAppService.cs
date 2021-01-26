@@ -72,7 +72,7 @@ namespace BWR.Application.AppServices.Clients
                 foreach (var clientCash in clientCashes)
                 {
 
-                    var total = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.ClientId == clientId && c.CoinId == clientCash.CoinId).Sum(c => c.Amount);
+                    var total = _unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.ClientId == clientId && c.CoinId == clientCash.CoinId).Sum(c => c.RealAmount);
                     total += clientCash.InitialBalance;
                     var clientBalanceDto = new ClientCashesDto()
                     {

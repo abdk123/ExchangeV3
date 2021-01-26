@@ -129,9 +129,7 @@
                                 var clients = (List<ClientDto>)ViewData["Clients"];
                                 foreach (var item in clients)
                                 {
-                                    <option value="@item.Id" @if (!item.IsEnabled) { Write("disabled"); }>
-                                        @item.FullName
-                                    </option>
+                                    <option value="@item.Id" @if (!item.IsEnabled) { Write("disabled"); }>@item.FullName</option>
                                 }
                             }
                         </select>
@@ -225,9 +223,9 @@
             tags: true,
             width: 'resolve'
         });
-        $('.agentSelect').select2({
-            width: 'resolve'
-        });
+        //$('.agentSelect').select2({
+        //    width: 'resolve'
+        //});
     }
 
     function changeReciver(element) {
@@ -250,6 +248,9 @@
             AgentDiv.hidden = true;
             comapnyDiv.hidden = true;
         }
+               $('.agentSelect').select2({
+            width: '100%'
+        });
         $('.normalClientSelect').select2({
             tags: true
         });

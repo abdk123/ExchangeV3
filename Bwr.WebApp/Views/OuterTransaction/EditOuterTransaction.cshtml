@@ -1540,12 +1540,11 @@
 
     if ($outerTransactionForEdit.TypeOfPay == 3) {
 
-        //$('#reciverCompany').val($outerTransactionForEdit.ReceiverCompanyId).trigger('change')
         
         $("#TypeOfPay").val('3').change();
         $('#reciverCompany').val($outerTransactionForEdit.ReceiverCompanyId).trigger('change');
         $('#secoundCompanyCommission').val(numberWithCommas($outerTransactionForEdit.ReceiverCompanyComission));
-        setTimeout(function(){ $('#reciverCompany').val($outerTransactionForEdit.ReceiverCompanyId).trigger('change'); }, 500);
+        setTimeout(function(){ $('#reciverCompany').val($outerTransactionForEdit.ReceiverCompanyId).trigger('change'); }, 1500);
 
         //Sender Info
         $('#clientSenderByCompant').val($outerTransactionForEdit.SenderClientId).trigger('change');

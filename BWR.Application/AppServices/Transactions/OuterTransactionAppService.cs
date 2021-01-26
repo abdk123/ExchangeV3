@@ -123,19 +123,21 @@ namespace BWR.Application.AppServices.Transactions
 
                 outerTransactionUpdateDto = Mapper.Map<Transaction, OuterTransactionUpdateDto>(outerTransaction);
                 var mainMoneyAction = outerTransaction.MoenyActions[0];
-                var companyCashIQ = this._unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.SenderCompanyId && c.MoenyAction.Date <= mainMoneyAction.Date && c.MoneyActionId < mainMoneyAction.Id);
-                var senederCompanyTotalAmount = companyCashIQ.Sum(c => c.Amount);
-                var senderCompanyinitBalance = this._unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.SenderCompanyId).First().InitialBalance ;
-                outerTransactionUpdateDto.SenderCompanyBalanceBeFroeAction = senderCompanyinitBalance + senederCompanyTotalAmount;
+                {
+                    var companyCashIQ = this._unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.SenderCompanyId && c.MoenyAction.Date <= mainMoneyAction.Date && c.MoneyActionId < mainMoneyAction.Id);
+                    var senederCompanyTotalAmount = companyCashIQ.Sum(c => c.RealAmount);
+                    var senderCompanyinitBalance = this._unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.SenderCompanyId).First().InitialBalance;
+                    outerTransactionUpdateDto.SenderCompanyBalanceBeFroeAction = senderCompanyinitBalance + senederCompanyTotalAmount;
+                }
                 if (outerTransactionUpdateDto.TypeOfPay == TypeOfPay.ClientsReceivables)
                 {
-                    var clientTotalAmount = this._unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.ClientId == outerTransaction.SenderClientId && c.MoenyAction.Date <= mainMoneyAction.Date && c.MoenyActionId < mainMoneyAction.Id).Sum(c => c.Amount);
+                    var clientTotalAmount = this._unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.ClientId == outerTransaction.SenderClientId && c.MoenyAction.Date <= mainMoneyAction.Date && c.MoenyActionId < mainMoneyAction.Id).Sum(c => c.RealAmount);
                     var clientinitBalance = this._unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.ClientId == outerTransaction.SenderClientId).First().InitialBalance;
                     outerTransactionUpdateDto.SenderClientBalanceBeFroeAction = clientinitBalance + clientTotalAmount;
                 }
                 if (outerTransactionUpdateDto.TypeOfPay == TypeOfPay.CompaniesReceivables)
                 {
-                    var secoundCompanyTotalAmount = this._unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.ReceiverCompanyId && c.MoenyAction.Date <= mainMoneyAction.Date && c.MoneyActionId < mainMoneyAction.Id).Sum(c => c.Amount);
+                    var secoundCompanyTotalAmount = this._unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.ReceiverCompanyId && c.MoenyAction.Date <= mainMoneyAction.Date && c.MoneyActionId < mainMoneyAction.Id).Sum(c => c.RealAmount);
                     var secoundCompanyinitBalance = this._unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == outerTransaction.CoinId && c.CompanyId == outerTransaction.ReceiverCompanyId).First().InitialBalance;
                     outerTransactionUpdateDto.ReciverCompanyBalanceBeforeAction = secoundCompanyTotalAmount + secoundCompanyinitBalance;
                 }
@@ -460,10 +462,11 @@ namespace BWR.Application.AppServices.Transactions
                     CoinId = dto.CoinId,
                     Amount = dto.Amount,
                     Matched = false
-                };
+                   };
 
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(senderCompanyCashFlow);
                 _unitOfWork.Save();
+                //delete matched 
                 var senderCompanyMatchedCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == senderCompanyCashFlow.CompanyId && c.CoinId == senderCompanyCashFlow.CoinId && c.Matched == true && c.MoenyAction.Date > moneyAction.Date);
                 foreach (var item in senderCompanyMatchedCashFlows)
                 {
@@ -488,7 +491,7 @@ namespace BWR.Application.AppServices.Transactions
                     Matched = false
                 };
 
-                receiverCompanyCashFlow.Amount += dto.ReceiverCompanyComission.Value;
+                //receiverCompanyCashFlow.Amount += dto.ReceiverCompanyComission.Value;
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(receiverCompanyCashFlow);
 
                 var reciverCompanyMatchedCashFlows = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CompanyId == receiverCompanyCashFlow.CompanyId && c.CoinId == dto.CoinId && c.Matched == true && c.MoenyAction.Date > moneyAction.Date);
@@ -506,15 +509,6 @@ namespace BWR.Application.AppServices.Transactions
 
                 _unitOfWork.Save();
                 _unitOfWork.Commit();
-
-                //if (dto.RecivingAmount != null && dto.RecivingAmount != 0)
-                //{
-                //    bool response = ReciveFromClientForMainBoxMethond(outerTransaction.Id, dto);
-                //    if (!response)
-                //    {
-                //        return false;
-                //    }
-                //}
 
                 return true;
 
@@ -1028,7 +1022,7 @@ namespace BWR.Application.AppServices.Transactions
                     Matched = false
                 };
 
-                receiverCompanyCashFlow.Amount += dto.ReceiverCompanyComission.Value;
+                //receiverCompanyCashFlow.Amount += dto.ReceiverCompanyComission.Value;
                 _unitOfWork.GenericRepository<CompanyCashFlow>().Insert(receiverCompanyCashFlow);
                 #endregion
                 var senderCompanyMatchedCashFlow = _unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.MoenyAction.Date >= lesserDate && c.Matched == true && c.CoinId == companyCashFlow.CoinId && c.CompanyId == companyCashFlow.CompanyId).ToList();
