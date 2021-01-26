@@ -114,6 +114,31 @@ namespace BWR.Application.AppServices.BoxActions
                         FirstCompanyId = moneyAction.Clearing.FromCompanyId,
                         SecondCompanyId = moneyAction.Clearing.ToCompanyId
                     };
+                    if (dto.FirstClientId != null)
+                    {
+                        var totalBeforeAction = this._unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.CoinId == clearing.CoinId && c.ClientId == dto.FirstClientId && c.MoenyAction.Date <= moneyAction.Date && c.MoenyActionId < moneyAction.Id).Sum(c => c.RealAmount);
+                        var initalBalance = this._unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == clearing.CoinId && c.ClientId == dto.FirstClientId).First().InitialBalance;
+
+                        dto.FirstBalanceFeforeAction = totalBeforeAction + initalBalance;
+                    }
+                    else if (dto.FirstCompanyId != null)
+                    {
+                        var totalBeforeAction = this._unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == clearing.CoinId && c.CompanyId == dto.FirstCompanyId && c.MoenyAction.Date <= moneyAction.Date && c.MoneyActionId < moneyAction.Id).Sum(c => c.RealAmount);
+                        var initalBalance = this._unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == clearing.CoinId && c.CompanyId == dto.FirstCompanyId).First().InitialBalance;
+
+                        dto.FirstBalanceFeforeAction = totalBeforeAction + initalBalance;
+                    }
+                    if (dto.SecondClientId != null) {
+                        var totalBeforeAction = this._unitOfWork.GenericRepository<ClientCashFlow>().FindBy(c => c.CoinId == clearing.CoinId && c.ClientId == dto.SecondClientId && c.MoenyAction.Date <= moneyAction.Date && c.MoenyActionId < moneyAction.Id).Sum(c => c.RealAmount);
+                        var initalBalance = this._unitOfWork.GenericRepository<ClientCash>().FindBy(c => c.CoinId == clearing.CoinId && c.ClientId == dto.SecondClientId).First().InitialBalance;
+                        dto.SecondBalanceFeforeAction = totalBeforeAction + initalBalance;
+                    }
+                    else if (dto.SecondCompanyId != null)
+                    {
+                        var totalBeforeAction = this._unitOfWork.GenericRepository<CompanyCashFlow>().FindBy(c => c.CoinId == clearing.CoinId && c.CompanyId == dto.SecondCompanyId && c.MoenyAction.Date <= moneyAction.Date && c.MoneyActionId < moneyAction.Id).Sum(c => c.RealAmount);
+                        var initalBalance = this._unitOfWork.GenericRepository<CompanyCash>().FindBy(c => c.CoinId == clearing.CoinId && c.CompanyId == dto.SecondCompanyId).First().InitialBalance;
+                        dto.SecondBalanceFeforeAction = totalBeforeAction + initalBalance;
+                    }
                 }
 
             }

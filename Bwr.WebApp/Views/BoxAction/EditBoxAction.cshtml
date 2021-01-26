@@ -426,10 +426,10 @@
             function (data) {
                 for (var i = 0; i < data.length; i++) {
                     var newOption = new Option(data[i].FullName, data[i].Id, false, false);
-
                     $('#secoundAgentSelect').append(newOption);
                 }
                 $('#secoundAgentSelect').val(null).trigger('change');
+                console.log('finsihFill');
             }
         )
 
@@ -1130,8 +1130,8 @@
             } break;
 
             case 'None': {
-
                 if ($boxActionDto.FirstClientId != null && $boxActionDto.SecondClientId != null) {
+                    
                     displayAndHideElements({ firstAccount: 3, secoundAccount: 2, agent: 'block', expence: 'none', income: 'none', company: 'none', secondAccountDetial: 'block', secoundCompany: 'none', secondClient: 'block' });
                     $('#agents').val($boxActionDto.FirstClientId).trigger("change");
                     await fillSecoundSelect();
